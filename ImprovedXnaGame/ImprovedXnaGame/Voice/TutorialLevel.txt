@@ -1,0 +1,12 @@
+﻿Ahoj, hráči. Vítej ve hře "Age of Scouts". V tomto tutoriálu zkusíš cvičně přepadnout nepřátelský tábor.
+Nejprve se ale musíme naučit chodit.
+Klikni levým tlačítkem myši na skauta uprostřed obrazovky.
+Výborně. Nyní klikni pravým tlačítkem myši na nedalekou vlajku a skaut se tam přesune.
+Hustým lesem se v Age of Scouts nedá procházet. Obejdi les a dojdi až k další vlajce.
+Někteří skauti umí plavat, tento ale ne. Najdi most přes řeku a dojdi k další vlajce.
+Výborně. Pokračuj dál, dokud nenarazíš na pole vysoké trávy.
+Pozor! Přes tebou hlídá předsunutá hlídka nepřátelského tábora. Dávej pozor, aby tě nespatřila, nebo budeš muset úroveň opakovat.
+Zůstaň ve vysoké trávě a daleko od hlídky, aby tě neviděla, a hlídku obejdi.
+Další skauti ti přišli na pomoc. Přidrž levé tlačítko myši a přejeď s ním přes všechny své skauty, abys je mohl úkolovat všechny najednout.
+Výborně. Nyní s nimi dojdi až do nepřátelského tábora a zneškodni nepřátelské skauty.
+Pokud klikneš pravým tlačítkem na nepřítele, tvoji skauti na něj začnou střílet.
