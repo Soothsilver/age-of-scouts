@@ -25,5 +25,15 @@ namespace Age.World
         {
             return X + ":" + Y;
         }
+
+        public static bool operator ==(IntVector one, IntVector two)
+        {
+            return one.X == two.X && one.Y == two.Y;
+        }
+
+        public static bool operator !=(IntVector one, IntVector two)
+        {
+            return !(one == two);
+        }
     }
 }

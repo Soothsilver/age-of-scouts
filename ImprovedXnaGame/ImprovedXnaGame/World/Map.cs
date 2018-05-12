@@ -20,11 +20,16 @@ namespace Age.World
 
         internal void Draw(Session session, float elapsedSeconds, Selection selection)
         {
+            HashSet<Tile> visibleTiles = DisplayOptimization.GetTilesVisibleOnScreen(session);
             Vector2 centerOfScreenInStandardPixels = session.CenterOfScreenInStandardPixels;
             float zoomLevel = session.ZoomLevel;
             // Layer 1: Tiles
             this.ForEachTile((x, y, tile) =>
             {
+                if (!visibleTiles.Contains(tile))
+                {
+                    return;
+                }
                 Rectangle rectTile = Isomath.TileToScreen(tile, session);
                 Primitives.DrawImage(Library.Get(tile.Icon), rectTile);
                 if (Debug.DebugPoints.Tiles != null && Debug.DebugPoints.Tiles.Contains(tile))

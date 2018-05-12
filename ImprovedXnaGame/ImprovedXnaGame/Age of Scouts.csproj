@@ -152,6 +152,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="StaticData.cs" />
     <Compile Include="Voice\ChatLine.cs" />
+    <Compile Include="World\DisplayOptimization.cs" />
     <Compile Include="World\IntVector.cs" />
     <Compile Include="World\Isomath.cs" />
     <Compile Include="World\Levels.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Core\Gender.cs" />
     <Compile Include="Core\Session.cs" />
     <Compile Include="Core\Troop.cs" />
+    <Compile Include="World\MiaAlgorithm.cs" />
     <Compile Include="World\MoveViewport.cs" />
     <Compile Include="World\Waterflow.cs" />
   </ItemGroup>

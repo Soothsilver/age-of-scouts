@@ -130,50 +130,17 @@ namespace Age.Phases
 
         }
 
-        private List<Tile> DetermineTilesInRectangle(Rectangle rectSelectionBox, Map map)
+        public static List<Tile> DetermineTilesInRectangle(Rectangle rectStandard, Map map)
         {
-            IntVector topLeft = Isomath.StandardToTile(rectSelectionBox.X, rectSelectionBox.Y);
-            IntVector topRight = Isomath.StandardToTile(rectSelectionBox.Right, rectSelectionBox.Y);
-            IntVector bottomLeft = Isomath.StandardToTile(rectSelectionBox.X, rectSelectionBox.Bottom);
-            IntVector bottomRight = Isomath.StandardToTile(rectSelectionBox.Right, rectSelectionBox.Bottom);
+            IEnumerable<IntVector> tileCoordinates = MiaAlgorithm.GetTilesInsideRectangle(rectStandard);
             List<Tile> values = new List<Tile>();
-            int startingY = topLeft.Y - 1;
-            int endingY = topLeft.Y + 1;
-            bool doNotChangeStartAndEndNow = true;
-            bool beforeTopRightCorner = true;
-            bool noYIncreaseOnce = false;
-            for (int x = topLeft.X; x <= bottomRight.X; x++)
-            {
-                if (beforeTopRightCorner)
+            foreach(IntVector coordinates in tileCoordinates) {
+                int x = coordinates.X;
+                int y = coordinates.Y;
+                if (x >= 0 && y >= 0 && x < map.Width && y < map.Height)
                 {
-                    startingY -= 1;
-                    if (x == topRight.X)
-                    {
-                        startingY++;
-                        beforeTopRightCorner = false;
-                        noYIncreaseOnce = true;
-                    }
-                }
-                else
-                {
-                    if (noYIncreaseOnce)
-                    {
-                        noYIncreaseOnce = false;
-                    }
-                    else
-                    {
-                        startingY++;   
-                    }
-                }
-                
-                for (int y = startingY; y <= endingY; y++)
-                {
-                    if (x >= 0 && y >= 0 && x < map.Width && y < map.Height)
-                    {
-                        values.Add(map.Tiles[x, y]);
-                    }
-                }
-
+                    values.Add(map.Tiles[x, y]);
+                }     
             }
             return values;
 
