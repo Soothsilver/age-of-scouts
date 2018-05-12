@@ -40,6 +40,7 @@ namespace Age.World
                 Width = tmxMap.Width,
                 Height = tmxMap.Height
             };
+            session.Map = map;
             map.Tiles = new Tile[map.Width, map.Height];
             for (int x = 0; x < map.Width; x++)
             {
@@ -80,16 +81,33 @@ namespace Age.World
                     AssignDataFromTileType(session, tile, tiletype, layer.Name);
                 }
             }
+            foreach(var layer in tmxMap.ObjectGroups)
+            {
+
+                foreach(var obj in layer.Objects)
+                {
+                    string tiletype = gidToTiletype[obj.Tile.Gid];
+                    if (tiletype == null)
+                    {
+                        throw new Exception("The tile " + obj.X + ":" + obj.Y + " refers to an object without an A tiletype.");
+                    }
+                    IntVector whereToCoordinates = Isomath.ObjectLayerToTile((int)obj.X, (int)obj.Y);
+                    Tile whereTo = map.Tiles[whereToCoordinates.X, whereToCoordinates.Y];
+                    AssignDataFromTileType(session, whereTo, tiletype, layer.Name);
+                }
+
+            }
+            //     foreach(var layer in tmxMap.la)
             map.ForEachTile((x, y, tile) =>
             {
                 tile.Neighbours.FillAll();
             });
-            session.Map = map;
         }
 
         private void AssignDataFromTileType(Session session, Tile tile, string tiletype, string layerName)
         {
             Troop controller = layerName == "Blue" ? session.PlayerTroop : session.Troops[1];
+
             switch (tiletype)
             {
                 case "Grass":
@@ -122,11 +140,17 @@ namespace Age.World
                     tile.Neighbours.TopRight.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopRight);
                     break;
                 case "Kitchen":
+                    session.SpawnBuilding(BuildingTemplate.Kitchen, controller, tile);
+                    break;
                 case "TentStandard":
-                    // TODO to be implemented
+                    session.SpawnBuilding(BuildingTemplate.Tent, controller, tile);
                     break;
                 case "Pracant":
                     session.SpawnUnit(new Unit(NameGenerator.GenerateBoyName(), controller, UnitTemplate.Pracant, Isomath.TileToStandard(tile.X + 0.5f, tile.Y + 0.5f)));
+                    break;
+                case "Hadrakostrelec":
+
+                    session.SpawnUnit(new Unit(NameGenerator.GenerateBoyName(), controller, UnitTemplate.Hadrakostrelec, Isomath.TileToStandard(tile.X + 0.5f, tile.Y + 0.5f)));
                     break;
                 default:
                     throw new Exception("The tiletype '" + tiletype + "' does not have anything assigned in the project.");

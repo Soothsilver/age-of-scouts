@@ -116,7 +116,7 @@ namespace Age.HUD
 
         internal static void Update(Selection selection, Session session)
         {
-            if (mouseOverTile != null)
+            if (mouseOverTile != null && !selection.SelectionInProgress)
             {
                 Root.WasMouseLeftClick = false;
                 if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)

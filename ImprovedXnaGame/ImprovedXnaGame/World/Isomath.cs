@@ -22,7 +22,7 @@ namespace Age.World
     /// Screen coordinates are affected by the monitor offset (where the viewport is focused) and by zoom, unlike the other two coordinate systems.
     /// 
     /// </summary>
-    class Isomath
+    static class Isomath
     {
         // Tile => Standard
         public static Vector2 TileToStandard(Vector2 tile)
@@ -74,6 +74,12 @@ namespace Age.World
                 (int)(width * zoom),
                 (int)(height * zoom));
         }
+
+        internal static IntVector ObjectLayerToTile(int x, int y)
+        {
+            return new IntVector(x / 64 - 1 , y / 64 - 1);
+        }
+
         public static Vector2 StandardToScreen(Vector2 standard, IScreenInformation session)
         {
             Vector2 topLeftOfScreenInStdPixels = session.CenterOfScreenInStandardPixels * session.ZoomLevel - new Vector2(Root.ScreenWidth / 2, Root.ScreenHeight / 2);
@@ -92,9 +98,14 @@ namespace Age.World
         // Standard => Tile
         internal static IntVector StandardToTile(Vector2 standardFloat)
         {
-            IntVector standard = new IntVector((int)standardFloat.X, (int)standardFloat.Y);
-            int mapx = (int)Math.Floor( ((float)standard.X / Tile.HALF_WIDTH + (float)standard.Y / Tile.HALF_HEIGHT) / 2   );
-            int mapy = (int)Math.Floor( ((float)standard.Y / Tile.HALF_HEIGHT - ((float)standard.X / Tile.HALF_WIDTH)) / 2 );
+            int mapx = (int)Math.Floor((standardFloat.X / Tile.HALF_WIDTH + standardFloat.Y / Tile.HALF_HEIGHT) / 2   );
+            int mapy = (int)Math.Floor((standardFloat.Y / Tile.HALF_HEIGHT - standardFloat.X / Tile.HALF_WIDTH) / 2 );
+            return new IntVector(mapx, mapy);
+        }
+        internal static IntVector StandardToTile(int x, int y)
+        {
+            int mapx = (int)Math.Floor(((float)x / Tile.HALF_WIDTH + (float)y / Tile.HALF_HEIGHT) / 2);
+            int mapy = (int)Math.Floor(((float)y / Tile.HALF_HEIGHT - ((float)x / Tile.HALF_WIDTH)) / 2);
             return new IntVector(mapx, mapy);
         }
     }

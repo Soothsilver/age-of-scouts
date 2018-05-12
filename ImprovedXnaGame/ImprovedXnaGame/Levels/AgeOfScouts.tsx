@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="AgeOfScouts" tilewidth="384" tileheight="250" tilecount="11" columns="0">
+<tileset name="AgeOfScouts" tilewidth="384" tileheight="250" tilecount="12" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="Grass">
   <properties>
@@ -66,5 +66,11 @@
    <property name="A" value="Pracant"/>
   </properties>
   <image width="64" height="64" source="../../ImprovedXnaGameContent/Units/Kid/KidIdle.png"/>
+ </tile>
+ <tile id="11">
+  <properties>
+   <property name="A" value="Hadrakostrelec"/>
+  </properties>
+  <image width="64" height="64" source="../../ImprovedXnaGameContent/Units/Kid/HadrakometLogo.png"/>
  </tile>
 </tileset>

@@ -186,15 +186,18 @@ namespace Age.Core
                 }
                 else
                 {
-                    // Random movement
-                    Activity.Speed = R.RandomUnitVector() * Speed * 1.8f;
-                    Activity.SecondsUntilNextRecalculation = 0.1f;
                     // Target moves
                     Unit obstacle = moveLegality.ObstacleUnit;
                     if (obstacle != null && obstacle.Controller == this.Controller && !obstacle.Activity.HasAGoal)
                     {
                         obstacle.Activity.Speed = R.RandomUnitVector() * Speed * 1.8f;
                         obstacle.Activity.SecondsUntilNextRecalculation = 0.1f;
+                    }
+                    else
+                    {
+                        // Random movement
+                        Activity.Speed = R.RandomUnitVector() * Speed * 1.8f;
+                        Activity.SecondsUntilNextRecalculation = 0.1f;
                     }
                 }
 

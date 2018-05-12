@@ -16,7 +16,7 @@ namespace Age.Core
         public Unit Source;
         public Projectile(Vector2 startingPosition, Vector2 target, Unit source)
         {
-            float scalarSpeed = Tile.WIDTH * 3;
+            float scalarSpeed = Tile.WIDTH * 2;
             this.Position = startingPosition;
             this.Speed = target - startingPosition;
             this.Speed.Normalize();
@@ -28,7 +28,7 @@ namespace Age.Core
 
         public void Draw(IScreenInformation screen)
         {
-            Primitives.FillCircle(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 80), screen), (int)(4 * screen.ZoomLevel), Color.Gray);
+            Primitives.DrawPoint(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 80), screen), Color.White, (int)(4 * screen.ZoomLevel));
         }
         public void DrawShadow(IScreenInformation screen)
         {
@@ -42,17 +42,24 @@ namespace Age.Core
             if (!this.Lost)
             {
                 Tile whereAmI = session.Map.GetTileFromStandardCoordinates(this.Position);
-                if (whereAmI.PreventsProjectiles)
+                if (whereAmI == null)
                 {
                     this.Lost = true;
-                    return;
                 }
-                if (this.Height >= 1)
+                else if (whereAmI.PreventsProjectiles)
                 {
-                    // too high
-                    return;
+                    this.Lost = true;
                 }
-                foreach (var target in session.AllUnits)
+                else if (this.Height >= 1)
+                {
+                    // Do nothing.
+                }
+                else if (this.Height < 0f)
+                {
+                    this.Lost = true;
+                    // Hit the ground.
+                }
+                else foreach (var target in session.AllUnits)
                 {
                     if (session.AreEnemies(Source, target) && target.Hitbox.Contains((int)this.Position.X, (int)this.Position.Y)) 
                     {

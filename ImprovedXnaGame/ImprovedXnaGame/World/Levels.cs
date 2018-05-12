@@ -173,6 +173,7 @@ namespace Age.World
                 StateTrigger = (levelPhase) => s.AllUnits.Count(unt => unt.Controller == enemy) == 0,
                 OnComplete = (session) => session.AchieveEnding(Ending.Victory)
             });
+            s.ObjectivesChanged = false;
             return s;
         }
 
@@ -182,6 +183,15 @@ namespace Age.World
             LoadMapIntoSession(s, "Levels\\BlankMap.tmx");
             s.Troops[1].Surrender();
             s.Objectives.Add(new Objective("Nemáš žádné úkoly. Dělej, co chceš!"));
+            s.ObjectivesChanged = false;
+            return s;
+        }
+        internal static Session DebugMap()
+        {
+            Session s = CreateBasic1v1();
+            LoadMapIntoSession(s, "Levels\\DebugMap.tmx");
+            s.Objectives.Add(new Objective("Programuj ^^"));
+            s.ObjectivesChanged = false;
             return s;
         }
     }

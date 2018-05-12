@@ -14,6 +14,12 @@ namespace Age.HUD
             this.session = session;
         }
 
+        protected override void Initialize(Game game)
+        {
+            this.session.ObjectivesChanged = false;
+            base.Initialize(game);
+        }
+
         protected override void Draw(SpriteBatch sb, Game game, float elapsedSeconds, bool topmost)
         {
             Rectangle rectObjectives = new Rectangle(Root.ScreenWidth / 2 - 200, 100, 400, 500);

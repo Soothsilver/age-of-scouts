@@ -1,5 +1,6 @@
 ﻿using Auxiliary;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,32 @@ namespace Age.HUD
                 {
                     UI.MajorTooltip = new Tooltip(caption, tooltip);
                 }
+            }
+        }
+
+        internal static void DrawImageButton(Rectangle rectangle, bool interactible, string tooltipCaption, TextureName image, Action onClick, string tooltipDescription)
+        {
+            bool mo = Root.IsMouseOver(rectangle);
+            Primitives.DrawImage(Library.Get(image), rectangle, Color.White.Alpha(mo & interactible ? 255 : 210));
+            if (mo && interactible)
+            {
+                MouseOverOnClickAction = onClick;
+                if (tooltipCaption != null)
+                {
+                    UI.MajorTooltip = new Tooltip(tooltipCaption, tooltipDescription);
+                }
+            }
+        }
+
+        internal static void DrawIconButton(Rectangle rectangle, bool interactible, Texture2D texture, Tooltip tooltip, Action onClick)
+        {
+            bool mo = Root.IsMouseOver(rectangle);
+            Primitives.DrawImage(Library.Get(TextureName.Tile64x64), rectangle);
+            Primitives.DrawImage(texture, rectangle, Color.White.Alpha(mo & interactible ? 255 : 210));
+            if (mo && interactible)
+            {
+                MouseOverOnClickAction = onClick;
+                UI.MajorTooltip = tooltip;
             }
         }
     }

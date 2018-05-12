@@ -27,6 +27,10 @@ namespace Age.World
             {
                 Rectangle rectTile = Isomath.TileToScreen(tile, session);
                 Primitives.DrawImage(Library.Get(tile.Icon), rectTile);
+                if (Debug.DebugPoints.Tiles != null && Debug.DebugPoints.Tiles.Contains(tile))
+                {
+                    Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Yellow.Alpha(200));
+                }
            
                
             });
@@ -133,6 +137,10 @@ namespace Age.World
                 {
                     Rectangle rectObject = Isomath.StandardPersonToScreen(tile.NaturalObjectOccupant.FeetStdPosition, tile.NaturalObjectOccupant.PixelWidth, tile.NaturalObjectOccupant.PixelHeight, session);
                     Primitives.DrawImage(Library.Get(tile.NaturalObjectOccupant.Icon), new Rectangle(rectObject.X, rectObject.Y, rectObject.Width, rectObject.Height));
+                }
+                if (tile.BuildingOccupant != null && tile.BuildingOccupant.PrimaryTile == tile)
+                {
+                    tile.BuildingOccupant.Draw(session);
                 }
             });
 

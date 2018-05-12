@@ -13,6 +13,7 @@ namespace Age.Core
         public string Description;
         public TextureName Icon;
         public TextureName DeadIcon;
+        public bool CanBuildStuff;
 
         private SoundEffect Ack1;
         private SoundEffect Ack2;
@@ -40,7 +41,10 @@ namespace Age.Core
 
         public static void InitUnitTemplates()
         {
-            Pracant = new UnitTemplate("Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Kid);
+            Pracant = new UnitTemplate("Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Kid)
+            {
+                CanBuildStuff = true
+            };
             Hadrakostrelec  = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid);
         }
 

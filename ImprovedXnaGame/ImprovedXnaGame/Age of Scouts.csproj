@@ -118,6 +118,8 @@
   <ItemGroup>
     <Compile Include="Animation\SpriteCache.cs" />
     <Compile Include="Core\Activity.cs" />
+    <Compile Include="Core\Building.cs" />
+    <Compile Include="Core\BuildingTemplate.cs" />
     <Compile Include="Core\Corpse.cs" />
     <Compile Include="Core\Ending.cs" />
     <Compile Include="Core\Entity.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="Pathfinding\Pathfinding.cs" />
     <Compile Include="Phases\IngameMenuPhase.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="StaticData.cs" />
     <Compile Include="Voice\ChatLine.cs" />
     <Compile Include="World\IntVector.cs" />
     <Compile Include="World\Isomath.cs" />
@@ -233,6 +236,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Levels\BlankMap.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Levels\DebugMap.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

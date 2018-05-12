@@ -21,6 +21,7 @@ namespace Age.Core
         public List<Unit> Occupants = new List<Unit>();
         public List<Corpse> BrokenOccupants = new List<Corpse>();
         public NaturalObject NaturalObjectOccupant = null;
+        public Building BuildingOccupant = null;
         public Neighbours Neighbours = new Neighbours();
 
         public Tile(int x, int y, TextureName icon)
@@ -31,7 +32,8 @@ namespace Age.Core
             Fog = FogOfWarStatus.Black;
         }
 
-        public bool PreventsMovement => this.Type == TileType.Water || (this.NaturalObjectOccupant?.PreventsMovement ?? false);
+        public bool PreventsMovement => this.Type == TileType.Water || (this.NaturalObjectOccupant?.PreventsMovement ?? false)
+            || this.BuildingOccupant != null;
 
         public bool PreventsProjectiles => this.NaturalObjectOccupant?.PreventsProjectiles ?? false;
 

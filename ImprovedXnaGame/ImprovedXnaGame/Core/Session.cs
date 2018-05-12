@@ -22,6 +22,7 @@ namespace Age.Core
         }
         public List<Troop> Troops = new List<Troop>();
         public List<Unit> AllUnits = new List<Unit>();
+        public List<Building> AllBuildings = new List<Building>();
         public List<Objective> Objectives = new List<Objective>();
         public List<Trigger> OtherTriggers = new List<Trigger>();
         public Ending Ending = null;
@@ -46,19 +47,26 @@ namespace Age.Core
             }
         }
 
-        internal void SmartCenterTo(int tileX, int tileY)
+        public void SmartCenterTo(int tileX, int tileY)
         {
             var target = (Vector2)Isomath.TileToStandard(tileX, tileY);
             MoveViewport.SmartCenterTo(this, target);
         }
+        public void SmartCenterTo(Vector2 standardCoordinates)
+        {
+            MoveViewport.SmartCenterTo(this, standardCoordinates);
+        }
 
         public Map Map;
+        internal bool ObjectivesChanged;
+
         public Vector2 CenterOfScreenInStandardPixels { get; set; }
         public float ZoomLevel { get; set; } = 1;
 
         public Session()
         {
             // Generic death trigger
+            this.ObjectivesChanged = true;
             this.OtherTriggers.Add(new Trigger()
             {
                 StateTrigger = (levelPhase) => levelPhase.Session.AllUnits.Count(unt => unt.Controller == levelPhase.Session.PlayerTroop) == 0,
@@ -118,6 +126,22 @@ namespace Age.Core
             Tile tile = Map.GetTileFromStandardCoordinates(unit.FeetStdPosition);
             tile.Occupants.Add(unit);
             unit.Occupies = tile;
+        }
+
+        internal void SpawnBuilding(BuildingTemplate kitchen, Troop controller, Tile tile)
+        {
+            var b = new Building(kitchen, controller, Isomath.TileToStandard(tile.X + 1, tile.Y + 1), tile);
+            for (int y = 0; y < kitchen.TileHeight; y++)
+            {
+                for (int x = 0; x < kitchen.TileWidth; x++)
+                {
+                    int tileX = tile.X - x;
+                    int tileY = tile.Y - y;
+                    Tile tl = Map.Tiles[tileX, tileY];
+                    tl.BuildingOccupant = b;
+                }
+            }
+            this.AllBuildings.Add(b);
         }
     }
 }

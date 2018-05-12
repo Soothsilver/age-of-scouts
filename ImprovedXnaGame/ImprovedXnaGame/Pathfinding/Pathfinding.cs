@@ -9,7 +9,7 @@ using System.Text;
 namespace Age.Pathfinding
 {
     class Pathfinding {
-        private static int PathfindingSearchId = -1;
+        private static int PathfindingSearchId = 0;
         public static List<Vector2> AStar(Unit who, Vector2 targetPrecise, Map map)
         {
             PathfindingSearchId++;

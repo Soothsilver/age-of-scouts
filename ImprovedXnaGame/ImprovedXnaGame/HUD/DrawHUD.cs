@@ -1,4 +1,5 @@
-﻿using Age.Core;
+﻿using Age.Animation;
+using Age.Core;
 using Age.Phases;
 using Age.Voice;
 using Auxiliary;
@@ -16,18 +17,26 @@ namespace Age.HUD
         {
             DrawTopBar(mainPhase, session, topmost);
             session.Ending?.Draw(topmost);
-            DrawBottomBar(session, mainPhase.Selection);
+            DrawBottomBar(session, mainPhase.Selection, topmost);
             DrawChatLine(session, elapsedSeconds);
             DrawInstructionalLine(mainPhase, session);
         }
 
         private static void DrawInstructionalLine(LevelPhase levelPhase, Session session)
         {
+            string line = null;
             if (levelPhase.Selection.SelectedGodPower != null)
             {
-                var bnds = Primitives.GetMultiLineTextBounds("{b}" + levelPhase.Selection.SelectedGodPower.Power.InstructionalLine + "{/b}", new Rectangle(0, 0, Root.ScreenWidth, 100), FontFamily.Mid);
+                line = levelPhase.Selection.SelectedGodPower.Power.InstructionalLine;
+            }
+            if (levelPhase.Selection.SelectedBuildingToPlace != null)
+            {
+                line = "Vyber, kam postavit tuto stavbu.";
+            }
+            if (line != null) { 
+                var bnds = Primitives.GetMultiLineTextBounds("{b}" + line  + "{/b}", new Rectangle(0, 0, Root.ScreenWidth, 100), FontFamily.Mid);
                 Primitives.FillRectangle(new Rectangle(Root.ScreenWidth / 2 - bnds.Width / 2 - 30, Root.ScreenHeight - 400 - 20, bnds.Width + 60, bnds.Height + 40), Color.Brown.Alpha(200));
-                Primitives.DrawMultiLineText("{b}" + levelPhase.Selection.SelectedGodPower.Power.InstructionalLine + "{/b}", new Rectangle(0, Root.ScreenHeight - 400, Root.ScreenWidth, 100), Color.White, FontFamily.Mid, Primitives.TextAlignment.Top, false);
+                Primitives.DrawMultiLineText("{b}" + line + "{/b}", new Rectangle(0, Root.ScreenHeight - 400, Root.ScreenWidth, 100), Color.White, FontFamily.Mid, Primitives.TextAlignment.Top, false);
             }
         }
 
@@ -57,7 +66,7 @@ namespace Age.HUD
             }
         }
 
-        private static void DrawBottomBar(Session session, Selection selection)
+        private static void DrawBottomBar(Session session, Selection selection, bool topmost)
         {
             int width = 1440;
             int height = 200;
@@ -66,7 +75,9 @@ namespace Age.HUD
             Rectangle rectBottomBar = new Rectangle(Root.ScreenWidth / 2 - width / 2, Root.ScreenHeight - height, width, height);
             Primitives.DrawAndFillRectangle(rectBottomBar, ColorScheme.Background, ColorScheme.Foreground);
 
-            // Selection
+            // Selection   
+            Rectangle rectAllIcons = new Rectangle(rectBottomBar.X + 5 + height + 5, rectBottomBar.Y + 5, 64*6+4, height);
+
             if (selection.SelectedUnits.Count > 0)
             {
                 Unit primaryUnit = selection.SelectedUnits[0];
@@ -81,7 +92,6 @@ namespace Age.HUD
                 Primitives.DrawSingleLineText(primaryUnit.UnitTemplate.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 30), Color.Black, Library.FontNormal);
                 Primitives.DrawImage(Library.Get(primaryUnit.UnitTemplate.Icon), new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, height - 60, height - 60));
 
-                Rectangle rectAllIcons = new Rectangle(rectBottomBar.X + 5 + height + 5, rectBottomBar.Y + 5, 64*6+4, height);
                 Primitives.DrawRectangle(rectAllIcons, ColorScheme.Foreground);
                 int x = 0;
                 int y = 0;
@@ -114,7 +124,54 @@ namespace Age.HUD
                         x += 64;
                     }
                 }
+                // Actions
+                if (primaryUnit.Controller == session.PlayerTroop)
+                {
+                    Rectangle rectOptions = new Rectangle(rectAllIcons.Right + 2, rectAllIcons.Y, rectAllIcons.Width, rectAllIcons.Height);
+                    Primitives.DrawRectangle(rectOptions, Color.Black);
+                    // Row 1: Stances
+                    y = 0;
+                    x = 0;
+                    Stance? commonStance = primaryUnit.Stance;
+                    if (selection.SelectedUnits.Any(unt => unt.Stance != commonStance))
+                    {
+                        commonStance = null;
+                    }
+                    foreach (Stance stance in StaticData.AllStances)
+                    {
+                        var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
+                        UI.DrawIconButton(r, topmost, Library.Get(stance.ToTexture()),  stance.ToTooltip(), () =>
+                        {
+                            foreach (var unt in selection.SelectedUnits)
+                            {
+                                unt.Stance = stance;
+                            }
+                        });
+                        if (commonStance == stance)
+                        {
+                            Primitives.DrawRectangle(r, Color.White, 2);
+                        }
+                        x += 64;
+                    }
+                    x = 0;
+                    y += 64;
+                    if (primaryUnit.UnitTemplate.CanBuildStuff)
+                    {
+                        foreach(BuildingTemplate building in BuildingTemplate.GetConstructiblesBy(primaryUnit.Controller))
+                        {
+                            var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
+                            UI.DrawIconButton(r, topmost && building.AffordableBy(primaryUnit.Controller), building.Icon.Color(primaryUnit.Controller), new Tooltip("Postavit budovu " + building.Name, building.Description), () =>
+                            {
+                                selection.SelectedBuildingToPlace = building;
+                            });
+                            x += 64;
+                        }
+                    }
+                }
+
             }
+
+
 
             // Minimap
             Minimap.Draw(session, new Rectangle(rectBottomBar.Right - height * 2, rectBottomBar.Y - height, 2 * height, 2 * height));
@@ -178,7 +235,33 @@ namespace Age.HUD
             }
 
             // Buttons
-            UI.DrawButton(new Rectangle(rectTopBar.Right - 410, 0, 300, 40), topmost, "Úkoly", () => Root.PushPhase(new ViewObjectivesPhase(mainPhase.Session)), "Zobrazí úkoly. Splněním úkolů vyhrajete úroveň.");
+
+            if (session.AllUnits.Any(unt => unt.Controller == session.PlayerTroop && unt.UnitTemplate.Name == "Pracant" &&
+            !unt.Activity.HasAGoal))
+            {
+
+                UI.DrawImageButton(new Rectangle(rectTopBar.Right - 410 - 64, 0, 64, 100), topmost, "Líný pracant", TextureName.IdleVillager,
+                 () => {
+                     Unit idleVillager = session.AllUnits.First(unt => unt.Controller == session.PlayerTroop && unt.UnitTemplate.Name == "Pracant" &&
+               !unt.Activity.HasAGoal);
+                     mainPhase.Selection.SelectUnits(new Unit[]
+                     {
+                         idleVillager
+                    });
+                     mainPhase.Session.SmartCenterTo(idleVillager.FeetStdPosition);
+                 }, "Vybere jednoho z vašich Pracantů, který právě nemá nic na práci.");
+            }
+            UI.DrawImageButton(new Rectangle(rectTopBar.Right- 410, 0, 64, 100), topmost, "Úkoly", TextureName.ObjectivesRibbon,
+             () => Root.PushPhase(new ViewObjectivesPhase(mainPhase.Session)), "Zobrazí úkoly. Splněním úkolů vyhrajete úroveň.");
+
+            if (mainPhase.Session.ObjectivesChanged)
+            {
+                if (R.Flicker >= 0.5f)
+                {
+                    Primitives.FillRectangle(new Rectangle(rectTopBar.Right - 410 + 2, 0, 60, 90), Color.White.Alpha(100));
+                }
+            }
+
             UI.DrawButton(new Rectangle(rectTopBar.Right - 110, 0, 100, 40), topmost, "Menu", () => Root.PushPhase(new IngameMenuPhase(mainPhase)), "Zobrazí menu, ze kterého můžete hru ukončit.");
         }
         

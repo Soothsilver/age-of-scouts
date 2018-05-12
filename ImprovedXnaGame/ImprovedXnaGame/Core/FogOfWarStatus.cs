@@ -27,7 +27,7 @@ namespace Age.Core
     public static class FogOfWarMechanics
     {
 
-        internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, bool createDebugPoints, float cleartime = 2)
+        internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, bool createDebugPoints, float cleartime = 2, bool fromAir = false)
         {
             Tile tile = map.GetTileFromStandardCoordinates(source);
             tile.SetClearFogStatus(cleartime);
@@ -51,7 +51,7 @@ namespace Age.Core
                         break;
                     }
                     tl.SetClearFogStatus(cleartime);
-                    if (tl.NaturalObjectOccupant?.EntityKind == EntityKind.UntraversableTree)
+                    if (tl.NaturalObjectOccupant?.EntityKind == EntityKind.UntraversableTree && !fromAir)
                     {
                         break;
                     }

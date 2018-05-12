@@ -64,6 +64,10 @@ namespace Age.Phases
             {
                 FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Session.Map, Selection.SelectedUnits.Contains(unit));
             }
+            foreach (var unit in Session.AllBuildings.Where(unt => unt.Controller == Session.PlayerTroop))
+            {
+                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 7, Session.Map, createDebugPoints: false, fromAir: true);
+            }
             Session.Revealers.ForEach(revealer => revealer.Update(Session.Map));
             foreach (var unit in Session.AllUnits)
             {
@@ -96,6 +100,7 @@ namespace Age.Phases
                     {
                         objective.Complete = true;
                         SFX.PlaySound(SoundEffectName.QuestSound);
+                        Session.ObjectivesChanged = true;
                         objective.OnComplete?.Invoke(this.Session);
                     }
                 }

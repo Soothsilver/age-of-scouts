@@ -331,6 +331,14 @@ namespace Auxiliary
         BerryBush,
         Corn,
         PracantLogo,
-        GodPowerUsed
+        GodPowerUsed,
+        Kitchen,
+        TentStandard,
+        IdleVillager,
+        ObjectivesRibbon,
+        AggressiveStance,
+        StandYourGroundStance,
+        StealthyStance,
+        Tile64x64
     }
 }
