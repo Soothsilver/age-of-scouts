@@ -22,21 +22,24 @@ namespace Age.Music
 
         internal static void Load(ContentManager content)
         {
-            MenuMusic = new MusicTrack("Junácká hymna", content.Load<Song>("Music\\JunackaHymna"));
-            LevelMusic = new MusicTrack("Podzimní den", content.Load<Song>("Music\\AutumnDay"));
+         //   MenuMusic = new MusicTrack("Junácká hymna", content.Load<Song>("Music\\JunackaHymna"));
+         //   LevelMusic = new MusicTrack("Podzimní den", content.Load<Song>("Music\\AutumnDay"));
         }
 
         public static void Play(MusicTrack track)
         {
+            /*
             PlayingWhat = track;
             MediaPlayer.Play(track.Song);
             MediaPlayer.IsRepeating = true;
             Status = FlagStatus.Raising;
             FlagRaisedPercentage = 0;
+            */
         }
 
         public static void Draw(float elapsedSeconds)
         {
+            /*
             switch(Status)
             {
                 case FlagStatus.Raising:
@@ -70,6 +73,7 @@ namespace Age.Music
             Primitives.DrawSingleLineText("Nyní přehrávám", new Vector2(rect.X + 70, rect.Y + 5), Color.Black, Library.FontNormal);           
             Primitives.DrawSingleLineText(PlayingWhat.Name, new Vector2(rect.X + 65, rect.Y + 35), Color.Black, Library.FontNormalBold);
             Primitives.DrawImage(Library.Get(TextureName.MusicIcon), new Rectangle(rect.Right - 80, rect.Y + 8, 64, 64));
+            */
         }
 
         private enum FlagStatus

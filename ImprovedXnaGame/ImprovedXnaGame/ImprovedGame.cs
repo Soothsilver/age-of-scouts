@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -31,11 +30,12 @@ namespace Age
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
-            IntPtr hWnd = this.Window.Handle;
+
+            /*IntPtr hWnd = this.Window.Handle;
           
             var control = Control.FromHandle(hWnd);
             this.form = control.FindForm();
-            Root.Form = form;
+            Root.Form = form;*/
         }
 
         protected override void LoadContent()
@@ -45,7 +45,7 @@ namespace Age
             this.IsFixedTimeStep = false;
             Root.Init(this, spriteBatch, graphics, new Resolution(1920, 1080));
             //Root.IsFullscreen = true;
-            Root.GoToBorderlessWindow(new Resolution(1920,1080));
+           // Root.GoToBorderlessWindow(new Resolution(1920,1080));
             this.Window.Title = "Age of Scouts";
             Auxiliary.GUI.GuiSkin.DefaultSkin.InnerBorderThickness = 1;
             Auxiliary.GUI.GuiSkin.DefaultSkin.OuterBorderThickness = 1;
@@ -60,9 +60,11 @@ namespace Age
             ConstructionOption.InitializeAllConstructionOptions();
             UnitTemplate.Hadrakostrelec.LoadSounds(SfxKid("Ack1"), SfxKid("Ack2"), SfxKid("AckMove"), SfxKid("Fail"), SfxKid("Joke2"), SfxKid("Joke3"), SfxKid("KidJoke1"), SfxKid("Selection1"), SfxKid("Selection2"), SfxKid("Selection3"), SfxKid("Selection4"));
             UnitTemplate.Pracant.LoadSounds(SfxKid("Ack1"), SfxKid("Ack2"), SfxKid("AckMove"), SfxKid("Fail"), SfxKid("Joke2"), SfxKid("Joke3"), SfxKid("KidJoke1"), SfxKid("Selection1"), SfxKid("Selection2"), SfxKid("Selection3"), SfxKid("Selection4"));
+            /*
             var form = (System.Windows.Forms.Form)System.Windows.Forms.Control.FromHandle(this.Window.Handle);
             form.Location = new System.Drawing.Point(0, 0);
             form.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            */
             BackgroundMusicPlayer.Load(Content);
             Root.PushPhase(new Phases.AgeMainMenu());
         }
