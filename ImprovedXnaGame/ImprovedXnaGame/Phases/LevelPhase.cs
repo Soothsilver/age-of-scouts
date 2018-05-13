@@ -90,6 +90,7 @@ namespace Age.Phases
             {
                 projectile.Update(this.Session, elapsedSeconds);
             }
+            Session.AllBuildings.ForEach(build => build.Update(elapsedSeconds));
             Session.AllUnits.RemoveAll(unt => unt.Broken);
             Session.Projectiles.RemoveAll(pr => pr.Lost);
             foreach (var objective in Session.Objectives)
@@ -132,5 +133,12 @@ namespace Age.Phases
             }
         }
 
+        public string WarningMessage;
+        public float WarningMessageDisappearsInSeconds = 0;
+        internal void EmitWarningMessage(string message)
+        {
+            WarningMessage = message;
+            WarningMessageDisappearsInSeconds = 7;
+        }
     }
 }

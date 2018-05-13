@@ -10,11 +10,12 @@ namespace Age.Pathfinding
 {
     class Pathfinding {
         private static int PathfindingSearchId = 0;
-        public static List<Vector2> AStar(Unit who, Vector2 targetPrecise, Map map)
+        public static LinkedList<Vector2> AStar(Unit who, Vector2 targetPrecise, Map map, PathfindingMode mode)
         {
             PathfindingSearchId++;
             Tile start = who.Occupies;
             Tile target = map.GetTileFromStandardCoordinates(targetPrecise);
+            Tile closestToTargetSoFar = start;
             HashSet<Tile> openSet = new HashSet<Tile>
             {
                 start
@@ -30,23 +31,7 @@ namespace Age.Pathfinding
                 }
                 if (current == target)
                 {
-                    var l = ReconstructPath(who, current);
-                    if (l.Count == 1 && l.First.Value == start)
-                    {
-                        float distance = (targetPrecise - who.FeetStdPosition).LengthSquared();
-                        if (distance <= 9)
-                        {
-                            return null;
-                        }
-                    }
-                    List<Vector2> result = new List<Vector2>();
-                    foreach(Tile tl in l)
-                    {
-                        result.Add(Isomath.TileToStandard(tl.X + 0.5f, tl.Y + 0.5f));
-                    }
-                    result.RemoveAt(result.Count - 1);
-                    result.Add(targetPrecise);
-                    return result;
+                    return ReconstructPrettyPath(start, target, who.FeetStdPosition, targetPrecise);
                 }
                 openSet.Remove(current);
                 current.Pathfinding_Closed = true;
@@ -64,24 +49,52 @@ namespace Age.Pathfinding
                         openSet.Add(neighbour);
                     }
 
-                    int tentativeGScore = current.Pathfinding_G + edge.Difficulty; // TODO diagonal (neighbour.Diagonal ? 14 : 10);
+                    int tentativeGScore = current.Pathfinding_G + edge.Difficulty; 
                     if (tentativeGScore >= neighbour.Pathfinding_G) continue;
 
                     neighbour.Pathfinding_Parent = current;
                     neighbour.Pathfinding_G = tentativeGScore;
                     neighbour.Pathfinding_F = neighbour.Pathfinding_G + Heuristic(neighbour, target);
-
+                    if (neighbour.Pathfinding_F < closestToTargetSoFar.Pathfinding_F)
+                    {
+                        closestToTargetSoFar = neighbour;
+                    }
                 }
+            }
+            if (mode == PathfindingMode.FindClosestIfDirectIsImpossible)
+            {
+                return ReconstructPrettyPath(start, closestToTargetSoFar, who.FeetStdPosition, Isomath.TileToStandard(closestToTargetSoFar.X + 0.5f, closestToTargetSoFar.Y + 0.5f));
             }
             return null;
         }
 
-        private static LinkedList<Tile> ReconstructPath(Unit who, Tile current)
+        private static LinkedList<Vector2> ReconstructPrettyPath(Tile start, Tile reachableDestination, Vector2 trueStart, Vector2 trueEnd)
+        {
+            var l = ReconstructPath(start, reachableDestination);
+            if (l.Count == 1 && l.First.Value == start)
+            {
+                float distance = (trueEnd - trueStart).LengthSquared();
+                if (distance <= 9)
+                {
+                    return null;
+                }
+            }
+            LinkedList<Vector2> result = new LinkedList<Vector2>();
+            foreach (Tile tl in l)
+            {
+                result.AddLast(Isomath.TileToStandard(tl.X + 0.5f, tl.Y + 0.5f));
+            }
+            result.RemoveLast();
+            result.AddLast(trueEnd);
+            return result;
+        }
+
+        private static LinkedList<Tile> ReconstructPath(Tile start, Tile current)
         {
             LinkedList<Tile> path = new LinkedList<Tile>();
             path.AddLast(current);
             while (current.Pathfinding_Parent != null &&
-                current.Pathfinding_Parent != who.Occupies)
+                current.Pathfinding_Parent != start)
             {
                 path.AddFirst(current.Pathfinding_Parent);
                 current = current.Pathfinding_Parent;
@@ -103,77 +116,11 @@ namespace Age.Pathfinding
             t.Pathfinding_Parent = parent;
         }
     }
+
+    enum PathfindingMode
+    {
+        Precise,
+        FindClosestIfDirectIsImpossible
+    }
 }
-        /*
-            public static Tile GetNextTileInLine(Unit u, Tile target)
-            {
-                var line = AStar(u, target);
-                u.PlannedPath = line;
-                if (line == null) return null;
-                foreach (var l in line)
-                {
-                    if (l != u.Tile)
-                    {
-                        return l;
-                    }
-                }
-                return null;
-            }*/
-       /*
-        internal class PathfindingTask : UnitTask
-        {
-            private Tile target;
-            private Tile immediateTarget;
-            private float timeRemaining;
-            private Vector2 speed;
-
-
-            public PathfindingTask(Tile target)
-            {
-                this.target = target;
-            }
-
-            internal override string Describe()
-            {
-                return "Někam jde.";
-            }
-
-            internal override bool Execute(Unit u, float elapsedSeconds)
-            {
-                if (immediateTarget == null)
-                {
-                    if (u.Tile == target)
-                    {
-                        return true;
-                    }
-                    immediateTarget = Pathfinding.GetNextTileInLine(u, target);
-                    if (immediateTarget == null)
-                    {
-                        u.TaskQueue.Prepend(new PathfindingTask(target));
-                        u.TaskQueue.Prepend(new WaitTask(0.5f));
-                        return true;
-                    }
-                    Vector2 distt = new Vector2(immediateTarget.X + 0.5f, immediateTarget.Y + 0.5f) - u.Position;
-                    timeRemaining = distt.Length() / u.Speed;
-                    distt.Normalize();
-                    distt *= u.Speed;
-                    speed = distt;
-                    u.Tile.PathfindingOccupants.Remove(u);
-                    immediateTarget.PathfindingOccupants.Add(u);
-                }
-                timeRemaining -= elapsedSeconds;
-                u.Tile.Occupants.Remove(u);
-                u.Position += speed * elapsedSeconds;
-                u.Tile.Occupants.Add(u);
-                if (timeRemaining <= 0)
-                {
-                    immediateTarget = null;
-                }
-
-
-                return false;
-            }
-        }
-    */
-    
-
+       

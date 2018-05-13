@@ -1,5 +1,7 @@
 ﻿using Auxiliary;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace Age.Core
 {
@@ -9,6 +11,15 @@ namespace Age.Core
         public int PixelWidth;
         public int PixelHeight;
         public Vector2 FeetStdPosition;
+        public Session Session;
+
+
+
+        public Troop Controller;
+
+        public abstract string Name { get; }
+        public abstract Texture2D BottomBarTexture { get; }
+        public abstract List<ConstructionOption> ConstructionOptions { get; }
 
         protected Entity(TextureName icon, Vector2 feetPosition)
         {

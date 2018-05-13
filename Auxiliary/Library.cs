@@ -339,6 +339,22 @@ namespace Auxiliary
         AggressiveStance,
         StandYourGroundStance,
         StealthyStance,
-        Tile64x64
+        Tile64x64,
+        LaborerIdle,
+        LaborerIdle2,
+        KidThrowRight2,
+        KidThrowLeft2,
+        KidThrowLeft1,
+        KidThrowRight1,
+        PracantMoveRight,
+        PracantMoveLeft,
+        PracantMoveUp3,
+        PracantMoveUp2,
+        PracantMoveUp,
+        PracantMoveRight2,
+        PracantMoveLeft2,
+        PracantMoveDown3,
+        PracantMoveDown,
+        PracantMoveDown2
     }
 }

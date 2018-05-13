@@ -2,14 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Age.World
 {
     static class MiaAlgorithm
     {
-        public static IEnumerable<IntVector> GetTilesInsideRectangle(Rectangle standardCoordinates)
+        public static LinkedList<IntVector> GetTilesInsideRectangle(Rectangle standardCoordinates)
         {
+            LinkedList<IntVector> values = new LinkedList<IntVector>();
             IntVector topLeftTile = Isomath.StandardToTile(standardCoordinates.X, standardCoordinates.Y);
             IntVector topRightTile = Isomath.StandardToTile(standardCoordinates.Right, standardCoordinates.Y);
             IntVector bottomLeftTile = Isomath.StandardToTile(standardCoordinates.X, standardCoordinates.Bottom);
@@ -25,6 +27,11 @@ namespace Age.World
             int maximumT = Math.Max(topRight_2.T, bottomRight_4.T) + 1;
             int maximumS = Math.Max(bottomLeft_3.S, bottomRight_4.S) + 1;
 
+            int maxT1T3 = Math.Max(topLeft_1.T, bottomLeft_3.T);
+            int minT2T4 = Math.Min(topRight_2.T, bottomRight_4.T);
+            int maxS1S2 = Math.Max(topLeft_1.S, topRight_2.S);
+            int minS3S4 = Math.Min(bottomLeft_3.S, bottomRight_4.S);
+
             for (int s = minimumS; s <= maximumS; s++)
             {
                 for (int t = minimumT; t <= maximumT; t++)
@@ -37,18 +44,23 @@ namespace Age.World
                             tile == bottomLeftTile ||
                             tile == bottomRightTile)
                         {
-                            yield return tile;
+                            values.AddLast(tile);
+                        }
+                        else if (maxT1T3 < t && t < minT2T4 && maxS1S2 < s && s < minS3S4)
+                        {
+                            values.AddLast(tile);
                         }
                         else if (IsTileCornerInStandardRectangle(tile.X, tile.Y, standardCoordinates)
                             || IsTileCornerInStandardRectangle(tile.X + 1, tile.Y, standardCoordinates)
                             || IsTileCornerInStandardRectangle(tile.X, tile.Y + 1, standardCoordinates)
                             || IsTileCornerInStandardRectangle(tile.X +1 , tile.Y + 1, standardCoordinates))
                         {
-                            yield return tile;
+                            values.AddLast(tile);
                         }
                     }
                 }
             }
+            return values;
         }
 
         private static bool IsTileCornerInStandardRectangle(int tileX, int tileY, Rectangle standardCoordinates)

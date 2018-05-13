@@ -12,6 +12,7 @@ namespace Age.Animation
         internal int Height;
 
         public static Sprite Kid;
+        public static Sprite Pracant;
 
         internal SpriteInstance CreateInstance(Color color)
         {
@@ -36,6 +37,20 @@ namespace Age.Animation
             Kid.AnimationLists.Add(AnimationListKey.MoveLeft, new AnimationList(TextureName.KidMoveLeft, TextureName.KidMoveLeft2));
             Kid.AnimationLists.Add(AnimationListKey.MoveDown, new AnimationList(TextureName.KidMoveDown, TextureName.KidMoveDown2, TextureName.KidMoveDown, TextureName.KidMoveDown3));
             Kid.AnimationLists.Add(AnimationListKey.MoveUp, new AnimationList(TextureName.KidMoveUp, TextureName.KidMoveUp2, TextureName.KidMoveUp, TextureName.KidMoveUp3));
+            Kid.AnimationLists.Add(AnimationListKey.ReadyToAttackRight, new AnimationList(TextureName.KidThrowRight1));
+            Kid.AnimationLists.Add(AnimationListKey.ReadyToAttackLeft, new AnimationList(TextureName.KidThrowLeft1));
+            Kid.AnimationLists.Add(AnimationListKey.AfterAttackRight, new AnimationList(TextureName.KidThrowRight2));
+            Kid.AnimationLists.Add(AnimationListKey.AfterAttackLeft, new AnimationList(TextureName.KidThrowLeft2));
+            Pracant = new Sprite
+            {
+                Width = Library.Get(TextureName.LaborerIdle).Width,
+                Height = Library.Get(TextureName.LaborerIdle).Height
+            };
+            Pracant.AnimationLists.Add(AnimationListKey.Idle, new AnimationList(TextureName.LaborerIdle, TextureName.LaborerIdle, TextureName.LaborerIdle2, TextureName.LaborerIdle2));
+            Pracant.AnimationLists.Add(AnimationListKey.MoveRight, new AnimationList(TextureName.PracantMoveRight, TextureName.PracantMoveRight2));
+            Pracant.AnimationLists.Add(AnimationListKey.MoveLeft, new AnimationList(TextureName.PracantMoveLeft, TextureName.PracantMoveLeft2));
+            Pracant.AnimationLists.Add(AnimationListKey.MoveDown, new AnimationList(TextureName.PracantMoveDown, TextureName.PracantMoveDown2, TextureName.PracantMoveDown, TextureName.PracantMoveDown3));
+            Pracant.AnimationLists.Add(AnimationListKey.MoveUp, new AnimationList(TextureName.PracantMoveUp, TextureName.PracantMoveUp2, TextureName.PracantMoveUp, TextureName.PracantMoveUp3));
         }
     }
     class AnimationList
@@ -52,6 +67,10 @@ namespace Age.Animation
         MoveDown,
         MoveRight,
         MoveUp,
-        MoveLeft
+        MoveLeft,
+        ReadyToAttackRight,
+        ReadyToAttackLeft,
+        AfterAttackRight,
+        AfterAttackLeft
     }
 }

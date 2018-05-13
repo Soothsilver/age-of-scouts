@@ -26,6 +26,27 @@ namespace Age.World
             return X + ":" + Y;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is IntVector))
+            {
+                return false;
+            }
+
+            var vector = (IntVector)obj;
+            return X == vector.X &&
+                   Y == vector.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1861411795;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + X.GetHashCode();
+            hashCode = hashCode * -1521134295 + Y.GetHashCode();
+            return hashCode;
+        }
+
         public static bool operator ==(IntVector one, IntVector two)
         {
             return one.X == two.X && one.Y == two.Y;

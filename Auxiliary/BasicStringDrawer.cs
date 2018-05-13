@@ -50,17 +50,17 @@ namespace Auxiliary
                             {
                                 shadowColor = Color.Black;
                             }*/
-                            Primitives.spriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X + 1, rectangle.Y + line.PositionOffset.Y -1), shadowColor);
-                            Primitives.spriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X - 1, rectangle.Y + line.PositionOffset.Y - 1), shadowColor);
-                            Primitives.spriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X + 1, rectangle.Y + line.PositionOffset.Y + 1), shadowColor);
-                            Primitives.spriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X - 1, rectangle.Y + line.PositionOffset.Y + 1), shadowColor);
+                            Primitives.SpriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X + 1, rectangle.Y + line.PositionOffset.Y -1), shadowColor);
+                            Primitives.SpriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X - 1, rectangle.Y + line.PositionOffset.Y - 1), shadowColor);
+                            Primitives.SpriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X + 1, rectangle.Y + line.PositionOffset.Y + 1), shadowColor);
+                            Primitives.SpriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X - 1, rectangle.Y + line.PositionOffset.Y + 1), shadowColor);
                         }
-                        Primitives.spriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X, rectangle.Y + line.PositionOffset.Y), color);
+                        Primitives.SpriteBatch.DrawString(font, line.Text, new Vector2(rectangle.X + line.PositionOffset.X, rectangle.Y + line.PositionOffset.Y), color);
                     }
                     return;
                 }
             }
-            DrawMultiLineTextDetailedParameters(Primitives.spriteBatch, font, text, rectangle, color, alignment, true, new Vector2(0, 0), out Rectangle empty, out List<MultilineLine> cachedLines, shadowed: true);
+            DrawMultiLineTextDetailedParameters(Primitives.SpriteBatch, font, text, rectangle, color, alignment, true, new Vector2(0, 0), out Rectangle empty, out List<MultilineLine> cachedLines, shadowed: true);
             multilineStringCache.Add(new MultilineString(text, rectangle, alignment, font, Vector2.Zero, true, cachedLines));
             
         }
@@ -74,7 +74,7 @@ namespace Auxiliary
         public static Rectangle GetMultiLineTextBounds(string text, Rectangle rectangle, SpriteFont font = null)
         {
             if (font == null) font = Library.FontVerdana;
-            DrawMultiLineTextDetailedParameters(Primitives.spriteBatch, font, text, rectangle, Color.Black, TextAlignment.TopLeft, true, new Vector2(0, 0), out Rectangle bounds, out List<MultilineLine> empty, shadowed: false, onlyGetBounds: true);
+            DrawMultiLineTextDetailedParameters(Primitives.SpriteBatch, font, text, rectangle, Color.Black, TextAlignment.TopLeft, true, new Vector2(0, 0), out Rectangle bounds, out List<MultilineLine> empty, shadowed: false, onlyGetBounds: true);
             return bounds;
         }
      

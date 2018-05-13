@@ -73,6 +73,7 @@ namespace Auxiliary
             multilineStringCache.Clear();
             GC.Collect();
         }
+        
 
         /// <summary>
         /// Draws a multiline text using the Primitives spritebatch.
@@ -99,7 +100,7 @@ namespace Auxiliary
                     {
                         if (line.Icon != null)
                         {
-                            spriteBatch.Draw(line.Icon,
+                            SpriteBatch.Draw(line.Icon,
                                 new Rectangle(rectangle.X + (int)line.PositionOffset.X, rectangle.Y + (int)line.PositionOffset.Y,
                                 line.IconWidth, line.IconWidth), Color.White);
                         }
@@ -112,21 +113,21 @@ namespace Auxiliary
                                 {
                                     shadowColor = Color.White;
                                 }
-                                spriteBatch.DrawString(line.Font, line.Text,
+                                SpriteBatch.DrawString(line.Font, line.Text,
                                     new Vector2(rectangle.X + (int)line.PositionOffset.X - 1,
                                     rectangle.Y + (int)line.PositionOffset.Y - 1), shadowColor);
-                                spriteBatch.DrawString(line.Font, line.Text,
+                                SpriteBatch.DrawString(line.Font, line.Text,
                                     new Vector2(rectangle.X + (int)line.PositionOffset.X + 1,
                                     rectangle.Y + (int)line.PositionOffset.Y - 1), shadowColor);
-                                spriteBatch.DrawString(line.Font, line.Text,
+                                SpriteBatch.DrawString(line.Font, line.Text,
                                     new Vector2(rectangle.X + (int)line.PositionOffset.X - 1,
                                     rectangle.Y + (int)line.PositionOffset.Y + 1), shadowColor);
-                                spriteBatch.DrawString(line.Font, line.Text,
+                                SpriteBatch.DrawString(line.Font, line.Text,
                                     new Vector2(rectangle.X + (int)line.PositionOffset.X + 1,
                                     rectangle.Y + (int)line.PositionOffset.Y + 1), shadowColor);
 
                             }
-                            spriteBatch.DrawString(line.Font, line.Text,
+                            SpriteBatch.DrawString(line.Font, line.Text,
                                 new Vector2(rectangle.X + (int)line.PositionOffset.X,
                                 rectangle.Y + (int)line.PositionOffset.Y), color);
 

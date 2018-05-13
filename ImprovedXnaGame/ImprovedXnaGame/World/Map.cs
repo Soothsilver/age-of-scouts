@@ -21,6 +21,7 @@ namespace Age.World
         internal void Draw(Session session, float elapsedSeconds, Selection selection)
         {
             HashSet<Tile> visibleTiles = DisplayOptimization.GetTilesVisibleOnScreen(session);
+            Tile mouseOverTile = session.Map.GetTileFromStandardCoordinates(Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, session));
             Vector2 centerOfScreenInStandardPixels = session.CenterOfScreenInStandardPixels;
             float zoomLevel = session.ZoomLevel;
             // Layer 1: Tiles
@@ -35,8 +36,7 @@ namespace Age.World
                 if (Debug.DebugPoints.Tiles != null && Debug.DebugPoints.Tiles.Contains(tile))
                 {
                     Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Yellow.Alpha(200));
-                }
-           
+                }          
                
             });
             this.ForEachTile((x, y, tile) =>
@@ -142,17 +142,44 @@ namespace Age.World
                 {
                     Rectangle rectObject = Isomath.StandardPersonToScreen(tile.NaturalObjectOccupant.FeetStdPosition, tile.NaturalObjectOccupant.PixelWidth, tile.NaturalObjectOccupant.PixelHeight, session);
                     Primitives.DrawImage(Library.Get(tile.NaturalObjectOccupant.Icon), new Rectangle(rectObject.X, rectObject.Y, rectObject.Width, rectObject.Height));
+                    if (selection.SelectedNaturalObject == tile.NaturalObjectOccupant)
+                    {
+                        Primitives.DrawRectangle(rectObject.Extend(1, 1), Color.White);
+                    }
                 }
                 if (tile.BuildingOccupant != null && tile.BuildingOccupant.PrimaryTile == tile)
                 {
-                    tile.BuildingOccupant.Draw(session);
+                    tile.BuildingOccupant.Draw(session, selection);
+                }
+                if (tile == mouseOverTile && selection.SelectedBuildingToPlace != null)
+                {
+                    selection.SelectedBuildingToPlace.DrawShadow(session, session, tile, session.PlayerTroop.LightColor);
                 }
             });
 
+            if (selection.SelectedBuildingToPlace != null && mouseOverTile != null)
+            {
+                //bool placeable = (selection.SelectedBuildingToPlace.CanBePlacedOn(mouseOverTile));
+                // TODO draw shadow
+            }
+
             // Layer 3: Projectiles
-            foreach(Projectile p in session.Projectiles)
+            foreach (Projectile p in session.Projectiles)
             {
                 p.Draw(session);
+            }
+
+            // Layer 3a: Rally points
+            if( selection.SelectedBuilding != null)
+            {
+                Building b = selection.SelectedBuilding;
+                if (b.RallyPointInStandardCoordinates != Vector2.Zero)
+                {
+                    Vector2 start = Isomath.StandardToScreen(b.FeetStdPosition, session);
+                    Vector2 end = Isomath.StandardToScreen(b.RallyPointInStandardCoordinates, session);
+                    Primitives.DrawLine(start, end, Color.Red);
+                    Primitives.DrawPoint(end, Color.Red, 4);
+                }
             }
 
             // Layer 4: Debug
@@ -172,8 +199,18 @@ namespace Age.World
             Debug.DebugPoints.Coordinates.Clear();
 
         }
-    
-        
+
+        internal Tile GetTileFromTileCoordinates(int x, int y)
+        {
+            if (x >= 0 && y >= 0 && x < Width && y < Height)
+            {
+                return this.Tiles[x, y];
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         internal Tile GetTileFromStandardCoordinates(Vector2 standard)
         {

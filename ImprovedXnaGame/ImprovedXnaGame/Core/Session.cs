@@ -62,9 +62,11 @@ namespace Age.Core
 
         public Vector2 CenterOfScreenInStandardPixels { get; set; }
         public float ZoomLevel { get; set; } = 1;
+        public Troop GaiaTroop { get; } 
 
         public Session()
         {
+            GaiaTroop = new Troop("Příroda", this, Era.EraNacelniku, Color.DarkGreen, Color.LightGreen); 
             // Generic death trigger
             this.ObjectivesChanged = true;
             this.OtherTriggers.Add(new Trigger()
@@ -94,19 +96,21 @@ namespace Age.Core
                     {
                         selection.SelectedUnits.ForEach((unit) =>
                         {
+                            unit.Activity.Reset();
                             unit.Activity.AttackTarget = target;
-                            unit.Activity.MovementTarget = Vector2.Zero;
-                            unit.Activity.SecondsUntilNextRecalculation = 0;
                         });
                         return;
                     }
                 }
                 selection.SelectedUnits.ForEach((unit) =>
                 {
-                    unit.Activity.AttackTarget = null;
+                    unit.Activity.Reset();
                     unit.Activity.MovementTarget = standardTarget;
-                    unit.Activity.SecondsUntilNextRecalculation = 0;
                 });
+            }
+            else if (tile != null && selection.SelectedBuilding != null && selection.SelectedBuilding.Controller == PlayerTroop)
+            {
+                selection.SelectedBuilding.RallyPointInStandardCoordinates = standardTarget;
             }
         }
 
@@ -128,7 +132,7 @@ namespace Age.Core
             unit.Occupies = tile;
         }
 
-        internal void SpawnBuilding(BuildingTemplate kitchen, Troop controller, Tile tile)
+        internal Building SpawnBuilding(BuildingTemplate kitchen, Troop controller, Tile tile)
         {
             var b = new Building(kitchen, controller, Isomath.TileToStandard(tile.X + 1, tile.Y + 1), tile);
             for (int y = 0; y < kitchen.TileHeight; y++)
@@ -141,7 +145,18 @@ namespace Age.Core
                     tl.BuildingOccupant = b;
                 }
             }
+            if (b.Template.Id == BuildingId.Kitchen)
+            {
+                b.RallyPointInStandardCoordinates = b.FeetStdPosition + new Vector2(1, 1);
+            }
             this.AllBuildings.Add(b);
+            return b;
+        }
+        internal void SpawnBuildingAsConstruction(BuildingTemplate template, Troop controller, Tile tile)
+        {
+            Building b = SpawnBuilding(template, controller, tile);
+            b.SelfConstructionInProgress = true;
+            b.SelfConstructionProgress = 0.1f;
         }
     }
 }

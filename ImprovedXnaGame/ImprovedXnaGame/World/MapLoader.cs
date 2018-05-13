@@ -119,25 +119,25 @@ namespace Age.World
                     tile.Type = TileType.Water;
                     break;
                 case "Flag":
-                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BasicFlag, EntityKind.TutorialFlag, tile);
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BasicFlag, EntityKind.TutorialFlag, tile, session);
                     break;
                 case "Tree":
-                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BasicTree, EntityKind.UntraversableTree, tile);
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BasicTree, EntityKind.UntraversableTree, tile, session);
                     break;
                 case "TallGrass":
-                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.TallGrass, EntityKind.TallGrass, tile);
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.TallGrass, EntityKind.TallGrass, tile, session);
                     break;
                 case "BerryBush":
-                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BerryBush, EntityKind.BerryBush, tile);
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BerryBush, EntityKind.BerryBush, tile, session);
                     break;
                 case "Corn":
-                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.Corn, EntityKind.Corn, tile);
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.Corn, EntityKind.Corn, tile, session);
                     break;
                 case "BigSimpleTent":
-                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BigSimpleTent, EntityKind.UnalignedTent, tile);
-                    tile.Neighbours.TopLeft.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopLeft);
-                    tile.Neighbours.Top.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.Top);
-                    tile.Neighbours.TopRight.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopRight);
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BigSimpleTent, EntityKind.UnalignedTent, tile, session);
+                    tile.Neighbours.TopLeft.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopLeft, session);
+                    tile.Neighbours.Top.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.Top, session);
+                    tile.Neighbours.TopRight.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopRight, session);
                     break;
                 case "Kitchen":
                     session.SpawnBuilding(BuildingTemplate.Kitchen, controller, tile);
@@ -157,9 +157,9 @@ namespace Age.World
             }
         }
 
-        private NaturalObject SpawnNaturalObject(TextureName icon, EntityKind entityKind, Tile tile)
+        private NaturalObject SpawnNaturalObject(TextureName icon, EntityKind entityKind, Tile tile, Session session)
         {
-            return NaturalObject.Create(icon, entityKind, tile.X, tile.Y);
+            return NaturalObject.Create(icon, entityKind, tile.X, tile.Y, session);
         }
 
       

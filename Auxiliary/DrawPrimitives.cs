@@ -11,7 +11,7 @@ namespace Auxiliary
     /// </summary>
     public static partial class Primitives
     {
-        internal static SpriteBatch spriteBatch;
+        public static SpriteBatch SpriteBatch;
         private static GraphicsDevice graphicsDevice;
         
 
@@ -20,7 +20,7 @@ namespace Auxiliary
         /// </summary>
         public static void FillRectangle(Rectangle rectangle, Color color)
         {
-            spriteBatch.Draw(Library.Pixel, rectangle, color);
+            SpriteBatch.Draw(Library.Pixel, rectangle, color);
         }
         /// <summary>
         /// Draw the border of a rectangle, without filling it in.
@@ -30,10 +30,10 @@ namespace Auxiliary
         /// <param name="thickness">Number of pixels (line width)</param>
         public static void DrawRectangle(Rectangle rectangle, Color color, int thickness = 1)
         {
-            spriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, thickness), color);
-            spriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X, rectangle.Y, thickness, rectangle.Height), color);
-            spriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X + rectangle.Width - thickness, rectangle.Y, thickness, rectangle.Height), color);
-            spriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - thickness, rectangle.Width, thickness), color);
+            SpriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, thickness), color);
+            SpriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X, rectangle.Y, thickness, rectangle.Height), color);
+            SpriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X + rectangle.Width - thickness, rectangle.Y, thickness, rectangle.Height), color);
+            SpriteBatch.Draw(Library.Pixel, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - thickness, rectangle.Width, thickness), color);
         }
         /// <summary>
         /// Draw a filled rectangle with a border.
@@ -68,7 +68,7 @@ namespace Auxiliary
         {
             float angle = (float)Math.Atan2(endPoint.Y - startPoint.Y, endPoint.X - startPoint.X);
             float length = Vector2.Distance(startPoint, endPoint);
-            spriteBatch.Draw(Library.Pixel, startPoint, null, color, angle, Vector2.Zero, new Vector2(length, width), SpriteEffects.None, 0);
+            SpriteBatch.Draw(Library.Pixel, startPoint, null, color, angle, Vector2.Zero, new Vector2(length, width), SpriteEffects.None, 0);
         }
 
         public static void DrawHealthbar(Rectangle rectangle, Color strongColor, int HP, int maxHP)
@@ -92,7 +92,7 @@ namespace Auxiliary
             {
                 font = Library.FontVerdana;
             }   
-            spriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            SpriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
         /// <summary>
         /// Draws a Texture2D, possibly preserving aspect-ratio (based on parameters).
@@ -111,7 +111,7 @@ namespace Auxiliary
             {
                 Color clrB = scaleBgColor ?? Color.Transparent;
                 Primitives.FillRectangle(rectangle, clrB);
-                spriteBatch.Draw(texture, Utilities.ScaleRectangle(rectangle, texture.Width, texture.Height, scaleUp), clr);
+                SpriteBatch.Draw(texture, Utilities.ScaleRectangle(rectangle, texture.Width, texture.Height, scaleUp), clr);
 
             }
             else
@@ -122,19 +122,20 @@ namespace Auxiliary
                     int yZoom = rectangle.Height / texture.Height;
                     if (xZoom == yZoom && xZoom != 1)
                     {
-                        spriteBatch.Draw(texture, new Vector2(rectangle.X, rectangle.Y), null, clr, 0, Vector2.Zero, xZoom, SpriteEffects.None, 0);
+                        SpriteBatch.Draw(texture, new Vector2(rectangle.X, rectangle.Y), null, clr, 0, Vector2.Zero, xZoom, SpriteEffects.None, 0);
                     }
                     else
                     {
-                        spriteBatch.Draw(texture, rectangle, clr);
+                        SpriteBatch.Draw(texture, rectangle, clr);
                     }
                 }
                 else
                 {
-                    spriteBatch.Draw(texture, rectangle, clr);
+                    SpriteBatch.Draw(texture, rectangle, clr);
                 }
             }
         }
+        
 
         /* ROUNDED RECTANGLES */
         /// <summary>
@@ -199,9 +200,9 @@ namespace Auxiliary
                     if (rr.Thickness == width)
                     {
                         if (doFill)
-                            spriteBatch.Draw(rr.FillInTexture, rectangle, innerColor);
+                            SpriteBatch.Draw(rr.FillInTexture, rectangle, innerColor);
                         else if (doDrawBorder)
-                            spriteBatch.Draw(rr.BorderTexture, rectangle, outerColor);
+                            SpriteBatch.Draw(rr.BorderTexture, rectangle, outerColor);
                         return;
                     }
                 }
@@ -291,7 +292,7 @@ namespace Auxiliary
         public static void FillCircleQuick(Vector2 center, int radius, Color color)
         {
             float scale = radius / 500f;
-            spriteBatch.Draw(Library.Circle1000X1000, center, null, color, 0, new Vector2(500, 500), scale, SpriteEffects.None, 0);
+            SpriteBatch.Draw(Library.Circle1000X1000, center, null, color, 0, new Vector2(500, 500), scale, SpriteEffects.None, 0);
         }
         /// <summary>
         /// Draws an outline of a circle. Unlike the non-quick method, this is much less CPU-intensive, however, it does not allow you to 
@@ -303,7 +304,7 @@ namespace Auxiliary
         public static void DrawCircleQuick(Vector2 center, int radius, Color color)
         {
             float scale = radius / 500f;
-            spriteBatch.Draw(Library.EmptyCircle1000X1000, center, null, color, 0, new Vector2(500, 500), scale, SpriteEffects.None, 0);
+            SpriteBatch.Draw(Library.EmptyCircle1000X1000, center, null, color, 0, new Vector2(500, 500), scale, SpriteEffects.None, 0);
         }
         /// <summary>
         /// Draws a filled circle. 
@@ -338,9 +339,9 @@ namespace Auxiliary
             {
                 foreach(Circle c in circlesCache[radius])
                 {
-                    if (c.Filled == filled && (filled || c.Thickness == thickness))
+                    if (c.Filled == filled && (filled || c.Thickness == thickness) && c.Color == color)
                     {
-                        spriteBatch.Draw(c.Texture, center, null, color, 0, new Vector2(radius + 1, radius + 1), 1, SpriteEffects.None, 0);
+                        SpriteBatch.Draw(c.Texture, center, null, color, 0, new Vector2(radius + 1, radius + 1), 1, SpriteEffects.None, 0);
                         return;
                     }
                 }
@@ -367,11 +368,11 @@ namespace Auxiliary
             }
             texture.SetData(data);
             if (containsKeyRadius)
-                circlesCache[radius].Add(new Circle(texture, filled, thickness));
+                circlesCache[radius].Add(new Circle(texture, filled, thickness, color));
             else
-                circlesCache.Add(radius, new List<Circle>(new Circle[] { new Circle(texture, filled, thickness) }));
+                circlesCache.Add(radius, new List<Circle>(new Circle[] { new Circle(texture, filled, thickness, color) }));
 
-            spriteBatch.Draw(texture, center, null, color, 0, new Vector2(radius + 1, radius + 1), 1, SpriteEffects.None, 0);
+            SpriteBatch.Draw(texture, center, null, color, 0, new Vector2(radius + 1, radius + 1), 1, SpriteEffects.None, 0);
         }
         private static readonly Dictionary<int, List<Circle>> circlesCache = new Dictionary<int, List<Circle>>();
 
@@ -380,7 +381,7 @@ namespace Auxiliary
         /// </summary>
         public static void Init(SpriteBatch spriteBatchParameter, GraphicsDevice graphicsDeviceParameter)
         {
-            Primitives.spriteBatch = spriteBatchParameter;
+            Primitives.SpriteBatch = spriteBatchParameter;
             Primitives.graphicsDevice = graphicsDeviceParameter;
         }
         private class Circle
@@ -388,9 +389,12 @@ namespace Auxiliary
             public readonly Texture2D Texture;
             public readonly bool Filled;
             public readonly int Thickness;
-            public Circle(Texture2D texture, bool filled, int thickness)
+            internal Color Color;
+
+            public Circle(Texture2D texture, bool filled, int thickness, Color color)
             {
                 Texture = texture; Filled = filled; Thickness = thickness;
+                Color = color;
             }
         }
         private class RoundedRectangle

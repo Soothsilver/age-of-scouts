@@ -16,7 +16,7 @@ namespace Age.Core
         public Unit Source;
         public Projectile(Vector2 startingPosition, Vector2 target, Unit source)
         {
-            float scalarSpeed = Tile.WIDTH * 2;
+            float scalarSpeed = Tile.WIDTH * 7;
             this.Position = startingPosition;
             this.Speed = target - startingPosition;
             this.Speed.Normalize();
@@ -28,7 +28,7 @@ namespace Age.Core
 
         public void Draw(IScreenInformation screen)
         {
-            Primitives.DrawPoint(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 80), screen), Color.White, (int)(4 * screen.ZoomLevel));
+            Primitives.FillCircle(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 80), screen), (int)(4 * screen.ZoomLevel), Color.White);
         }
         public void DrawShadow(IScreenInformation screen)
         {

@@ -13,13 +13,32 @@ namespace Age.HUD
 {
     class DrawHUD
     {
+        static BottomBar BottomBar = new BottomBar();
+
         public static void Draw(LevelPhase mainPhase, Session session, bool topmost, float elapsedSeconds)
         {
             DrawTopBar(mainPhase, session, topmost);
             session.Ending?.Draw(topmost);
-            DrawBottomBar(session, mainPhase.Selection, topmost);
+            DrawBottomBar(session, mainPhase, mainPhase.Selection, topmost);
             DrawChatLine(session, elapsedSeconds);
             DrawInstructionalLine(mainPhase, session);
+            DrawWarningLine(mainPhase, elapsedSeconds);
+        }
+
+        private static void DrawWarningLine(LevelPhase mainPhase, float elapsedSeconds)
+        {
+            if (mainPhase.WarningMessage != null)
+            {
+                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(29, Root.ScreenHeight - 400), Color.Red,
+                    Library.FontTinyBold);
+                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(30, Root.ScreenHeight - 400), Color.White,
+                    Library.FontTinyBold);
+                mainPhase.WarningMessageDisappearsInSeconds -= elapsedSeconds;
+                if (mainPhase.WarningMessageDisappearsInSeconds <= 0)
+                {
+                    mainPhase.WarningMessage = null;
+                }
+            }
         }
 
         private static void DrawInstructionalLine(LevelPhase levelPhase, Session session)
@@ -66,118 +85,9 @@ namespace Age.HUD
             }
         }
 
-        private static void DrawBottomBar(Session session, Selection selection, bool topmost)
+        private static void DrawBottomBar(Session session, LevelPhase levelPhase, Selection selection, bool topmost)
         {
-            int width = 1440;
-            int height = 200;
-
-            // Bottom bar
-            Rectangle rectBottomBar = new Rectangle(Root.ScreenWidth / 2 - width / 2, Root.ScreenHeight - height, width, height);
-            Primitives.DrawAndFillRectangle(rectBottomBar, ColorScheme.Background, ColorScheme.Foreground);
-
-            // Selection   
-            Rectangle rectAllIcons = new Rectangle(rectBottomBar.X + 5 + height + 5, rectBottomBar.Y + 5, 64*6+4, height);
-
-            if (selection.SelectedUnits.Count > 0)
-            {
-                Unit primaryUnit = selection.SelectedUnits[0];
-                Rectangle rectFlagBar = new Rectangle(rectBottomBar.X + rectBottomBar.Width / 2 - 300, rectBottomBar.Y - 30, 600, 30);
-                Primitives.DrawAndFillRectangle(rectFlagBar, ColorScheme.Background, ColorScheme.Foreground);
-                var flagString = primaryUnit.Controller.Name + " - " + primaryUnit.Controller.Era.ToCzech(Gender.Boy);
-                BasicStringDrawer.DrawMultiLineText(flagString, rectFlagBar, primaryUnit.Controller.StrongColor, Library.FontTinyBold, Primitives.TextAlignment.Middle, shadowed: true);
-
-                Rectangle rectPrimaryIcon = new Rectangle(rectBottomBar.X + 5, rectBottomBar.Y + 5, height - 10, height - 10);
-                Primitives.DrawRectangle(rectPrimaryIcon, ColorScheme.Foreground);
-                Primitives.DrawSingleLineText(primaryUnit.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 5), Color.Black, Library.FontNormalBold);
-                Primitives.DrawSingleLineText(primaryUnit.UnitTemplate.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 30), Color.Black, Library.FontNormal);
-                Primitives.DrawImage(Library.Get(primaryUnit.UnitTemplate.Icon), new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, height - 60, height - 60));
-
-                Primitives.DrawRectangle(rectAllIcons, ColorScheme.Foreground);
-                int x = 0;
-                int y = 0;
-                for (int i = 0; i < selection.SelectedUnits.Count; i++)
-                {
-                    Unit unit = selection.SelectedUnits[i];
-                    Rectangle rectOneIcon = new Rectangle(rectAllIcons.X + 2 + x, rectAllIcons.Y + 2 + y, 64, 64);
-                    bool mo = Root.IsMouseOver(rectOneIcon);
-                    Primitives.FillRectangle(rectOneIcon, unit.Controller.LightColor);
-                    if (mo)
-                    {
-                        Primitives.FillRectangle(rectOneIcon, Color.White.Alpha(50));
-                        UI.MajorTooltip = unit.GetTooltip();
-                        UI.MouseOverOnClickAction = () =>
-                        {
-                            selection.SelectUnits(new Unit[] { unit });
-                        };
-                    }
-                    Primitives.DrawImage(Library.Get(unit.UnitTemplate.Icon), rectOneIcon);
-                    Primitives.DrawRectangle(rectOneIcon, Color.Black);
-                    Primitives.DrawHealthbar(new Rectangle(rectOneIcon.X, rectOneIcon.Bottom - 5, rectOneIcon.Width, 5), unit.Controller.StrongColor, unit.HP, unit.MaxHP);
-
-
-                    if ((i + 1) % 6 == 0) {
-                        x = 0;
-                        y += 64;
-                    }
-                    else
-                    {
-                        x += 64;
-                    }
-                }
-                // Actions
-                if (primaryUnit.Controller == session.PlayerTroop)
-                {
-                    Rectangle rectOptions = new Rectangle(rectAllIcons.Right + 2, rectAllIcons.Y, rectAllIcons.Width, rectAllIcons.Height);
-                    Primitives.DrawRectangle(rectOptions, Color.Black);
-                    // Row 1: Stances
-                    y = 0;
-                    x = 0;
-                    Stance? commonStance = primaryUnit.Stance;
-                    if (selection.SelectedUnits.Any(unt => unt.Stance != commonStance))
-                    {
-                        commonStance = null;
-                    }
-                    foreach (Stance stance in StaticData.AllStances)
-                    {
-                        var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
-                        UI.DrawIconButton(r, topmost, Library.Get(stance.ToTexture()),  stance.ToTooltip(), () =>
-                        {
-                            foreach (var unt in selection.SelectedUnits)
-                            {
-                                unt.Stance = stance;
-                            }
-                        });
-                        if (commonStance == stance)
-                        {
-                            Primitives.DrawRectangle(r, Color.White, 2);
-                        }
-                        x += 64;
-                    }
-                    x = 0;
-                    y += 64;
-                    if (primaryUnit.UnitTemplate.CanBuildStuff)
-                    {
-                        foreach(BuildingTemplate building in BuildingTemplate.GetConstructiblesBy(primaryUnit.Controller))
-                        {
-                            var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
-                            UI.DrawIconButton(r, topmost && building.AffordableBy(primaryUnit.Controller), building.Icon.Color(primaryUnit.Controller), new Tooltip("Postavit budovu " + building.Name, building.Description), () =>
-                            {
-                                selection.SelectedBuildingToPlace = building;
-                            });
-                            x += 64;
-                        }
-                    }
-                }
-
-            }
-
-
-
-            // Minimap
-            Minimap.Draw(session, new Rectangle(rectBottomBar.Right - height * 2, rectBottomBar.Y - height, 2 * height, 2 * height));
-
-            // Tooltip
-            UI.MajorTooltip?.Draw(new Rectangle(rectBottomBar.X, rectBottomBar.Y - 155, 400, 150));
+            BottomBar.Draw(session, levelPhase, selection, topmost);
         }
 
         private static void DrawTopBar(LevelPhase mainPhase, Session session, bool topmost)
@@ -235,7 +145,6 @@ namespace Age.HUD
             }
 
             // Buttons
-
             if (session.AllUnits.Any(unt => unt.Controller == session.PlayerTroop && unt.UnitTemplate.Name == "Pracant" &&
             !unt.Activity.HasAGoal))
             {

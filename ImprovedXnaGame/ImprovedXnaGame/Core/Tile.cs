@@ -23,6 +23,7 @@ namespace Age.Core
         public NaturalObject NaturalObjectOccupant = null;
         public Building BuildingOccupant = null;
         public Neighbours Neighbours = new Neighbours();
+        
 
         public Tile(int x, int y, TextureName icon)
         {
@@ -54,20 +55,11 @@ namespace Age.Core
 
         internal Tooltip GetTooltip()
         {
-            switch (NaturalObjectOccupant?.EntityKind) {
-                case EntityKind.BerryBush:
-                    return new Tooltip("Lesní plody", "Z tohoto keře můžou tvoji {b}Pracanti{/b} sbírat lesní plody. Až je donesou zpět do kuchyně, získáš {lime}jídlo{/lime}.");
-                case EntityKind.Corn:
-                    return new Tooltip("Kukuřice", "Z této části kukuřičného pole můžou tvoji {b}Pracanti{/b} odnést kukuřici do kuchyně a získat tak {lime}jídlo{/lime}.");
-                case EntityKind.TutorialFlag:
-                    return new Tooltip("Vlajka", "V některých úrovních je cílem hry se dostat k vlajce.");
-                case EntityKind.UnalignedTent:
-                    return new Tooltip("Nezničitelný stan", "Pravidla hry nepovolují útočit na tento stan. Je třeba ho obejít.");
-                case EntityKind.UntraversableTree:
-                    return new Tooltip("Strom", "Stomy blokují pohyb, ale tvoji {b}Pracanti{/b} ho mohou pokácet a odnést do kuchyně nebo dřevního kouta a získat tak {red}dřevo{/red}.");
-
-                default: return null;
+            if (NaturalObjectOccupant != null)
+            {
+                return new Tooltip(NaturalObjectOccupant.Name, NaturalObjectOccupant.Description);
             }
+            return null;
         }
     }
 

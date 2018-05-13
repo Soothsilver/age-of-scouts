@@ -17,15 +17,45 @@ namespace Age.Phases
         public Vector2 StandardCoordinatesSelectionStart = Vector2.Zero;
         public LeaderPowerInstance SelectedGodPower;
         public BuildingTemplate SelectedBuildingToPlace;
+        public Building SelectedBuilding;
+        public NaturalObject SelectedNaturalObject;
+
+        public bool IsSomethingSelected => SelectedNaturalObject != null || SelectedBuilding != null || SelectedUnits.Count > 0;
 
         internal void Update(LevelPhase levelPhase, float elapsedSeconds)
         {
+            Tile mouseOverTile = levelPhase.Session.Map.GetTileFromStandardCoordinates(
+                    Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session)
+                );
             if (UI.MouseOverOnClickAction != null)
             {
                 return;
             }
             if (SelectedBuildingToPlace != null)
             {
+                if (Root.WasMouseLeftClick)
+                {
+                    if (SelectedBuildingToPlace.PlaceableOn(levelPhase.Session, mouseOverTile))
+                    {
+                        if (SelectedBuildingToPlace.ApplyCost(levelPhase.Session.PlayerTroop))
+                        {
+                            levelPhase.Session.SpawnBuildingAsConstruction(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop, mouseOverTile);
+                            if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift))
+                            {
+                                SelectedBuildingToPlace = null;
+                            }
+                        }
+                        else
+                        {
+                            levelPhase.EmitWarningMessage("Na tuto budovu nemáš dost surovin.");
+                        }
+                    }
+                    else
+                    {
+                        levelPhase.EmitWarningMessage("Sem budovu nemůžeš postavit.");
+                    }
+                    Root.WasMouseLeftClick = false;
+                }
                 if (Root.WasMouseRightClick)
                 {
                     Root.WasMouseRightClick = false;
@@ -78,13 +108,26 @@ namespace Age.Phases
             }
         }
 
+        internal Entity GetPrimaryEntity()
+        {
+            if (SelectedUnits.Count > 0)
+            {
+                return SelectedUnits[0];
+            }
+            else if (SelectedBuilding != null)
+            {
+                return SelectedBuilding;
+            }
+            else if (SelectedNaturalObject != null)
+            {
+                return SelectedNaturalObject;
+            }
+            throw new Exception("Nothing is selected.");
+        }
+
         private void SelectThingsInRectangle(LevelPhase levelPhase, Rectangle rectSelectionBox)
         {
             List<Unit> inBox = new List<Unit>();
-            List<NaturalObject> natObjects = new List<NaturalObject>();
-            List<Building> buildings = new List<Building>();
-
-            List<Tile> selectedTiles = DetermineTilesInRectangle(rectSelectionBox, levelPhase.Session.Map);
 
             foreach (var unit in levelPhase.Session.AllUnits)
             {
@@ -93,24 +136,6 @@ namespace Age.Phases
                     inBox.Add(unit);
                 }
             }
-            /*
-            var topleftSelectionBox = Isomath.StandardToTile(new Vector2(rectSelectionBox.X, rectSelectionBox.Y));
-            var bottomRightSelectionBox = Isomath.StandardToTile(new Vector2(rectSelectionBox.Right, rectSelectionBox.Bottom));
-
-            levelPhase.Session.Map.ForEachTile((x, y, tile) =>
-            {
-                if (x >= topleftSelectionBox.X && y >= topleftSelectionBox.Y )
-            });
-
-
-
-            foreach (var bld in levelPhase.Session.AllBuildings)
-            {
-                if (bld.Hitbox.Intersects(rectSelectionBox))
-                {
-                    inBox.Add(unit);
-                }
-            }*/
             if (inBox.Count > 0)
             {
                 if (inBox.Any(unt => unt.Controller == levelPhase.Session.PlayerTroop))
@@ -125,7 +150,29 @@ namespace Age.Phases
             }
             else
             {
-                SelectedUnits.Clear();
+                Building toBeSelectedBuilding = null;
+                NaturalObject toBeSelectedObject = null;
+                DeselectAll();
+                List<Tile> selectedTiles = DetermineTilesInRectangle(rectSelectionBox, levelPhase.Session.Map);
+                foreach (var tile in selectedTiles)
+                {
+                    if (tile.BuildingOccupant != null)
+                    {
+                        toBeSelectedBuilding = tile.BuildingOccupant;
+                    }
+                    if (tile.NaturalObjectOccupant != null)
+                    {
+                        toBeSelectedObject = tile.NaturalObjectOccupant;
+                    }
+                }
+                if (toBeSelectedBuilding != null)
+                {
+                    SelectedBuilding = toBeSelectedBuilding;
+                }
+                else if (toBeSelectedObject != null)
+                {
+                    SelectedNaturalObject = toBeSelectedObject;
+                }
             }
 
         }
@@ -148,18 +195,25 @@ namespace Age.Phases
 
         public void SelectUnits(IEnumerable<Unit> enumerable)
         {
-            SelectedGodPower = null;
-            SelectedUnits.Clear();
+            DeselectAll();
             SelectedUnits.AddRange(enumerable);
+        }
+
+        private void DeselectAll()
+        {
+            SelectedUnits.Clear();
+            SelectedNaturalObject = null;
+            SelectedGodPower = null;
+            SelectedBuilding = null;
         }
 
         public void Draw(LevelPhase levelPhase, float elapsedSeconds)
         {
-            Debug.DebugPoints.Tiles = null;
+           // Debug.DebugPoints.Tiles = null;
             if (SelectionInProgress)
             {
                 Vector2 CurrentStandard = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session);
-                Debug.DebugPoints.Tiles = DetermineTilesInRectangle(GetSelectionRectangle(StandardCoordinatesSelectionStart, CurrentStandard, levelPhase.Session), levelPhase.Session.Map);
+               // Debug.DebugPoints.Tiles = DetermineTilesInRectangle(GetSelectionRectangle(StandardCoordinatesSelectionStart, CurrentStandard, levelPhase.Session), levelPhase.Session.Map);
                 Rectangle rectSelectionBox = Isomath.StandardToScreen(GetSelectionRectangle(StandardCoordinatesSelectionStart, CurrentStandard, levelPhase.Session), levelPhase.Session);
                 Primitives.DrawRectangle(rectSelectionBox, Color.White);
                 Primitives.DrawRectangle(rectSelectionBox.Extend(1,1), Color.Black);

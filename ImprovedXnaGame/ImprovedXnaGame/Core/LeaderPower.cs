@@ -1,24 +1,26 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
+using Auxiliary;
 
 namespace Age.Core
 {
-    public class LeaderPowerInstance
+    public class LeaderPower
     {
-        public LeaderPowerInstance(LeaderPower power, bool usedUp)
+        public TextureName Icon;
+        public string Name;
+        public string Description;
+        internal string InstructionalLine;
+
+        public LeaderPower(TextureName icon, string name, string description, string instructionalLine)
         {
-            this.Used = usedUp;
-            this.Power = power;
+            Icon = icon;
+            InstructionalLine = instructionalLine;
+            Name = name;
+            Description = description;
         }
 
-        public LeaderPower Power { get; set; }
-        public bool Used { get; set; }
-
-        internal void Use(Vector2 where, Session session)
+        internal static LeaderPower CreateSpy()
         {
-            this.Used = true;
-            // Tisik Spy
-            FogOfWarMechanics.RevealFogOfWar(where, Tile.WIDTH * 7, session.Map, false, cleartime: 7);
+            return new LeaderPower(TextureName.PruzkumGodPower, "Tišíkův průzkum", "Tvůj rádce ti na krátkou dobu ukáže zahalenou část mapy.", "Klikni levým tlačítkem myši na kamkoliv, abys tam seslal {i}Tišíkův průzkum{/i}.");
         }
     }
 }

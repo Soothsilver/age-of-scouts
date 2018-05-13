@@ -7,7 +7,8 @@ namespace Age.Core
 {
     class Corpse
     {
-        private const float TIME_EXISTING = 8;
+        private const float TIME_EXISTING = 24;
+        private const float TIME_TO_DISAPPEAR = 4;
         public Unit WhatItWas;
         public float SecondsUntilDisappearance;
         public float Alpha;
@@ -24,7 +25,10 @@ namespace Age.Core
         public void Draw(float elapsedSeconds, IScreenInformation screen)
         {
             SecondsUntilDisappearance -= elapsedSeconds;
-            Alpha -= elapsedSeconds / TIME_EXISTING;
+            if (SecondsUntilDisappearance <= TIME_TO_DISAPPEAR)
+            {
+                Alpha -= elapsedSeconds / TIME_TO_DISAPPEAR;
+            }
             if (SecondsUntilDisappearance <=0)
             {
                 this.Lost = true;

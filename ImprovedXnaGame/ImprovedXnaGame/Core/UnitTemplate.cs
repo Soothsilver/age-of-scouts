@@ -14,6 +14,7 @@ namespace Age.Core
         public TextureName Icon;
         public TextureName DeadIcon;
         public bool CanBuildStuff;
+        public bool CanAttack = true;
 
         private SoundEffect Ack1;
         private SoundEffect Ack2;
@@ -27,10 +28,13 @@ namespace Age.Core
         private SoundEffect Selection3;
         private SoundEffect Selection4;
 
-        private UnitTemplate(string name, string description, TextureName icon, TextureName deadIcon, Sprite sprite)
+        private UnitTemplate(string name, string description, TextureName icon, TextureName deadIcon, Sprite sprite,
+            int foodcost, int woodcost)
         {
             Name = name;
             Description = description;
+            FoodCost = foodcost;
+            WoodCost = woodcost;
             Icon = icon;
             DeadIcon = deadIcon;
             Sprite = sprite;
@@ -38,14 +42,17 @@ namespace Age.Core
 
         public static UnitTemplate Hadrakostrelec;
         public static UnitTemplate Pracant;
+        internal int FoodCost;
+        internal int WoodCost;
 
         public static void InitUnitTemplates()
         {
-            Pracant = new UnitTemplate("Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Kid)
+            Pracant = new UnitTemplate("Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Pracant, 50, 0)
             {
-                CanBuildStuff = true
+                CanBuildStuff = true,
+                CanAttack = false
             };
-            Hadrakostrelec  = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid);
+            Hadrakostrelec = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20);
         }
 
         public void LoadSounds(SoundEffect ack1, SoundEffect ack2, SoundEffect ackMove, SoundEffect fail, SoundEffect joke1, SoundEffect joke2, SoundEffect joke3, SoundEffect sel1, SoundEffect sel2, SoundEffect sel3, SoundEffect sel4)
