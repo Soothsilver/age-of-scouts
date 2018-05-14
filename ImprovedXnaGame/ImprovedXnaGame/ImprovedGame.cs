@@ -17,9 +17,8 @@ namespace Age
     /// </summary>
     public class ImprovedGame : Game
     {
-        GraphicsDeviceManager graphics;
+        readonly GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Form form;
 
         public ImprovedGame()
         {
@@ -28,7 +27,7 @@ namespace Age
             this.IsMouseVisible = true;
             IntPtr hWnd = this.Window.Handle;          
             var control = Control.FromHandle(hWnd);
-            this.form = control.FindForm();
+            Form form = control.FindForm();
             Root.Form = form;
         }
 
