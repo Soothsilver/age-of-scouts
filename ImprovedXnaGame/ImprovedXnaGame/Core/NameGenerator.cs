@@ -57,7 +57,7 @@ namespace Age.Core
         };
         internal static string GenerateBoyName()
         {
-            return boyNames[R.Integer(boyNames.Length)];
+            return boyNames[R.Next(boyNames.Length)];
         }
     }
 }

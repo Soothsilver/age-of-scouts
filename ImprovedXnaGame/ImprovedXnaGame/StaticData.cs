@@ -6,9 +6,11 @@ using System.Text;
 
 namespace Age
 {
+    /// <summary>
+    /// Static data, loaded once per application run, that don't fit elsewhere.
+    /// </summary>
     static class StaticData
     {
         public static Stance[] AllStances = new[] { Stance.Aggressive, Stance.StandYourGround, Stance.Stealthy };
-
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Age
 {
+    /// <summary>
+    /// Static pseudorandom generator with various utility functions.
+    /// </summary>
     static class R
     {
         public static float Flicker = 0.5f;
@@ -20,11 +20,11 @@ namespace Age
             else if (Flicker < FlickerMin) { Flicker = FlickerMin; FlickerAscending = true; }
         }
         private static Random rgen = new Random();
-        public static int Integer(int maxExclusive)
+        public static int Next(int maxExclusive)
         {
             return rgen.Next(maxExclusive);
         }
-        public static int Integer(int min, int maxExclusive)
+        public static int Next(int min, int maxExclusive)
         {
             return rgen.Next(min, maxExclusive);
         }

@@ -87,12 +87,12 @@ namespace Age.World
 
         private static void MouseMove(int x, int y, float elapsedSeconds, Session session)
         {
-            session.CenterOfScreenInStandardPixels += new Microsoft.Xna.Framework.Vector2(x, y) * elapsedSeconds * Settings.Instance.MouseMoveSpeed;
+            session.CenterOfScreenInStandardPixels += new Microsoft.Xna.Framework.Vector2(x, y) * elapsedSeconds * Settings.Instance.MouseMoveSpeed / session.ZoomLevel;
         }
 
         private static void KeyboardMove(int x, int y, float elapsedSeconds, Session session)
         {
-            session.CenterOfScreenInStandardPixels += new Microsoft.Xna.Framework.Vector2(x, y) * elapsedSeconds * Settings.Instance.KeyboardMoveSpeed;
+            session.CenterOfScreenInStandardPixels += new Microsoft.Xna.Framework.Vector2(x, y) * elapsedSeconds * Settings.Instance.KeyboardMoveSpeed / session.ZoomLevel;
         }
     }
 }

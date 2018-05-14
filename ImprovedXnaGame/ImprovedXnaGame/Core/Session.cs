@@ -61,7 +61,11 @@ namespace Age.Core
         internal bool ObjectivesChanged;
 
         public Vector2 CenterOfScreenInStandardPixels { get; set; }
-        public float ZoomLevel { get; set; } = 1;
+        /// <summary>
+        /// Greater zoom level means more close-up. Lesser zoom level means looking from a distance. A zoom-level of 1 is basic 1:1 display. A zoom-level of 2 is
+        /// where each tile is twice as big as normal.
+        /// </summary>
+        public float ZoomLevel = 1;
         public Troop GaiaTroop { get; } 
 
         public Session()

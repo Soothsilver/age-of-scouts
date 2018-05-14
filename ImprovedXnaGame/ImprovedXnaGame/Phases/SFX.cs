@@ -32,7 +32,7 @@ namespace Age.Phases
 
         internal static void PlayRandom(params SoundEffect[] sfxs)
         {
-            SoundEffect sfx = sfxs[R.Integer(sfxs.Length)];
+            SoundEffect sfx = sfxs[R.Next(sfxs.Length)];
             sfx.Play();
         }
 

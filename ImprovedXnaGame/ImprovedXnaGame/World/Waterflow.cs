@@ -31,7 +31,7 @@ namespace Age.World
                             }
                             else
                             {
-                                tile.Icon = WaterTextures[R.Integer(WaterTextures.Length)];
+                                tile.Icon = WaterTextures[R.Next(WaterTextures.Length)];
                             }
                         }
                     }
