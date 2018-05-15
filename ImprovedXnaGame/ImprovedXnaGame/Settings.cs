@@ -1,4 +1,7 @@
 ﻿using Age.Core;
+using Auxiliary;
+using Cother;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Age
 {
@@ -14,19 +17,22 @@ namespace Age
 
         public float KeyboardMoveSpeed = Tile.WIDTH * 8;
         public float MouseMoveSpeed = Tile.WIDTH * 8;
+
         /// <summary>
         /// Enables display of the fog of war. Fog of war is calculated even if this is disabled.
         /// </summary>
         public bool EnableFogOfWar = true;
+
         public bool ShowDebugPoints = false;
+
         /// <summary>
         /// Shows FPS, UPS (updates-per-second) and other indicators that may point to a performance problem.
         /// </summary>
         public bool ShowPerformanceIndicators = true;
+
         public float TimeFactor = 1;
 
-        private Settings()
-        {
-        }
+        public DisplayModus DisplayMode = DisplayModus.BorderlessWindow;
+        public Resolution Resolution = new Resolution(1920, 1080);
     }
 }

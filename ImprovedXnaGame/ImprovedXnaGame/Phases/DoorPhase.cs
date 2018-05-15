@@ -1,5 +1,4 @@
-﻿using System;
-using Auxiliary;
+﻿using Auxiliary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,71 +6,82 @@ namespace Age.Phases
 {
     internal class DoorPhase : GamePhase
     {
-        private float TransitionPercentage = 0;
-        private bool? TransitioningDirectionIsUp = null;
-        private float TransitionSpeed = 5;
-        private float SecondsUntilTransitionCompletes = 0;
-        private GamePhase TransitioningInto = null;
+        private float transitionPercentage;
+        private bool? transitioningDirectionIsUp;
+        private const float TransitionSpeed = 5;
+        private float secondsUntilTransitionCompletes;
+        private GamePhase transitioningInto;
 
 
         protected override void Draw(SpriteBatch sb, Game game, float elapsedSeconds, bool topmost)
         {
             base.Draw(sb, game, elapsedSeconds, topmost);
-            // Draw
-            int gateWidth = Root.ScreenWidth / 2;
-            Color innerGateColor = Color.FromNonPremultiplied(239, 181, 64, 255);
-            Color outerGateColor = Color.FromNonPremultiplied(112, 74, 0, 255);
-            Rectangle rectLeftGate = new Rectangle((int)(-gateWidth + gateWidth * TransitionPercentage), 0, gateWidth, Root.ScreenHeight);
-            Rectangle rectRightGate = new Rectangle((int)(2*gateWidth - gateWidth * TransitionPercentage), 0, gateWidth, Root.ScreenHeight);
-            Primitives.DrawAndFillRoundedRectangle(rectLeftGate, innerGateColor, outerGateColor, 4);
-            Primitives.DrawAndFillRoundedRectangle(rectRightGate, innerGateColor, outerGateColor, 4);
-            int logoW = Library.Get(TextureName.LogoRight).Width;
-            int logoH = Library.Get(TextureName.LogoRight).Height;
-            Primitives.DrawImage(Library.Get(TextureName.LogoLeft), new Rectangle(rectLeftGate.Right - logoW, rectLeftGate.Height / 2 - logoH / 2, logoW, logoH));
-            Primitives.DrawImage(Library.Get(TextureName.LogoRight), new Rectangle(rectRightGate.X, rectRightGate.Height / 2 - logoH / 2, logoW, logoH));
-            // Then move
-            if (TransitioningDirectionIsUp.HasValue && TransitioningDirectionIsUp.Value)
+            if (transitioningDirectionIsUp != null)
             {
-                if (TransitionPercentage == 1)
+                // Draw
+                int gateWidth = Root.ScreenWidth / 2;
+                Color innerGateColor = Color.FromNonPremultiplied(239, 181, 64, 255);
+                Color outerGateColor = Color.FromNonPremultiplied(112, 74, 0, 255);
+                Rectangle rectLeftGate = new Rectangle((int) (-gateWidth + gateWidth * transitionPercentage), 0,
+                    gateWidth, Root.ScreenHeight);
+                Rectangle rectRightGate = new Rectangle((int) (2 * gateWidth - gateWidth * transitionPercentage), 0,
+                    gateWidth, Root.ScreenHeight);
+                Primitives.DrawAndFillRoundedRectangle(rectLeftGate, innerGateColor, outerGateColor, 4);
+                Primitives.DrawAndFillRoundedRectangle(rectRightGate, innerGateColor, outerGateColor, 4);
+                int logoW = Library.Get(TextureName.LogoRight).Width;
+                int logoH = Library.Get(TextureName.LogoRight).Height;
+                Primitives.DrawImage(Library.Get(TextureName.LogoLeft),
+                    new Rectangle(rectLeftGate.Right - logoW, rectLeftGate.Height / 2 - logoH / 2, logoW, logoH));
+                Primitives.DrawImage(Library.Get(TextureName.LogoRight),
+                    new Rectangle(rectRightGate.X, rectRightGate.Height / 2 - logoH / 2, logoW, logoH));
+                // Then move
+                if (transitioningDirectionIsUp.Value)
                 {
-                    SecondsUntilTransitionCompletes -= elapsedSeconds;
-                    if (SecondsUntilTransitionCompletes <= 0)
+                    if (transitionPercentage == 1)
                     {
-                        TransitioningDirectionIsUp = null;
-                        TransitionPercentage = 0;
-                        if (TransitioningInto is DoorPhase)
+                        secondsUntilTransitionCompletes -= elapsedSeconds;
+                        if (secondsUntilTransitionCompletes <= 0)
                         {
-                            DoorPhase dp = (TransitioningInto as DoorPhase);
-                            dp.TransitionPercentage = 1;
-                            dp.TransitioningDirectionIsUp = false;
-                            dp.OnEntering();
+                            transitioningDirectionIsUp = null;
+                            transitionPercentage = 0;
+                            if (transitioningInto is DoorPhase phase)
+                            {
+                                DoorPhase dp = phase;
+                                dp.transitionPercentage = 1;
+                                dp.transitioningDirectionIsUp = false;
+                                dp.OnEntering();
+                            }
+
+                            if (transitioningInto != null && !Root.PhaseStack.Contains(transitioningInto))
+                            {
+                                Root.PushPhase(transitioningInto);
+                            }
+                            else
+                            {
+                                Root.PopFromPhase();
+                            }
+
+                            transitioningInto = null;
                         }
-                        if (TransitioningInto != null && !Root.PhaseStack.Contains(TransitioningInto))
+                    }
+                    else
+                    {
+                        transitionPercentage += elapsedSeconds * TransitionSpeed;
+                        if (transitionPercentage >= 1)
                         {
-                            Root.PushPhase(TransitioningInto);
-                        } else
-                        {
-                            Root.PopFromPhase();
+                            transitionPercentage = 1;
+                            secondsUntilTransitionCompletes = 0.5f;
                         }
-                        TransitioningInto = null;
                     }
                 }
-                else
+                else if (!transitioningDirectionIsUp.Value)
                 {
-                    TransitionPercentage += elapsedSeconds * TransitionSpeed;
-                    if (TransitionPercentage >= 1)
+                    transitionPercentage -= elapsedSeconds * TransitionSpeed;
+                    if (transitionPercentage <= 0)
                     {
-                        TransitionPercentage = 1;
-                        SecondsUntilTransitionCompletes = 0.5f;
+                        transitionPercentage = 0;
+                        transitioningDirectionIsUp = null;
                     }
-                }
-            }
-            else if (TransitioningDirectionIsUp.HasValue && !TransitioningDirectionIsUp.Value) {
-                TransitionPercentage -= elapsedSeconds * TransitionSpeed;
-                if (TransitionPercentage <= 0)
-                {
-                    TransitionPercentage = 0;
-                    TransitioningDirectionIsUp = null;
                 }
             }
         }
@@ -82,18 +92,18 @@ namespace Age.Phases
 
         public void TransitionIntoExit()
         {
-            if (TransitioningInto == null)
+            if (transitioningInto == null)
             {
-                TransitioningInto = Root.GetPhaseBeneath(this);
-                TransitioningDirectionIsUp = true;
+                transitioningInto = Root.GetPhaseBeneath(this);
+                transitioningDirectionIsUp = true;
             }
         }
         public void TransitionTo(GamePhase anotherPhase)
         {
-            if (TransitioningInto == null)
+            if (transitioningInto == null)
             {
-                TransitioningInto = anotherPhase;
-                TransitioningDirectionIsUp = true;
+                transitioningInto = anotherPhase;
+                transitioningDirectionIsUp = true;
             }
         }
     }

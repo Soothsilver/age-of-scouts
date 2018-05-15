@@ -75,7 +75,14 @@ namespace Age
             PerformanceCounter.Instance.UpdateCycleBegins();
             if (Root.WasKeyPressed(Keys.Enter, ModifierKey.Alt))
             {
-                graphics.ToggleFullScreen();
+                if (Root.IsFullscreen)
+                {
+                    Root.GoToFullscreen(Settings.Instance.Resolution);
+                }
+                else
+                {
+                    Root.GoToNormalWindow(Settings.Instance.Resolution);
+                }
             }
             if (Root.WasMouseLeftClick)
             {

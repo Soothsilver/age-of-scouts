@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Age.Phases;
 using Auxiliary;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Age.Core
 {
@@ -34,35 +33,35 @@ namespace Age.Core
 
         private ConstructionOption(string caption, string description, Action<Building, Selection> whatDo, int foodCost, int woodCost, int populationCost, TextureName icon)
         {
-            FoodCost = foodCost;
-            PopulationCost = populationCost;
-            WoodCost = woodCost;
+            this.foodCost = foodCost;
+            this.populationCost = populationCost;
+            this.woodCost = woodCost;
             OnClick = whatDo;
             Description = description;
-            _caption = caption;
+            this.caption = caption;
             Icon = icon;
         }
 
-        private int FoodCost;
-        private int WoodCost;
-        private int PopulationCost;
-        private string _caption;
-        public string TooltipCaption => _caption + " (" + GetResourceCost() + ")";
+        private int foodCost;
+        private int woodCost;
+        private int populationCost;
+        private string caption;
+        public string TooltipCaption => caption + " (" + GetResourceCost() + ")";
 
         private string GetResourceCost()
         {
             string s = "";
-            if (FoodCost > 0)
+            if (foodCost > 0)
             {
-                s += FoodCost + " jídla";
-                if (WoodCost > 0)
+                s += foodCost + " jídla";
+                if (woodCost > 0)
                 {
                     s += ", ";
                 }
             }
-            if (WoodCost > 0)
+            if (woodCost > 0)
             {
-                s += WoodCost + " dřeva";
+                s += woodCost + " dřeva";
             }
             return s;
         }
@@ -71,8 +70,8 @@ namespace Age.Core
 
         internal bool AffordableBy(Troop controller)
         {
-            return controller.Wood >= this.WoodCost && controller.Food >= this.FoodCost && 
-                (this.PopulationCost == 0 || (controller.PopulationLimit - controller.PopulationUsed) >= this.PopulationCost);
+            return controller.Wood >= this.woodCost && controller.Food >= this.foodCost && 
+                (this.populationCost == 0 || (controller.PopulationLimit - controller.PopulationUsed) >= this.populationCost);
         }
 
         public Action<Building, Selection> OnClick;

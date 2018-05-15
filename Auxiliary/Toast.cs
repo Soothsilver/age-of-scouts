@@ -55,14 +55,7 @@ namespace Auxiliary
             }
         }
 
-        public static void GoToBorderlessWindow(Resolution resolution)
-        {
-            Form.FormBorderStyle = FormBorderStyle.None;
-            Form.Width = 1920;
-            Form.Height = 1080;
-            Form.WindowState = FormWindowState.Maximized;
-            Form.Location = new System.Drawing.Point(0, 0);
-        }
+      
 
         public static Form Form;
 

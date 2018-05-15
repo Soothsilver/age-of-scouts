@@ -34,9 +34,14 @@ namespace Age.Phases
                 levelPhase.Session.AchieveEnding(Ending.Defeat);
                 Root.PopFromPhase();
             });
-        
-            UI.DrawButton(new Rectangle(x, y + 120, width, height), topmost, "Ukončit do hlavního menu!", () => { (Root.PhaseStack[Root.PhaseStack.Count - 2] as DoorPhase).TransitionIntoExit(); Root.PopFromPhase(); });
-            UI.DrawButton(new Rectangle(x, y + 180, width, height), topmost, "Ukončit do Windows!", () => {
+            UI.DrawButton(new Rectangle(x, y + 120, width, height), topmost, "Nastavení", () =>
+            {
+                Root.PopFromPhase();
+                Root.PushPhase(new SettingsPhase());
+            });
+
+            UI.DrawButton(new Rectangle(x, y + 180, width, height), topmost, "Ukončit do hlavního menu!", () => { (Root.PhaseStack[Root.PhaseStack.Count - 2] as DoorPhase).TransitionIntoExit(); Root.PopFromPhase(); });
+            UI.DrawButton(new Rectangle(x, y + 240, width, height), topmost, "Ukončit do Windows!", () => {
                 Root.PhaseStack.Clear();
             });
             UI.DrawButton(new Rectangle(x, rectMenu.Height - 40, width, height), topmost, "Vrátit se ke hře", () => {

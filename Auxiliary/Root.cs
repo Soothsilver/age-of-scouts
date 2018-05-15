@@ -6,10 +6,13 @@
  * 
  */
 using System;
+using System.Windows.Forms;
 using Auxiliary.GUI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace Auxiliary
 {
@@ -219,6 +222,30 @@ namespace Auxiliary
                 return Mouse_NewState.LeftButton == ButtonState.Pressed;
             }
         }
+        public static void GoToBorderlessWindow(Resolution resolution)
+        {
+            Form.FormBorderStyle = FormBorderStyle.None;
+            Form.Width = resolution.Width;
+            Form.Height = resolution.Height;
+            Form.WindowState = FormWindowState.Maximized;
+            Form.Location = new System.Drawing.Point(0, 0);
+            Root.IsFullscreen = false;
+        }
+        public static void GoToFullscreen(Resolution resolution)
+        {
+            Root.SetResolution(resolution);
+            Root.IsFullscreen = true;
+        }
+        public static void GoToNormalWindow(Resolution resolution)
+        {
+            Root.IsFullscreen = false;
+            Form.FormBorderStyle = FormBorderStyle.Fixed3D;
+            Form.Width = resolution.Width;
+            Form.Height = resolution.Height;
+            Form.WindowState = FormWindowState.Normal;
+        }
+
+
         public static int ClickedMouseMovement;
         /// <summary>
         /// Call this from Game.Update(). Updates keyboard and mouse states, updates all phases, then erases phases scheduled for elimination, and updates toasts and FPS counter.
@@ -344,6 +371,7 @@ namespace Auxiliary
                 SetResolution(defaultResolution);
             Root.IsFullscreen = fullscreenMode;
         }
+
     }
     /// <summary>
     /// A meta-key pressed alongside another key.

@@ -64,12 +64,20 @@ namespace Age.Music
                     }
                     break;
             }
-            int width = 400;
-            Rectangle rect = new Microsoft.Xna.Framework.Rectangle(-50 - width + (int)(width * FlagRaisedPercentage), Root.ScreenHeight - 200, width, 80);
-            Primitives.DrawAndFillRoundedRectangle(rect, Color.Pink, Color.DeepPink, 2);
-            Primitives.DrawSingleLineText("Nyní přehrávám", new Vector2(rect.X + 70, rect.Y + 5), Color.Black, Library.FontNormal);           
-            Primitives.DrawSingleLineText(PlayingWhat.Name, new Vector2(rect.X + 65, rect.Y + 35), Color.Black, Library.FontNormalBold);
-            Primitives.DrawImage(Library.Get(TextureName.MusicIcon), new Rectangle(rect.Right - 80, rect.Y + 8, 64, 64));
+
+            if (FlagRaisedPercentage > 0)
+            {
+                int width = 400;
+                Rectangle rect = new Microsoft.Xna.Framework.Rectangle(
+                    -50 - width + (int) (width * FlagRaisedPercentage), Root.ScreenHeight - 200, width, 80);
+                Primitives.DrawAndFillRoundedRectangle(rect, Color.Pink, Color.DeepPink, 2);
+                Primitives.DrawSingleLineText("Nyní přehrávám", new Vector2(rect.X + 70, rect.Y + 5), Color.Black,
+                    Library.FontNormal);
+                Primitives.DrawSingleLineText(PlayingWhat.Name, new Vector2(rect.X + 65, rect.Y + 35), Color.Black,
+                    Library.FontNormalBold);
+                Primitives.DrawImage(Library.Get(TextureName.MusicIcon),
+                    new Rectangle(rect.Right - 80, rect.Y + 8, 64, 64));
+            }
         }
 
         private enum FlagStatus

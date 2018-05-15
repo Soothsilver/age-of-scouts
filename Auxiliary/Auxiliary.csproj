@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdvancedStringDrawer.cs" />
+    <Compile Include="DisplayModus.cs" />
     <Compile Include="DrawPrimitives.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FPSUPSCounter.cs" />
