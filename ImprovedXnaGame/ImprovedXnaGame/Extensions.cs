@@ -17,6 +17,23 @@ namespace Age
         {
             return SpriteCache.GetColoredTexture(textureName, controller.LightColor);
         }
+
+        public static Color OverlayOnto(this Color color, Color overlayOntoWhat)
+        {
+            float dstA = (float)overlayOntoWhat.A / 255f;
+            float srcA = (float)color.A / 255f;
+            float outA = srcA + dstA * (1 - srcA);
+            if (outA == 0)
+            {
+                return Microsoft.Xna.Framework.Color.Transparent;
+            }
+
+            int targetR = (int)(color.R + overlayOntoWhat.R * (1 - srcA));
+            int targetG = (int)(color.G + overlayOntoWhat.G * (1 - srcA));
+            int targetB = (int)(color.B +overlayOntoWhat.B * (1 - srcA));
+
+            return new Color(targetR, targetG, targetB, (int)(outA * 255));
+        }
         public static bool WithinDistance(this Vector2 me, Vector2 withinDistanceOf, int distance)
         {
             return (me - withinDistanceOf).LengthSquared() <= distance * distance;

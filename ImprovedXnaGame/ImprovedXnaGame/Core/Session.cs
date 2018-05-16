@@ -15,11 +15,9 @@ namespace Age.Core
     {
         public Troop PlayerTroop
         {
-            get
-            {
-                return Troops[0];
-            }
+            get { return Troops[0]; }
         }
+
         public List<Troop> Troops = new List<Troop>();
         public List<Unit> AllUnits = new List<Unit>();
         public List<Building> AllBuildings = new List<Building>();
@@ -30,6 +28,16 @@ namespace Age.Core
         public List<ChatLine> VoiceQueue = new List<ChatLine>();
         public List<Projectile> Projectiles = new List<Projectile>();
         public ChatLine CurrentVoiceLine;
+        public Map Map;
+        internal bool ObjectivesChanged;
+        /// <summary>
+        /// Greater zoom level means more close-up. Lesser zoom level means looking from a distance. A zoom-level of 1 is basic 1:1 display. A zoom-level of 2 is
+        /// where each tile is twice as big as normal.
+        /// </summary>
+        public float ZoomLevel { get; set; } = 1;
+        public Vector2 CenterOfScreenInStandardPixels { get; set; }
+        public Troop GaiaTroop { get; }
+
 
         internal void AchieveEnding(Ending ending)
         {
@@ -49,38 +57,27 @@ namespace Age.Core
 
         public void SmartCenterTo(int tileX, int tileY)
         {
-            var target = (Vector2)Isomath.TileToStandard(tileX, tileY);
+            var target = (Vector2) Isomath.TileToStandard(tileX, tileY);
             MoveViewport.SmartCenterTo(this, target);
         }
+
         public void SmartCenterTo(Vector2 standardCoordinates)
         {
             MoveViewport.SmartCenterTo(this, standardCoordinates);
         }
 
-        public Map Map;
-        internal bool ObjectivesChanged;
-
-        public Vector2 CenterOfScreenInStandardPixels { get; set; }
-        /// <summary>
-        /// Greater zoom level means more close-up. Lesser zoom level means looking from a distance. A zoom-level of 1 is basic 1:1 display. A zoom-level of 2 is
-        /// where each tile is twice as big as normal.
-        /// </summary>
-        public float ZoomLevel { get; set; }= 1;
-        public Troop GaiaTroop { get; } 
 
         public Session()
         {
-            GaiaTroop = new Troop("Příroda", this, Era.EraNacelniku, Color.DarkGreen, Color.LightGreen); 
+            GaiaTroop = new Troop("Příroda", this, Era.EraNacelniku, Color.DarkGreen, Color.LightGreen);
             // Generic death trigger
             this.ObjectivesChanged = true;
             this.OtherTriggers.Add(new Trigger()
             {
-                StateTrigger = (levelPhase) => levelPhase.Session.AllUnits.Count(unt => unt.Controller == levelPhase.Session.PlayerTroop) == 0,
-                OnComplete = (session) =>
-                {
-                    session.AchieveEnding(Ending.Defeat);
-                }
-            });            
+                StateTrigger = (levelPhase) =>
+                    levelPhase.Session.AllUnits.Count(unt => unt.Controller == levelPhase.Session.PlayerTroop) == 0,
+                OnComplete = (session) => { session.AchieveEnding(Ending.Defeat); }
+            });
         }
 
         internal void SpawnProjectile(Projectile projectile)
@@ -91,12 +88,14 @@ namespace Age.Core
         internal void RightClickOn(Selection selection, Vector2 standardTarget)
         {
             Tile tile = Map.GetTileFromStandardCoordinates(standardTarget);
-            if (tile != null && selection.SelectedUnits.Count > 0 && selection.SelectedUnits[0].Controller == PlayerTroop)
+            if (tile != null && selection.SelectedUnits.Count > 0 &&
+                selection.SelectedUnits[0].Controller == PlayerTroop)
             {
                 selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
                 foreach (var target in AllUnits)
                 {
-                    if (AreEnemies(selection.SelectedUnits[0], target) && target.Hitbox.Contains((int)standardTarget.X, (int)standardTarget.Y))
+                    if (AreEnemies(selection.SelectedUnits[0], target) &&
+                        target.Hitbox.Contains((int) standardTarget.X, (int) standardTarget.Y))
                     {
                         selection.SelectedUnits.ForEach((unit) =>
                         {
@@ -106,13 +105,15 @@ namespace Age.Core
                         return;
                     }
                 }
+
                 selection.SelectedUnits.ForEach((unit) =>
                 {
                     unit.Activity.Reset();
                     unit.Activity.MovementTarget = standardTarget;
                 });
             }
-            else if (tile != null && selection.SelectedBuilding != null && selection.SelectedBuilding.Controller == PlayerTroop)
+            else if (tile != null && selection.SelectedBuilding != null &&
+                     selection.SelectedBuilding.Controller == PlayerTroop)
             {
                 selection.SelectedBuilding.RallyPointInStandardCoordinates = standardTarget;
             }
@@ -120,7 +121,8 @@ namespace Age.Core
 
         public bool AreEnemies(Unit unit, Unit target)
         {
-            return unit.Controller != target.Controller && !unit.Controller.Convertible && !target.Controller.Convertible;
+            return unit.Controller != target.Controller && !unit.Controller.Convertible &&
+                   !target.Controller.Convertible;
         }
 
         public void EnqueueVoice(ChatLine chatLine)
@@ -149,13 +151,16 @@ namespace Age.Core
                     tl.BuildingOccupant = b;
                 }
             }
+
             if (b.Template.Id == BuildingId.Kitchen)
             {
                 b.RallyPointInStandardCoordinates = b.FeetStdPosition + new Vector2(1, 1);
             }
+
             this.AllBuildings.Add(b);
             return b;
         }
+
         internal void SpawnBuildingAsConstruction(BuildingTemplate template, Troop controller, Tile tile)
         {
             Building b = SpawnBuilding(template, controller, tile);

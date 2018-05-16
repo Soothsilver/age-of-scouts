@@ -14,44 +14,60 @@ namespace Age.HUD
         private Texture2D minimapTexture = null;
         private Color[] minimapData = null;
         private static int BASE_TERRAIN_ALPHA = 120;
-        private static int TERRAIN_ALPHA = 170;
-        private static Color grass = Color.LimeGreen;
-        private static Color water = Color.CornflowerBlue;
-        private static Color tallGrass = Color.GreenYellow;
-        private static Color forest = Color.DarkGreen;
+        private static int TERRAIN_ALPHA = 150;
+        private static Color grass = Color.LimeGreen.Alpha(BASE_TERRAIN_ALPHA).OverlayOnto(Color.White);
+        private static Color water = Color.CornflowerBlue.Alpha(TERRAIN_ALPHA).OverlayOnto(Color.White);
+        private static Color tallGrass = Color.GreenYellow.Alpha(TERRAIN_ALPHA).OverlayOnto(Color.White);
+        private static Color forest = Color.DarkGreen.Alpha(TERRAIN_ALPHA).OverlayOnto(Color.White);
         private static Color obstacle = Color.Black;
+        private int cyclesUntilRedraw = 0;
 
         public void Draw(Session session, Rectangle rectangle)
         {
+            Map map = session.Map;
+            int tileWidth = rectangle.Width / map.Width;
             if (minimapTexture == null)
             {
                 Initialize(session.Map, rectangle);
             }
-            Map map = session.Map;
-            int minimapHeight = rectangle.Height;
-            int minimapWidth = rectangle.Width;
-            int tileWidth = rectangle.Width / map.Width;
-            int tileHeight = rectangle.Height / map.Height;
-            mouseOverStandard = IntVector.Zero;
-            for (int y = 0; y < map.Height; y++)
+
+            if (cyclesUntilRedraw <= 0)
             {
-                for (int x =0; x< map.Width; x++)
+                int minimapHeight = rectangle.Height;
+                int minimapWidth = rectangle.Width;
+                int tileHeight = rectangle.Height / map.Height;
+                mouseOverStandard = IntVector.Zero;
+                for (int y = 0; y < map.Height; y++)
                 {
-                    int screenX = (x - y) * tileWidth / 2 + rectangle.Width / 2;
-                    for (int j = 0; j < tileHeight; j++)
+                    for (int x = 0; x < map.Width; x++)
                     {
-                        int screenY = (x + y) * tileHeight / 2;
-                        Tile t = map.Tiles[x, y];
-                        Color clr = GetMinimapColor(t);
-                        for (int i = 0; i < tileWidth; i++)
+                        int screenX = (x - y) * tileWidth / 2 + rectangle.Width / 2;
+                        for (int j = 0; j < tileHeight; j++)
                         {
-                            minimapData[(screenY + j) * minimapHeight + (screenX + i)] = clr;
+                            int screenY = (x + y) * tileHeight / 2;
+                            Tile t = map.Tiles[x, y];
+                            Color clr = GetMinimapColor(t);
+                            if (t.Fog == FogOfWarStatus.Grey && Settings.Instance.EnableFogOfWar)
+                            {
+                                clr = Color.Black.Alpha(150).OverlayOnto(clr);
+                            }
+                            for (int i = 0; i < tileWidth; i++)
+                            {
+                                minimapData[(screenY + j) * minimapHeight + (screenX + i)] = clr;
+                            }
                         }
                     }
                 }
+
+                cyclesUntilRedraw = 10;
+                minimapTexture.SetData<Color>(minimapData);
             }
+            else
+            {
+                cyclesUntilRedraw--;
+            }
+
             // Blit
-            minimapTexture.SetData<Color>(minimapData);
             Primitives.DrawImage(minimapTexture, rectangle);
             // Borders
             int movright = tileWidth;

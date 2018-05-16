@@ -18,7 +18,7 @@ namespace Auxiliary
         /// <param name="alpha">New alpha component (0 to 255).</param>
         public static Color Alpha(this Color color, int alpha)
         {
-            return Color.FromNonPremultiplied(color.R, color.G, color.B, alpha);
+            return color * ((float)alpha / 255f);// Color.FromNonPremultiplied(color.R, color.G, color.B, alpha);
         }
 
         public static bool IsLight(this Color color)
