@@ -4,62 +4,55 @@ using Age.Phases;
 using Age.World;
 using Auxiliary;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Age.HUD
 {
     internal class Minimap
     {
-        private static Tile mouseOverTile;
-        internal static void Draw(Session session, Rectangle rectangle)
+        private IntVector mouseOverStandard = new IntVector(0, 0);
+        private Texture2D minimapTexture = null;
+        private Color[] minimapData = null;
+        private static int BASE_TERRAIN_ALPHA = 120;
+        private static int TERRAIN_ALPHA = 170;
+        private static Color grass = Color.LimeGreen;
+        private static Color water = Color.CornflowerBlue;
+        private static Color tallGrass = Color.GreenYellow;
+        private static Color forest = Color.DarkGreen;
+        private static Color obstacle = Color.Black;
+
+        public void Draw(Session session, Rectangle rectangle)
         {
+            if (minimapTexture == null)
+            {
+                Initialize(session.Map, rectangle);
+            }
             Map map = session.Map;
+            int minimapHeight = rectangle.Height;
+            int minimapWidth = rectangle.Width;
             int tileWidth = rectangle.Width / map.Width;
             int tileHeight = rectangle.Height / map.Height;
-            mouseOverTile = null;
+            mouseOverStandard = IntVector.Zero;
             for (int y = 0; y < map.Height; y++)
             {
                 for (int x =0; x< map.Width; x++)
                 {
-                    int screenX = (x - y) * tileWidth / 2  + rectangle.X + rectangle.Width / 2;
-                    int screenY = (x + y) * tileHeight / 2 + rectangle.Y;
-                    Rectangle r = new Rectangle(screenX, screenY, tileWidth, tileHeight);
-                    Tile t = map.Tiles[x, y];
-                    if (Root.IsMouseOver(r))
+                    int screenX = (x - y) * tileWidth / 2 + rectangle.Width / 2;
+                    for (int j = 0; j < tileHeight; j++)
                     {
-                        mouseOverTile = t;
-                    }
-                    Primitives.FillRectangle(r, Color.White);
-                    Primitives.FillRectangle(r, GetMinimapColor(t));
-                    if (Settings.Instance.EnableFogOfWar)
-                    {
-                        if (t.Fog == FogOfWarStatus.Black)
+                        int screenY = (x + y) * tileHeight / 2;
+                        Tile t = map.Tiles[x, y];
+                        Color clr = GetMinimapColor(t);
+                        for (int i = 0; i < tileWidth; i++)
                         {
-                            Primitives.FillRectangle(r, Color.Black);
-                        }
-                        else if (t.Fog == FogOfWarStatus.Grey)
-                        {
-                            Primitives.FillRectangle(r, Color.Black.Alpha(150));
+                            minimapData[(screenY + j) * minimapHeight + (screenX + i)] = clr;
                         }
                     }
                 }
             }
-
-            // Viewport
-            /*
-            var centerTile = Isomath.StandardToTile(session.CenterOfScreenInStandardPixels);
-            int viewportTilesX = (int)(Root.ScreenWidth / (session.ZoomLevel * Tile.WIDTH));
-            int viewportTilesY = (int)(Root.ScreenHeight / (session.ZoomLevel * Tile.HEIGHT));
-            IntVector topLeftTile = new IntVector(centerTile.X - viewportTilesX / 2, centerTile.Y - viewportTilesY / 2);
-            Rectangle rectViewport = new Rectangle(
-                    (topLeftTile.X - topLeftTile.Y) * tileWidth / 2 + rectangle.X + rectangle.Width / 2,
-                    (topLeftTile.X + topLeftTile.Y) * tileHeight / 2 + rectangle.Y,
-                    tileWidth * viewportTilesX,
-                    tileHeight * viewportTilesY                
-                );
-            Primitives.DrawRectangle(rectViewport, Color.White, 1);
-            Primitives.DrawRectangle(rectViewport.Extend(1,1), Color.Black, 1);
-            */
-
+            // Blit
+            minimapTexture.SetData<Color>(minimapData);
+            Primitives.DrawImage(minimapTexture, rectangle);
             // Borders
             int movright = tileWidth;
             int movall = -2;
@@ -71,7 +64,6 @@ namespace Age.HUD
             Vector2 left = new Vector2(rectangle.X + movright + movall + prolongBottomLeftX, rectangle.Y + rectangle.Height / 2 + movall + prolongBottomLeftY);
 
             Color borderColor = ColorScheme.Foreground;
-            Color alternateBorderColor = Color.White;
             int borderWidth = 4;
             Primitives.DrawLine(top, right, borderColor, borderWidth);
             Primitives.DrawLine(bottom, right, borderColor, borderWidth);
@@ -79,10 +71,25 @@ namespace Age.HUD
             Primitives.DrawLine(bottom, left, borderColor, borderWidth);
         }
 
+        private void Initialize(Map sessionMap, Rectangle rectangle)
+        {
+            this.minimapTexture = new Texture2D(Root.GraphicsDevice, rectangle.Width, rectangle.Height);
+            this.minimapData = new Color[rectangle.Width * rectangle.Height];
+            for (int y = 0; y < rectangle.Height; y++)
+            {
+                for (int x = 0; x < rectangle.Width; x++)
+                {
+                    minimapData[y * rectangle.Height + x] = Color.Transparent;
+                }
+            }
+        }
+
         private static Color GetMinimapColor(Tile tile)
         {
-            int BASE_TERRAIN_ALPHA = 120;
-            int TERRAIN_ALPHA = 170;
+            if (tile.Fog == FogOfWarStatus.Black && Settings.Instance.EnableFogOfWar)
+            {
+                return Color.Black;
+            }
           
             if (tile.Occupants.Count > 0)
             {
@@ -93,29 +100,31 @@ namespace Age.HUD
                 switch (tile.NaturalObjectOccupant.EntityKind)
                 {
                     case EntityKind.TallGrass:
-                        return Color.Green.Alpha(BASE_TERRAIN_ALPHA);
+                        return tallGrass;
                     case EntityKind.TutorialFlag:
-                        return Color.White.Alpha(TERRAIN_ALPHA);
+                        return obstacle;
                     case EntityKind.UnalignedTent:
-                        return Color.Black.Alpha(TERRAIN_ALPHA);
+                        return obstacle;
                     case EntityKind.UntraversableTree:
-                        return Color.DarkGreen.Alpha(TERRAIN_ALPHA);
+                        return forest;
                     case EntityKind.BerryBush:
-                        return Color.Violet.Alpha(TERRAIN_ALPHA);
+                        return Color.Violet;
                     case EntityKind.Corn:
-                        return Color.Yellow.Alpha(TERRAIN_ALPHA);
+                        return Color.Yellow;
                 }
             }
             switch (tile.Type)
             {
-                case TileType.Grass: return Color.LimeGreen.Alpha(BASE_TERRAIN_ALPHA);
-                case TileType.Water: return Color.Blue.Alpha(TERRAIN_ALPHA);
+                case TileType.Grass:
+                    return grass;
+                case TileType.Water: return water;
                 default: return Color.Red;
             }
         }
 
-        internal static void Update(Selection selection, Session session)
+        public void Update(Selection selection, Session session)
         {
+            /*
             if (mouseOverTile != null && !selection.SelectionInProgress)
             {
                 Root.WasMouseLeftClick = false;
@@ -132,6 +141,7 @@ namespace Age.HUD
                 }
 
             } 
+            */
         }
     }
 }

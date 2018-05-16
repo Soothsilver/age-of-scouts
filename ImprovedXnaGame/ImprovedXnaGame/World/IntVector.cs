@@ -16,6 +16,8 @@ namespace Age.World
             Y = y;
         }
 
+        public static IntVector Zero = new IntVector(0, 0);
+
         public static implicit operator Vector2(IntVector thisVector)
         {
             return new Vector2(thisVector.X, thisVector.Y);

@@ -11,20 +11,23 @@ namespace Age.HUD
 {
     class BottomBar
     {
+        private const int Width = 1440;
+        private const int Height = 200;
+
         internal void Draw(Session session, LevelPhase levelPhase, Selection selection, bool topmost)
         {
-            int width = 1440;
-            int height = 200;
 
             // Bottom bar
-            Rectangle rectBottomBar = new Rectangle(Root.ScreenWidth / 2 - width / 2, Root.ScreenHeight - height, width, height);
+            Rectangle rectBottomBar = new Rectangle(Root.ScreenWidth / 2 - Width / 2, Root.ScreenHeight - Height, Width, Height);
             Primitives.DrawAndFillRectangle(rectBottomBar, ColorScheme.Background, ColorScheme.Foreground);
 
             // Selection   
             DrawSelection(session, levelPhase, selection, topmost, rectBottomBar);
 
             // Minimap
-            Minimap.Draw(session, new Rectangle(rectBottomBar.Right - height * 2, rectBottomBar.Y - height, 2 * height, 2 * height));
+            PerformanceCounter.StartMeasurement(PerformanceGroup.Minimap);
+            levelPhase.Minimap.Draw(session, new Rectangle(rectBottomBar.Right - Height * 2, rectBottomBar.Y - Height, 2 * Height, 2 * Height));
+            PerformanceCounter.EndMeasurement(PerformanceGroup.Minimap);
 
             // Tooltip
             UI.MajorTooltip?.Draw(new Rectangle(rectBottomBar.X, rectBottomBar.Y - 155, 400, 150));
@@ -32,9 +35,7 @@ namespace Age.HUD
 
         private void DrawSelection(Session session, LevelPhase levelPhase, Selection selection, bool topmost, Rectangle rectBottomBar)
         {
-            int width = rectBottomBar.Width;
-            int height = rectBottomBar.Height;
-            Rectangle rectAllSelectedUnits = new Rectangle(rectBottomBar.X + 5 + height + 5, rectBottomBar.Y + 5, 64 * 6 + 4, height);
+            Rectangle rectAllSelectedUnits = new Rectangle(rectBottomBar.X + 5 + Height + 5, rectBottomBar.Y + 5, 64 * 6 + 4, Height);
 
 
             if (selection.IsSomethingSelected)
@@ -51,14 +52,14 @@ namespace Age.HUD
                 BasicStringDrawer.DrawMultiLineText(flagString, rectFlagBar, primaryEntity.Controller.StrongColor, Library.FontTinyBold, Primitives.TextAlignment.Middle, shadowed: true);
 
                 // Primary entity
-                Rectangle rectPrimaryIcon = new Rectangle(rectBottomBar.X + 5, rectBottomBar.Y + 5, height - 10, height - 10);
+                Rectangle rectPrimaryIcon = new Rectangle(rectBottomBar.X + 5, rectBottomBar.Y + 5, Height - 10, Height - 10);
                 Primitives.DrawRectangle(rectPrimaryIcon, ColorScheme.Foreground);
                 Primitives.DrawSingleLineText(primaryEntity.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 5), Color.Black, Library.FontNormalBold);
                 if (primaryUnit != null)
                 {
                     Primitives.DrawSingleLineText(primaryUnit.UnitTemplate.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 30), Color.Black, Library.FontNormal);
                 }
-                Primitives.DrawImage(primaryEntity.BottomBarTexture, new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, height - 60, height - 60));
+                Primitives.DrawImage(primaryEntity.BottomBarTexture, new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, Height - 60, Height - 60));
 
                 // All selected units and/or action currently executed by building
                 Primitives.DrawRectangle(rectAllSelectedUnits, ColorScheme.Foreground);
@@ -74,6 +75,7 @@ namespace Age.HUD
                 {
                     asNaturalObject.DrawActionInProgress(rectAllSelectedUnits);
                 }
+
                 // Actions
                 if (primaryEntity.Controller == session.PlayerTroop)
                 {
@@ -92,7 +94,7 @@ namespace Age.HUD
                         foreach (Stance stance in StaticData.AllStances)
                         {
                             var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
-                            UI.DrawIconButton(r, topmost, Library.Get(stance.ToTexture()), stance.ToTooltip(), () =>
+                            UI.DrawIconButton(r, topmost, Library.Get(stance.ToTexture()), stance.ToTooltip().Caption, stance.ToTooltip().Text, () =>
                             {
                                 foreach (var unt in selection.SelectedUnits)
                                 {
@@ -114,7 +116,7 @@ namespace Age.HUD
                         foreach (ConstructionOption building in primaryEntity.ConstructionOptions)
                         {
                             var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
-                            UI.DrawIconButton(r, topmost, building.Icon.Color(primaryEntity.Controller), new Tooltip(building.TooltipCaption, building.Description), () =>
+                            UI.DrawIconButton(r, topmost, building.Icon.Color(primaryEntity.Controller), building.TooltipCaption, building.Description, () =>
                             {
                                 if (building.AffordableBy(primaryEntity.Controller))
                                 {

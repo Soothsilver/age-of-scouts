@@ -50,7 +50,7 @@ namespace Age.HUD
             }
         }
 
-        internal static void DrawIconButton(Rectangle rectangle, bool interactible, Texture2D texture, Tooltip tooltip, Action onClick)
+        internal static void DrawIconButton(Rectangle rectangle, bool interactible, Texture2D texture, string tooltipCaption, string tooltipDescription, Action onClick)
         {
             bool mo = Root.IsMouseOver(rectangle);
             Primitives.DrawImage(Library.Get(TextureName.Tile64x64), rectangle);
@@ -58,7 +58,7 @@ namespace Age.HUD
             if (mo && interactible)
             {
                 MouseOverOnClickAction = onClick;
-                UI.MajorTooltip = tooltip;
+                UI.MajorTooltip = new Tooltip(tooltipCaption, tooltipDescription);
             }
         }
     }

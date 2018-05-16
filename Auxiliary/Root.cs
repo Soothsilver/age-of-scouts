@@ -23,7 +23,6 @@ namespace Auxiliary
     public static partial class Root
     {
         // Properties starting with "in" should not be used by your project
-        private static PerformanceCounter inFpsCounter;
         private static Game inGame;
         private static SpriteBatch inSpriteBatch;
         internal static GraphicsDeviceManager inGraphics;
@@ -210,10 +209,6 @@ namespace Auxiliary
         public static void DrawOverlay(GameTime gameTime)
         {
             DrawToasts();
-            // FPS
-            inFpsCounter.DrawCycleBegins();
-            if (Display_DisplayFpsCounter)
-                inFpsCounter.DrawSelf(Display_DisplayFpsCounterWhere);
         }
         public static bool Holding
         {
@@ -272,7 +267,6 @@ namespace Auxiliary
 
         
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            inFpsCounter.UpdateCycleBegins();
             if (Root.PhaseStack.Count > 0)
                 Root.PhaseStack.Peek().Update(Root.inGame, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -363,7 +357,6 @@ namespace Auxiliary
             // Load graphical functions
             Auxiliary.Primitives.Init(spriteBatch, game.GraphicsDevice);
             // Load FPS Counter
-            Root.inFpsCounter = new PerformanceCounter();
             // Load keyboard input
             Root.KeyboardInput = new KeyboardInput();
             // Set resolution

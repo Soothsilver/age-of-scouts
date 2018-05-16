@@ -16,6 +16,7 @@ namespace Age.Phases
     {
         public Session Session { get; set; }
         public Selection Selection = new Selection();
+        public Minimap Minimap = new Minimap();
 
         public LevelPhase(Session session)
         {

@@ -102,7 +102,7 @@
     <Compile Include="DisplayModus.cs" />
     <Compile Include="DrawPrimitives.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="FPSUPSCounter.cs" />
+    <Compile Include="PerformanceCounter.cs" />
     <Compile Include="GamePhase.cs" />
     <Compile Include="GUIRootHelper.cs" />
     <Compile Include="GUI\GUI.cs" />

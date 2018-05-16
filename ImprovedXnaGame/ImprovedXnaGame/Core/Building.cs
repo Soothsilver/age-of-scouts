@@ -96,7 +96,7 @@ namespace Age.Core
             {
                 Rectangle rectQueued = new Rectangle(x, rectAction.Bottom - 69, 64, 64);
                 UI.DrawIconButton(rectQueued, topmost, n.ConstructingWhat.Icon.Color(this.Controller),
-                    new Tooltip("Odstranit z fronty tuto položku", n.ConstructingWhat.Description),
+                    "Odstranit z fronty tuto položku", n.ConstructingWhat.Description,
                     () =>
                     {
                         ConstructionQueue.Remove(n);

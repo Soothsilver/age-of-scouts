@@ -72,6 +72,7 @@ namespace Age
 
         protected override void Update(GameTime gameTime)
         {
+            PerformanceCounter.StartMeasurement(PerformanceGroup.UpdateCycle);
             PerformanceCounter.Instance.UpdateCycleBegins();
             if (Root.WasKeyPressed(Keys.Enter, ModifierKey.Alt))
             {
@@ -99,6 +100,7 @@ namespace Age
             {
                 this.Exit();
             }
+            PerformanceCounter.EndMeasurement(PerformanceGroup.UpdateCycle);
         }
 
 
@@ -110,14 +112,18 @@ namespace Age
             UI.MajorTooltip = null;
 
             // Use pixel-perfect drawing:
+            PerformanceCounter.StartMeasurement(PerformanceGroup.DrawCycle);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullCounterClockwise);
 
             Root.DrawPhase(gameTime); 
 
-            BackgroundMusicPlayer.Draw((float)gameTime.ElapsedGameTime.TotalSeconds);           
+            BackgroundMusicPlayer.Draw((float)gameTime.ElapsedGameTime.TotalSeconds);
+            PerformanceCounter.EndMeasurement(PerformanceGroup.DrawCycle);
             PerformanceCounter.Instance.DrawSelf(new Vector2(Root.ScreenWidth - 300, 100));
 
+            PerformanceCounter.StartMeasurement(PerformanceGroup.SpriteBatchEnd);
             spriteBatch.End();
+            PerformanceCounter.EndMeasurement(PerformanceGroup.SpriteBatchEnd);
 
             base.Draw(gameTime);
         }
