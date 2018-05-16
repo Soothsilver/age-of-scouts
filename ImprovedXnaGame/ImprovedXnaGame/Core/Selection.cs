@@ -209,12 +209,13 @@ namespace Age.Phases
 
         public void Draw(LevelPhase levelPhase, float elapsedSeconds)
         {
+            Session session = levelPhase.Session;
            // Debug.DebugPoints.Tiles = null;
             if (SelectionInProgress)
             {
-                Vector2 CurrentStandard = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session);
+                Vector2 currentStandard = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, session);
                // Debug.DebugPoints.Tiles = DetermineTilesInRectangle(GetSelectionRectangle(StandardCoordinatesSelectionStart, CurrentStandard, levelPhase.Session), levelPhase.Session.Map);
-                Rectangle rectSelectionBox = Isomath.StandardToScreen(GetSelectionRectangle(StandardCoordinatesSelectionStart, CurrentStandard, levelPhase.Session), levelPhase.Session);
+                Rectangle rectSelectionBox = Isomath.StandardToScreen(GetSelectionRectangle(StandardCoordinatesSelectionStart, currentStandard, session), session);
                 Primitives.DrawRectangle(rectSelectionBox, Color.White);
                 Primitives.DrawRectangle(rectSelectionBox.Extend(1,1), Color.Black);
             }

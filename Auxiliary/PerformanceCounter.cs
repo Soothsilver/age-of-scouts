@@ -103,6 +103,7 @@ namespace Auxiliary
         DrawCycle,
         SpriteBatchEnd,
         Minimap,
-        UpdateCycle
+        UpdateCycle,
+        GetTilesVisibleOnScreen
     }
 }

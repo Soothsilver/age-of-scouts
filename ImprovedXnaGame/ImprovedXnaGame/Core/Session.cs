@@ -167,5 +167,17 @@ namespace Age.Core
             b.SelfConstructionInProgress = true;
             b.SelfConstructionProgress = 0.1f;
         }
+
+        public void CopyValuesFrom(Session session)
+        {
+            if (this.Map == null)
+            {
+                this.Map = new Map();
+            }
+
+            this.Map.CopyValuesFrom(session.Map);
+            this.CenterOfScreenInStandardPixels = session.CenterOfScreenInStandardPixels;
+            this.ZoomLevel = session.ZoomLevel;
+        }
     }
 }

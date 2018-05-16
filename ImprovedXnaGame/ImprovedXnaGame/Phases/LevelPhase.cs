@@ -15,6 +15,7 @@ namespace Age.Phases
     class LevelPhase : DoorPhase
     {
         public Session Session { get; set; }
+        public OtherThreads otherThreads = new OtherThreads();
         public Selection Selection = new Selection();
         public Minimap Minimap = new Minimap();
 
@@ -28,16 +29,23 @@ namespace Age.Phases
             }
         }
 
+        public override void Destruct(Game game)
+        {
+            base.Destruct(game);
+            otherThreads.EndWorking();
+        }
+
         protected override void Initialize(Game game)
         {
             BackgroundMusicPlayer.Play(BackgroundMusicPlayer.LevelMusic);
             SFX.PlaySound(SoundEffectName.QuestSound);
+            otherThreads.StartWorking();
         }
         protected override void Draw(SpriteBatch sb, Game game, float elapsedSeconds, bool topmost)
         {
             elapsedSeconds *= Settings.Instance.TimeFactor;
             Primitives.FillRectangle(Root.Screen, ColorScheme.LevelBackground);
-          //  Session.Map.Draw(Session, elapsedSeconds, Selection);
+            Session.Map.Draw(Session, elapsedSeconds, Selection);
             Selection.Draw(this, elapsedSeconds);
             DrawHUD.Draw(this, Session, topmost, elapsedSeconds);
             Cheats.Draw(this);
@@ -46,6 +54,7 @@ namespace Age.Phases
 
         protected override void Update(Game game, float elapsedSeconds)
         {
+            otherThreads.UpdateCycleBegins(this.Session);
             elapsedSeconds *= Settings.Instance.TimeFactor;
             base.Update(game, elapsedSeconds);
             MoveViewport.UpdateMove(Session, elapsedSeconds);

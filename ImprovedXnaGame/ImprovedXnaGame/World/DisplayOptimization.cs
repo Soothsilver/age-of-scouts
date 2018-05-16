@@ -12,6 +12,7 @@ namespace Age.World
     {
         internal static HashSet<Tile> GetTilesVisibleOnScreen(Session session)
         {
+            PerformanceCounter.StartMeasurement(PerformanceGroup.GetTilesVisibleOnScreen);
             HashSet<Tile> visibleTiles = new HashSet<Tile>();
             Vector2 standardTopLeft = Isomath.ScreenToStandard(Vector2.Zero, session);
             Vector2 standardTopRight = Isomath.ScreenToStandard(new Vector2(Root.ScreenWidth, 0), session);
@@ -26,6 +27,7 @@ namespace Age.World
                     visibleTiles.Add(session.Map.Tiles[tilePosition.X, tilePosition.Y]);
                 }
             }
+            PerformanceCounter.EndMeasurement(PerformanceGroup.GetTilesVisibleOnScreen);
             return visibleTiles;
         }
     }

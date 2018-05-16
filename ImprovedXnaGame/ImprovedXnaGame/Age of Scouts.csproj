@@ -149,6 +149,7 @@
     <Compile Include="Core\Selection.cs" />
     <Compile Include="Pathfinding\MovementRules.cs" />
     <Compile Include="Debug\Cheats.cs" />
+    <Compile Include="Other threads\OtherThreads.cs" />
     <Compile Include="Phases\SettingsPhase.cs" />
     <Compile Include="Phases\SFX.cs" />
     <Compile Include="Phases\ViewObjectivesPhase.cs" />

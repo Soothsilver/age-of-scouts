@@ -22,8 +22,6 @@ namespace Age.World
         {
             HashSet<Tile> visibleTiles = DisplayOptimization.GetTilesVisibleOnScreen(session);
             Tile mouseOverTile = session.Map.GetTileFromStandardCoordinates(Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, session));
-            Vector2 centerOfScreenInStandardPixels = session.CenterOfScreenInStandardPixels;
-            float zoomLevel = session.ZoomLevel;
             // Layer 1: Tiles
             this.ForEachTile((x, y, tile) =>
             {
@@ -232,6 +230,31 @@ namespace Age.World
                 for (int x = 0; x < Width; x++)
                 {
                     x_y_tile_action(x, y, Tiles[x, y]);
+                }
+            }
+        }
+
+        public void CopyValuesFrom(Map realMap)
+        {
+            if (this.Tiles == null)
+            {
+                this.Width = realMap.Width;
+                this.Height = realMap.Height;
+                this.Tiles = new Tile[realMap.Width, realMap.Height];
+                for (int y = 0; y < Height; y++)
+                {
+                    for (int x = 0; x < Width; x++)
+                    {
+                        this.Tiles[x, y] = new Tile(x, y, TextureName.IsoGrass2);
+                    }
+                }
+            }
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    this.Tiles[x, y].CopyValuesFrom(realMap.Tiles[x, y]);
                 }
             }
         }

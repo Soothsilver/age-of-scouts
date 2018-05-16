@@ -61,6 +61,17 @@ namespace Age.Core
             }
             return null;
         }
+
+        public void CopyValuesFrom(Tile realMapTile)
+        {
+            this.Fog = realMapTile.Fog;
+            this.Icon = realMapTile.Icon;
+            this.Type = realMapTile.Type;
+            this.NaturalObjectOccupant = realMapTile.NaturalObjectOccupant; // TODO not thread safe
+            this.BuildingOccupant = realMapTile.BuildingOccupant; // TODO not thread safe
+            // TODO units
+
+        }
     }
 
     internal class PathingVertex
