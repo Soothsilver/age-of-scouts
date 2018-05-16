@@ -20,7 +20,7 @@ namespace Age.World
             Vector2 standardBottomRight = Isomath.ScreenToStandard(new Vector2(Root.ScreenWidth, Root.ScreenHeight), session);
             Rectangle standardRect = new Rectangle((int)standardTopLeft.X, (int)standardTopLeft.Y, (int)(standardBottomRight.X - standardTopLeft.X), (int)(standardBottomRight.Y - standardTopLeft.Y));
 
-            foreach(IntVector tilePosition in MiaAlgorithm.GetTilesInsideRectangle(standardRect))
+            foreach(IntVector tilePosition in MiaAlgorithm.GetTilesInsideRectangle(standardRect, session.Map))
             {
                 if (tilePosition.X >= 0 && tilePosition.Y >= 0 && tilePosition.X < session.Map.Width && tilePosition.Y < session.Map.Height)
                 {

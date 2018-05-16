@@ -69,7 +69,8 @@ namespace Age.Core
             this.Type = realMapTile.Type;
             this.NaturalObjectOccupant = realMapTile.NaturalObjectOccupant; // TODO not thread safe
             this.BuildingOccupant = realMapTile.BuildingOccupant; // TODO not thread safe
-            // TODO units
+            this.Occupants.Clear();
+            this.Occupants.AddRange(realMapTile.Occupants); // TODO not thread sfae
 
         }
     }

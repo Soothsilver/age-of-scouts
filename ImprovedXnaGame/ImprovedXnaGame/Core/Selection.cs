@@ -179,7 +179,7 @@ namespace Age.Phases
 
         public static List<Tile> DetermineTilesInRectangle(Rectangle rectStandard, Map map)
         {
-            IEnumerable<IntVector> tileCoordinates = MiaAlgorithm.GetTilesInsideRectangle(rectStandard);
+            IEnumerable<IntVector> tileCoordinates = MiaAlgorithm.GetTilesInsideRectangle(rectStandard, map);
             List<Tile> values = new List<Tile>();
             foreach(IntVector coordinates in tileCoordinates) {
                 int x = coordinates.X;

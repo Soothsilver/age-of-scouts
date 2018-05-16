@@ -10,7 +10,6 @@ namespace Age.HUD
 {
     internal class Minimap
     {
-        private IntVector mouseOverStandard = new IntVector(0, 0);
         private Texture2D minimapTexture = null;
         private Color[] minimapData = null;
         private static int BASE_TERRAIN_ALPHA = 120;
@@ -21,22 +20,16 @@ namespace Age.HUD
         private static Color forest = Color.DarkGreen.Alpha(TERRAIN_ALPHA).OverlayOnto(Color.White);
         private static Color obstacle = Color.Black;
         private int cyclesUntilRedraw = 0;
+        private Rectangle rectangle;
+        private volatile bool initialized = false;
 
-        public void Draw(Session session, Rectangle rectangle)
+        public void UpdateTexture(Map map)
         {
-            Map map = session.Map;
-            int tileWidth = rectangle.Width / map.Width;
-            if (minimapTexture == null)
+            if (initialized)
             {
-                Initialize(session.Map, rectangle);
-            }
-
-            if (cyclesUntilRedraw <= 0)
-            {
+                int tileWidth = rectangle.Width / map.Width;
                 int minimapHeight = rectangle.Height;
-                int minimapWidth = rectangle.Width;
                 int tileHeight = rectangle.Height / map.Height;
-                mouseOverStandard = IntVector.Zero;
                 for (int y = 0; y < map.Height; y++)
                 {
                     for (int x = 0; x < map.Width; x++)
@@ -47,10 +40,12 @@ namespace Age.HUD
                             int screenY = (x + y) * tileHeight / 2;
                             Tile t = map.Tiles[x, y];
                             Color clr = GetMinimapColor(t);
+                            
                             if (t.Fog == FogOfWarStatus.Grey && Settings.Instance.EnableFogOfWar)
                             {
                                 clr = Color.Black.Alpha(150).OverlayOnto(clr);
                             }
+
                             for (int i = 0; i < tileWidth; i++)
                             {
                                 minimapData[(screenY + j) * minimapHeight + (screenX + i)] = clr;
@@ -58,13 +53,25 @@ namespace Age.HUD
                         }
                     }
                 }
-
-                cyclesUntilRedraw = 10;
-                minimapTexture.SetData<Color>(minimapData);
+                
+                
+                Texture2D newTexture = new Texture2D(Root.GraphicsDevice, minimapTexture.Width, minimapTexture.Height);
+                newTexture.SetData<Color>(minimapData);
+                minimapTexture = newTexture;
+                
+                
             }
-            else
+        }
+
+        public void Draw(Session session, Rectangle rectangle)
+        {
+            Map map = session.Map;
+            int tileWidth = rectangle.Width / map.Width;
+
+            
+            if (minimapTexture == null)
             {
-                cyclesUntilRedraw--;
+                Initialize(session.Map, rectangle);
             }
 
             // Blit
@@ -91,6 +98,7 @@ namespace Age.HUD
         {
             this.minimapTexture = new Texture2D(Root.GraphicsDevice, rectangle.Width, rectangle.Height);
             this.minimapData = new Color[rectangle.Width * rectangle.Height];
+            this.rectangle = rectangle;
             for (int y = 0; y < rectangle.Height; y++)
             {
                 for (int x = 0; x < rectangle.Width; x++)
@@ -98,6 +106,7 @@ namespace Age.HUD
                     minimapData[y * rectangle.Height + x] = Color.Transparent;
                 }
             }
+            this.initialized = true;
         }
 
         private static Color GetMinimapColor(Tile tile)

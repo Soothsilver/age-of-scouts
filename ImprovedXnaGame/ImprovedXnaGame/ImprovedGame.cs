@@ -34,14 +34,13 @@ namespace Age
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.graphics.SynchronizeWithVerticalRetrace = false;
-            this.IsFixedTimeStep = false;
             this.Window.Title = "Age of Scouts";
 
             // Visuals
             Root.Init(this, spriteBatch, graphics, new Resolution(1920, 1080));
             //Root.IsFullscreen = true;
             Root.GoToBorderlessWindow(new Resolution(1920,1080));
+            Root.SynchronizeWithVerticalRetrace = Settings.Instance.VSync;
 
             // Load assets
             Library.LoadTexturesIntoTextureCacheFromDirectories(Content, "Interface", "GodPowers", "Tiles", "Units\\Kid", "Buildings", "Units\\Pracant");

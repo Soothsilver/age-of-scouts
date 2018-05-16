@@ -332,6 +332,17 @@ namespace Auxiliary
         /// </summary>
         public static void ConsumeRightClick() { WasMouseRightClick = false; }
 
+        public static bool SynchronizeWithVerticalRetrace
+        {
+            get { return inGame.IsFixedTimeStep; }
+            set
+            {
+                inGame.IsFixedTimeStep = value;
+                inGraphics.SynchronizeWithVerticalRetrace = value;
+                inGraphics.ApplyChanges();
+            }
+        }
+
 
         /// <summary>
         /// Binds this Root class to the graphics device from the game, and also sets the resolution and fullscreen/windowed mode. You must call Root.Init() before using any other Auxiliary functions.
@@ -446,6 +457,7 @@ namespace Auxiliary
                 return 1;
             }
         }
+        
 
         /// <summary>
         /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.

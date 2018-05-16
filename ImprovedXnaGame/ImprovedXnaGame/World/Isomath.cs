@@ -79,7 +79,6 @@ namespace Age.World
         {
             return new IntVector(x / 64 - 1 , y / 64 - 1);
         }
-
         public static Vector2 StandardToScreen(Vector2 standard, IScreenInformation session)
         {
             Vector2 topLeftOfScreenInStdPixels = session.CenterOfScreenInStandardPixels * session.ZoomLevel - new Vector2(Root.ScreenWidth / 2, Root.ScreenHeight / 2);
@@ -107,6 +106,18 @@ namespace Age.World
             int mapx = (int)Math.Floor(((float)x / Tile.HALF_WIDTH + (float)y / Tile.HALF_HEIGHT) / 2);
             int mapy = (int)Math.Floor(((float)y / Tile.HALF_HEIGHT - ((float)x / Tile.HALF_WIDTH)) / 2);
             return new IntVector(mapx, mapy);
+        }
+
+        public static Rectangle TileOffsetToScreen(IntVector ubertop, int x, int y, int halfTileWidth, int halfTileHeight)
+        {
+            int actualX = (x - y) * halfTileWidth;
+            int actualY = (x + y) * halfTileHeight;
+
+            return new Rectangle(
+                ubertop.X + actualX - halfTileWidth,
+                ubertop.Y + actualY,
+                2 * halfTileWidth,
+                2 * halfTileHeight);
         }
     }
 }

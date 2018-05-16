@@ -22,54 +22,71 @@ namespace Age.World
         {
             HashSet<Tile> visibleTiles = DisplayOptimization.GetTilesVisibleOnScreen(session);
             Tile mouseOverTile = session.Map.GetTileFromStandardCoordinates(Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, session));
+            if (mouseOverTile != null)
+            {
+                UI.MajorTooltip = mouseOverTile.GetTooltip();
+            }
             // Layer 1: Tiles
-            this.ForEachTile((x, y, tile) =>
+            IntVector ubertop = (IntVector)Isomath.StandardToScreen(Vector2.Zero, session);
+            int halfTileWidth = (int) (Tile.HALF_WIDTH * session.ZoomLevel);
+            int halfTileHeight = (int)(Tile.HALF_HEIGHT * session.ZoomLevel);
+            for (int y = 0; y < Height; y++)
             {
-                if (!visibleTiles.Contains(tile))
+                for (int x = 0; x < Width; x++)
                 {
-                    return;
-                }
-                Rectangle rectTile = Isomath.TileToScreen(tile, session);
-                Primitives.DrawImage(Library.Get(tile.Icon), rectTile);
-                if (Debug.DebugPoints.Tiles != null && Debug.DebugPoints.Tiles.Contains(tile))
-                {
-                    Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Yellow.Alpha(200));
-                }          
-               
-            });
-            this.ForEachTile((x, y, tile) =>
-            {
-                Rectangle rectTile = Isomath.TileToScreen(tile, session);
-
-                if (Settings.Instance.EnableFogOfWar)
-                {                    
-                    if (tile.Fog == FogOfWarStatus.Black)
+                    Tile tile = Tiles[x, y];
+                    if (!visibleTiles.Contains(tile))
                     {
-                        Primitives.DrawImage(Library.Get(TextureName.FogOfWar), rectTile);
+                        continue;
+                    }
+
+                    Rectangle rectTile = Isomath.TileOffsetToScreen(ubertop, x, y, halfTileWidth, halfTileHeight);
+                    Primitives.DrawImage(Library.Get(tile.Icon), rectTile);
+                    if (Debug.DebugPoints.Tiles != null && Debug.DebugPoints.Tiles.Contains(tile))
+                    {
+                        Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Yellow.Alpha(200));
                     }
                 }
-            });
-            this.ForEachTile((x, y, tile) =>
+            }
+            // Layer 1b: Fog of War (black)   
+            for (int y = 0; y < Height; y++)
             {
-                Rectangle rectTile = Isomath.TileToScreen(tile, session);
-
-                if (Settings.Instance.EnableFogOfWar)
+                for (int x = 0; x < Width; x++)
                 {
-                    if (tile.Fog == FogOfWarStatus.Grey)
+                    Tile tile = Tiles[x, y];
+                    Rectangle rectTile = Isomath.TileOffsetToScreen(ubertop, x, y, halfTileWidth, halfTileHeight);
+                    if (Settings.Instance.EnableFogOfWar)
                     {
-                        Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Black.Alpha(150));
+                        if (tile.Fog == FogOfWarStatus.Black)
+                        {
+                            Primitives.DrawImage(Library.Get(TextureName.FogOfWar), rectTile);
+                        }
                     }
                 }
-            });
-
-
-            // Layer 1b: Projectiles' shadow
+            }
+            // Layer 1c: Fog of War (grey)
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    Tile tile = Tiles[x, y];
+                    Rectangle rectTile = Isomath.TileOffsetToScreen(ubertop, x, y, halfTileWidth, halfTileHeight);
+                    if (Settings.Instance.EnableFogOfWar)
+                    {
+                        if (tile.Fog == FogOfWarStatus.Grey)
+                        {
+                            Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Black.Alpha(150));
+                        }
+                    }
+                }
+            }
+            // Layer 1d: Projectiles' shadow
             foreach (Projectile p in session.Projectiles)
             {
                 p.DrawShadow(session);
             }
 
-            // Layer 1c: Pathing
+            // Layer 1e: Pathing
             foreach (var unit in session.AllUnits)
             {
                 Rectangle rectTile = Isomath.TileToScreen(unit.Occupies, session);
@@ -96,69 +113,85 @@ namespace Age.World
             }
 
             // Layer 2: Units and structures
-            this.ForEachTile((x, y, tile) =>
+            for (int y = 0; y < Height; y++)
             {
-                Rectangle rectTile = Isomath.TileToScreen(tile, session);
-                Tooltip tooltip = null;
-                if (!Settings.Instance.EnableFogOfWar || tile.Fog == FogOfWarStatus.Clear)
+                for (int x = 0; x < Width; x++)
                 {
-                    foreach (Corpse corpse in tile.BrokenOccupants)
-                    {
-                        corpse.Draw(elapsedSeconds, session);
-                    }
-                    tile.BrokenOccupants.RemoveAll(crps => crps.Lost);
-                    foreach (Unit unit in tile.Occupants)
-                    {
-                        Texture2D icon = unit.AnimationTick(elapsedSeconds);
-                        Rectangle rectUnit = Isomath.StandardPersonToScreen(unit.FeetStdPosition, unit.Sprite.Sprite.Width, unit.Sprite.Sprite.Height, session);
-                        Primitives.DrawImage(icon, rectUnit);
-                        Rectangle rewHitbox = Isomath.StandardToScreen(unit.Hitbox, session);
-                        if (selection.SelectedUnits.Contains(unit))
-                        {
-                            Primitives.DrawRectangle(rewHitbox.Extend(1, 1), unit.Controller.StrongColor);
-                        }
-                        if (unit.HP < unit.MaxHP)
-                        {
-                            Primitives.DrawHealthbar(new Rectangle(rewHitbox.X, rewHitbox.Y - 5, rewHitbox.Width, 5), unit.Controller.StrongColor, unit.HP, unit.MaxHP);
-                        }
-                        if (Root.IsMouseOver(rewHitbox))
-                        {
-                            tooltip = unit.GetTooltip();
-                        }
-                    }
-                }
-                if (Settings.Instance.EnableFogOfWar && tile.Fog == FogOfWarStatus.Black)
-                {
-                    return;
-                }
 
-                if (Root.IsMouseOver(rectTile) && tooltip == null)
-                {
-                    UI.MajorTooltip = tile.GetTooltip();
-                }
-                if (tile.NaturalObjectOccupant != null)
-                {
-                    Rectangle rectObject = Isomath.StandardPersonToScreen(tile.NaturalObjectOccupant.FeetStdPosition, tile.NaturalObjectOccupant.PixelWidth, tile.NaturalObjectOccupant.PixelHeight, session);
-                    Primitives.DrawImage(Library.Get(tile.NaturalObjectOccupant.Icon), new Rectangle(rectObject.X, rectObject.Y, rectObject.Width, rectObject.Height));
-                    if (selection.SelectedNaturalObject == tile.NaturalObjectOccupant)
+                    Tile tile = Tiles[x, y];
+                    Rectangle rectTile = Isomath.TileOffsetToScreen(ubertop, x, y, halfTileWidth, halfTileHeight);
+                    if (!Settings.Instance.EnableFogOfWar || tile.Fog == FogOfWarStatus.Clear)
                     {
-                        Primitives.DrawRectangle(rectObject.Extend(1, 1), Color.White);
+                        if (tile.BrokenOccupants.Count > 0)
+                        {
+                            foreach (Corpse corpse in tile.BrokenOccupants)
+                            {
+                                corpse.Draw(elapsedSeconds, session);
+                            }
+
+                            tile.BrokenOccupants.RemoveAll(crps => crps.Lost);
+                        }
+
+                        foreach (Unit unit in tile.Occupants)
+                        {
+                            Texture2D icon = unit.AnimationTick(elapsedSeconds);
+                            Rectangle rectUnit = Isomath.StandardPersonToScreen(unit.FeetStdPosition,
+                                unit.Sprite.Sprite.Width, unit.Sprite.Sprite.Height, session);
+                            Primitives.DrawImage(icon, rectUnit);
+                            Rectangle rewHitbox = Isomath.StandardToScreen(unit.Hitbox, session);
+                            if (selection.SelectedUnits.Contains(unit))
+                            {
+                                Primitives.DrawRectangle(rewHitbox.Extend(1, 1), unit.Controller.StrongColor);
+                            }
+
+                            if (unit.HP < unit.MaxHP)
+                            {
+                                Primitives.DrawHealthbar(
+                                    new Rectangle(rewHitbox.X, rewHitbox.Y - 5, rewHitbox.Width, 5),
+                                    unit.Controller.StrongColor, unit.HP, unit.MaxHP);
+                            }
+
+                            if (Root.IsMouseOver(rewHitbox))
+                            {
+                                UI.MajorTooltip = unit.GetTooltip();
+                            }
+                        }
+                    }
+
+                    if (Settings.Instance.EnableFogOfWar && tile.Fog == FogOfWarStatus.Black)
+                    {
+                        continue;
+                    }
+
+
+                    if (tile.NaturalObjectOccupant != null)
+                    {
+                        Rectangle rectObject = Isomath.StandardPersonToScreen(
+                            tile.NaturalObjectOccupant.FeetStdPosition, tile.NaturalObjectOccupant.PixelWidth,
+                            tile.NaturalObjectOccupant.PixelHeight, session);
+                        Primitives.DrawImage(Library.Get(tile.NaturalObjectOccupant.Icon),
+                            new Rectangle(rectObject.X, rectObject.Y, rectObject.Width, rectObject.Height));
+                        if (selection.SelectedNaturalObject == tile.NaturalObjectOccupant)
+                        {
+                            Primitives.DrawRectangle(rectObject.Extend(1, 1), Color.White);
+                        }
+                    }
+
+                    if (tile.BuildingOccupant != null && tile.BuildingOccupant.PrimaryTile == tile)
+                    {
+                        tile.BuildingOccupant.Draw(session, selection);
+                    }
+
+                    if (tile == mouseOverTile)
+                    {
                     }
                 }
-                if (tile.BuildingOccupant != null && tile.BuildingOccupant.PrimaryTile == tile)
-                {
-                    tile.BuildingOccupant.Draw(session, selection);
-                }
-                if (tile == mouseOverTile && selection.SelectedBuildingToPlace != null)
-                {
-                    selection.SelectedBuildingToPlace.DrawShadow(session, session, tile, session.PlayerTroop.LightColor);
-                }
-            });
+            }
 
             if (selection.SelectedBuildingToPlace != null && mouseOverTile != null)
             {
-                //bool placeable = (selection.SelectedBuildingToPlace.CanBePlacedOn(mouseOverTile));
-                // TODO draw shadow
+                selection.SelectedBuildingToPlace?.DrawShadow(session, session, mouseOverTile,
+                    session.PlayerTroop.LightColor);
             }
 
             // Layer 3: Projectiles
@@ -168,7 +201,7 @@ namespace Age.World
             }
 
             // Layer 3a: Rally points
-            if( selection.SelectedBuilding != null)
+            if (selection.SelectedBuilding != null)
             {
                 Building b = selection.SelectedBuilding;
                 if (b.RallyPointInStandardCoordinates != Vector2.Zero)
@@ -193,9 +226,8 @@ namespace Age.World
                     Primitives.DrawSingleLineText("Feet standard: " + unit.FeetStdPosition + "\nTile: " + unit.Occupies.ToString() + "\nTile standard: " + Isomath.TileToStandard(unit.Occupies.X, unit.Occupies.Y),
                         new Vector2(50, 300), Color.White, Library.FontTinyBold);
                 }
+                Debug.DebugPoints.Coordinates.Clear();
             }
-            Debug.DebugPoints.Coordinates.Clear();
-
         }
 
         internal Tile GetTileFromTileCoordinates(int x, int y)

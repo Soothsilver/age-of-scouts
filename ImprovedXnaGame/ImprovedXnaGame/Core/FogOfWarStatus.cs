@@ -41,7 +41,7 @@ namespace Age.Core
                 {
                     x += dx; y += dy;
                     if ((new Vector2(x, y) - source).LengthSquared() >= pixelRange * pixelRange) break;
-                    if (createDebugPoints)
+                    if (createDebugPoints && Settings.Instance.ShowDebugPoints)
                     {
                         Debug.DebugPoints.Coordinates.Add(new Vector2(x, y));
                     }

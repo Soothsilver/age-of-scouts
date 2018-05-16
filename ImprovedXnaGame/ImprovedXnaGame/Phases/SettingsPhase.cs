@@ -24,6 +24,15 @@ namespace Age.Phases
                     Root.GoToNormalWindow(Settings.Instance.Resolution);
                 });
 
+            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 190, 580, 40), topmost, "Synchronizovat se zatemňovacím impulsem (vsync)", () =>
+            {
+                Root.SynchronizeWithVerticalRetrace = true;
+            });
+            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 230, 300, 40), topmost, "Zakázat vsync", () =>
+            {
+                Root.SynchronizeWithVerticalRetrace = false;
+            });
+
             UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Bottom - 50, 300, 40), topmost, "Zavřít", Root.PopFromPhase);
 
             base.Draw(sb, game, elapsedSeconds, topmost);

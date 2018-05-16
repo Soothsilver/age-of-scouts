@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.Xna.Framework;
 
 namespace Auxiliary
@@ -11,6 +12,8 @@ namespace Auxiliary
         public static PerformanceCounter Instance = new PerformanceCounter();
         public int FPSSoFar;
         public int UPSSoFar;
+        public int OPSSoFar; 
+        public int OPS;
         public int FPS;
         public int UPS;
         private string upsDataSoFar;
@@ -18,6 +21,7 @@ namespace Auxiliary
         private List<PerformanceGroup> allPerformanceGroups = new List<PerformanceGroup>();
         private Dictionary<PerformanceGroup, Stopwatch> watches = new Dictionary<PerformanceGroup, Stopwatch>();
         private Dictionary<PerformanceGroup, long> total = new Dictionary<PerformanceGroup, long>();
+        private Dictionary<PerformanceGroup, long> maximum = new Dictionary<PerformanceGroup, long>();
 
         private PerformanceCounter()
         {
@@ -26,11 +30,17 @@ namespace Auxiliary
                 allPerformanceGroups.Add(performanceGroup);
                 watches.Add(performanceGroup, new Stopwatch());
                 total.Add(performanceGroup, 0);
+                maximum.Add(performanceGroup, 0);
             }
         }
         public static void AddUPSData(string line)
         {
             Instance.upsDataSoFar += line;
+        }
+
+        public static void OtherCycleBegins()
+        {
+            Interlocked.Increment(ref Instance.OPSSoFar);
         }
 
         public static void StartMeasurement(PerformanceGroup group)
@@ -53,21 +63,30 @@ namespace Auxiliary
             if (changePerformanceGroupDataDisplayNow)
             {
                 performanceGroupData = "";
-                foreach (var kvp in this.total)
+                foreach (var key in this.allPerformanceGroups)
                 {
-                    performanceGroupData += kvp.Key + ": " + kvp.Value + "\n";
+                    performanceGroupData += key + ": " + total[key] + " (max " + maximum[key] + ")\n";
                 }
 
-                changePerformanceGroupDataDisplayNow = false;
+                changePerformanceGroupDataDisplayNow = true;
             }
 
             foreach (var key in this.allPerformanceGroups)
             {
+                if (this.total[key] > this.maximum[key])
+                {
+                    this.maximum[key] = this.total[key];
+                }
+
+                if (Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F6))
+                {
+                    this.maximum[key] = 0;
+                }
                 this.total[key] = 0;
             }
 
             Primitives.DrawSingleLineText(fpsUpsString + "\n" + upsDataSoFar + "\n" + fpsDataSoFar + "\n" + performanceGroupData,
-                new Vector2(where.X + 2 ,where.Y - 2 ), Color.Gray, Library.FontTinyBold);
+                new Vector2(where.X + 1 ,where.Y - 1 ), Color.Black, Library.FontTinyBold);
             Primitives.DrawSingleLineText(fpsUpsString + "\n" + upsDataSoFar + "\n" + fpsDataSoFar + "\n" + performanceGroupData,
                 where, Color.White, Library.FontTinyBold);
         }
@@ -82,13 +101,15 @@ namespace Auxiliary
             UPSSoFar++;
             if (DateTime.Now > SecondElapsesIn)
             {
-                UPS = UPSSoFar * 2;
-                FPS = FPSSoFar * 2;
+                UPS = UPSSoFar;
+                FPS = FPSSoFar;
+                OPS = OPSSoFar;
                 UPSSoFar = 0;
                 FPSSoFar = 0;
-                fpsUpsString = "FPS: "+ FPS +"; UPS: "+ UPS;
+                OPSSoFar = 0;
+                fpsUpsString = "FPS: "+ FPS +"; UPS: "+ UPS + "; OPS: " + OPS;
                 changePerformanceGroupDataDisplayNow = true;
-                SecondElapsesIn = DateTime.Now.AddSeconds(0.5f);
+                SecondElapsesIn = DateTime.Now.AddSeconds(1);
             }
         }
 
@@ -104,6 +125,7 @@ namespace Auxiliary
         SpriteBatchEnd,
         Minimap,
         UpdateCycle,
-        GetTilesVisibleOnScreen
+        GetTilesVisibleOnScreen,
+        CopySession
     }
 }

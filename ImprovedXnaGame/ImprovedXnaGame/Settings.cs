@@ -24,6 +24,7 @@ namespace Age
         public bool EnableFogOfWar = true;
 
         public bool ShowDebugPoints = false;
+        public bool VSync = true;
 
         /// <summary>
         /// Shows FPS, UPS (updates-per-second) and other indicators that may point to a performance problem.

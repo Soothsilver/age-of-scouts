@@ -10,12 +10,13 @@ namespace Age
         /// </summary>
         static void Main(string[] args)
         {
+           
 #if DEBUG
-            using (ImprovedGame game = new ImprovedGame())
-            {
-                game.Run();
-            }
-#else  
+                using (ImprovedGame game = new ImprovedGame())
+                {
+                    game.Run();
+                }
+#else
             using (ImprovedGame game = new ImprovedGame())
             {
                 try
@@ -24,7 +25,8 @@ namespace Age
                 }
                 catch (Exception ex)
                 {
-                    string msg = "An exception has occured.\n\nPlease forward this information to the application programmer.\n\n" +
+                    string msg =
+ "An exception has occured.\n\nPlease forward this information to the application programmer.\n\n" +
                     ex.ToString() + Environment.NewLine + Environment.NewLine + ex.StackTrace.ToString();
                     string tempfile = System.IO.Path.GetTempFileName();
                     System.IO.File.WriteAllText(tempfile, msg);
@@ -32,8 +34,10 @@ namespace Age
                 }
             }
 #endif
+            
         }
     }
 #endif
+
 }
 

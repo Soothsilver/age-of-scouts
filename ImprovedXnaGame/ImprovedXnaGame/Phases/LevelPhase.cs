@@ -15,12 +15,13 @@ namespace Age.Phases
     class LevelPhase : DoorPhase
     {
         public Session Session { get; set; }
-        public OtherThreads otherThreads = new OtherThreads();
+        public OtherThreads otherThreads;
         public Selection Selection = new Selection();
         public Minimap Minimap = new Minimap();
 
         public LevelPhase(Session session)
         {
+            otherThreads = new OtherThreads(this);
             Session = session;
             var unit = session.AllUnits.FirstOrDefault(unt => unt.Controller == session.PlayerTroop);
             if (unit != null)
@@ -39,7 +40,7 @@ namespace Age.Phases
         {
             BackgroundMusicPlayer.Play(BackgroundMusicPlayer.LevelMusic);
             SFX.PlaySound(SoundEffectName.QuestSound);
-            otherThreads.StartWorking();
+            otherThreads.StartWorking(this.Session);
         }
         protected override void Draw(SpriteBatch sb, Game game, float elapsedSeconds, bool topmost)
         {

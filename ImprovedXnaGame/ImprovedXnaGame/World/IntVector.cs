@@ -40,6 +40,11 @@ namespace Age.World
                    Y == vector.Y;
         }
 
+        public static explicit operator IntVector(Vector2 vector)
+        {
+            return new IntVector((int) vector.X, (int)vector.Y);
+        }
+
         public override int GetHashCode()
         {
             var hashCode = 1861411795;

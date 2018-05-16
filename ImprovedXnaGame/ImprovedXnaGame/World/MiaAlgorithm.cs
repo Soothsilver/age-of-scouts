@@ -9,7 +9,7 @@ namespace Age.World
 {
     static class MiaAlgorithm
     {
-        public static LinkedList<IntVector> GetTilesInsideRectangle(Rectangle standardCoordinates)
+        public static LinkedList<IntVector> GetTilesInsideRectangle(Rectangle standardCoordinates, Map map)
         {
             LinkedList<IntVector> values = new LinkedList<IntVector>();
             IntVector topLeftTile = Isomath.StandardToTile(standardCoordinates.X, standardCoordinates.Y);
@@ -44,23 +44,35 @@ namespace Age.World
                             tile == bottomLeftTile ||
                             tile == bottomRightTile)
                         {
-                            values.AddLast(tile);
+                            AddAsLast(values, tile, map);
                         }
                         else if (maxT1T3 < t && t < minT2T4 && maxS1S2 < s && s < minS3S4)
                         {
-                            values.AddLast(tile);
+                            AddAsLast(values, tile, map);
                         }
                         else if (IsTileCornerInStandardRectangle(tile.X, tile.Y, standardCoordinates)
                             || IsTileCornerInStandardRectangle(tile.X + 1, tile.Y, standardCoordinates)
                             || IsTileCornerInStandardRectangle(tile.X, tile.Y + 1, standardCoordinates)
                             || IsTileCornerInStandardRectangle(tile.X +1 , tile.Y + 1, standardCoordinates))
                         {
-                            values.AddLast(tile);
+                            AddAsLast(values, tile, map);
                         }
                     }
                 }
             }
             return values;
+        }
+
+        private static void AddAsLast(LinkedList<IntVector> values, IntVector tile, Map map)
+        {
+            if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Width || tile.Y >= map.Height)
+            {
+                return;
+            }
+            else
+            {
+                values.AddLast(tile);
+            }
         }
 
         private static bool IsTileCornerInStandardRectangle(int tileX, int tileY, Rectangle standardCoordinates)
