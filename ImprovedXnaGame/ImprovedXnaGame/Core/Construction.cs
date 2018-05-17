@@ -35,8 +35,7 @@ namespace Age.Core
             building.Session.SpawnUnit(trainee);
             if (building.RallyPointInStandardCoordinates != Vector2.Zero)
             {
-                trainee.Activity.Reset();
-                trainee.Activity.MovementTarget = building.RallyPointInStandardCoordinates;
+                trainee.Strategy.ResetTo(building.RallyPointInStandardCoordinates);
             }
             return true;
         }

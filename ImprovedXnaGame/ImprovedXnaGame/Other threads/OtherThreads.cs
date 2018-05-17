@@ -56,7 +56,7 @@ namespace Age.Phases
                 }
             }
             int processorCount = Environment.ProcessorCount;
-            int targetProcessor = 10;
+            int targetProcessor = 2;
             if (newThread != null)
             {
                 newThread.IdealProcessor = targetProcessor;

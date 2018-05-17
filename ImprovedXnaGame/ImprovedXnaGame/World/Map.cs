@@ -99,10 +99,10 @@ namespace Age.World
                 {
                     Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Red.Alpha(150));
                 }
-                if (unit.Activity.HasAGoal && unit.Activity.PathingCoordinates != null && selection.SelectedUnits.Contains(unit))
+                if (unit.Tactics.PathingCoordinates != null && selection.SelectedUnits.Contains(unit))
                 {
                     Vector2 previousWaypoint = unit.FeetStdPosition;
-                    foreach (var waypoint in unit.Activity.PathingCoordinates)
+                    foreach (var waypoint in unit.Tactics.PathingCoordinates)
                     {
                         Vector2 screenFrom = Isomath.StandardToScreen(previousWaypoint, session);
                         Vector2 screenTo = Isomath.StandardToScreen(waypoint, session);
@@ -113,6 +113,14 @@ namespace Age.World
             }
 
             // Layer 2: Units and structures
+            // TODO Change the rhythm here so that tiles are drawn in this order:
+            // 149
+            // 238
+            // 567
+            // instead of
+            // 123
+            // 456
+            // 789
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -289,6 +297,23 @@ namespace Age.World
                     this.Tiles[x, y].CopyValuesFrom(realMap.Tiles[x, y]);
                 }
             }
+        }
+
+        public void Update(float elapsedSeconds)
+        {
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    Tile tile = Tiles[x, y];
+                    if (tile.Fog == FogOfWarStatus.Clear && tile.SecondsUntilFogStatusCanChange <= 0)
+                    {
+                        tile.Fog = FogOfWarStatus.Grey;
+                    }
+                    tile.SecondsUntilFogStatusCanChange -= elapsedSeconds;
+                }
+            };
         }
     }
 }

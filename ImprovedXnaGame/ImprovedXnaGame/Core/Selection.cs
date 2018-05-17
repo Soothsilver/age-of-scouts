@@ -11,14 +11,17 @@ namespace Age.Phases
 {
     class Selection
     {
+        // Things to do with primacy
+        public LeaderPowerInstance SelectedGodPower;
+        public BuildingTemplate SelectedBuildingToPlace;
+
+        // Actual selection
         public List<Unit> SelectedUnits = new List<Unit>();
+        public Building SelectedBuilding;
+        public NaturalObject SelectedNaturalObject;
 
         public bool SelectionInProgress = false;
         public Vector2 StandardCoordinatesSelectionStart = Vector2.Zero;
-        public LeaderPowerInstance SelectedGodPower;
-        public BuildingTemplate SelectedBuildingToPlace;
-        public Building SelectedBuilding;
-        public NaturalObject SelectedNaturalObject;
 
         public bool IsSomethingSelected => SelectedNaturalObject != null || SelectedBuilding != null || SelectedUnits.Count > 0;
 
@@ -29,6 +32,7 @@ namespace Age.Phases
                 );
             if (UI.MouseOverOnClickAction != null)
             {
+                // Buttons always have priority.
                 return;
             }
             if (SelectedBuildingToPlace != null)
@@ -39,7 +43,8 @@ namespace Age.Phases
                     {
                         if (SelectedBuildingToPlace.ApplyCost(levelPhase.Session.PlayerTroop))
                         {
-                            levelPhase.Session.SpawnBuildingAsConstruction(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop, mouseOverTile);
+                            Building construction = levelPhase.Session.SpawnBuildingAsConstruction(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop, mouseOverTile);
+                            SelectedUnits.ForEach(unit => unit.Strategy.ResetTo(construction));
                             if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift))
                             {
                                 SelectedBuildingToPlace = null;
@@ -62,41 +67,17 @@ namespace Age.Phases
                     SelectedBuildingToPlace = null;
                 }
             }
-            else if (SelectedGodPower == null)
-            {
-                if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                {
-                    if (Root.Mouse_OldState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
-                    {
-                        SelectionInProgress = true;
-                        StandardCoordinatesSelectionStart = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session);
-                    }
-                }
-                else if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
-                {
-                    if (Root.Mouse_OldState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && Root.WasMouseLeftClick)
-                    {
-                        SelectionInProgress = false;
-                        if (UI.MouseOverOnClickAction == null)
-                        {
-                            Vector2 CurrentStandard = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session);
-
-                            Rectangle rectSelectionBox = GetSelectionRectangle(StandardCoordinatesSelectionStart, CurrentStandard, levelPhase.Session);
-                            SelectThingsInRectangle(levelPhase, rectSelectionBox);
-                        }
-                    }
-                }
-            }
-            else
+            else if (SelectedGodPower != null)
             {
                 if (Root.WasMouseRightClick)
                 {
                     Root.WasMouseRightClick = false;
                     SelectedGodPower = null;
                 }
-                if (Root.WasMouseLeftClick)
+                else if (Root.WasMouseLeftClick)
                 {
-                    Vector2 where = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session);
+                    Vector2 where = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y,
+                        levelPhase.Session);
                     Tile tile = levelPhase.Session.Map.GetTileFromStandardCoordinates(where);
                     if (tile != null)
                     {
@@ -104,6 +85,35 @@ namespace Age.Phases
                     }
                     SelectedGodPower = null;
                     Root.WasMouseLeftClick = false;
+                }
+            }
+            else
+            {
+
+                if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                {
+                    if (Root.Mouse_OldState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
+                    {
+                        SelectionInProgress = true;
+                        StandardCoordinatesSelectionStart = Isomath.ScreenToStandard(Root.Mouse_NewState.X,
+                            Root.Mouse_NewState.Y, levelPhase.Session);
+                    }
+                }
+                else if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
+                {
+                    if (Root.Mouse_OldState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
+                        Root.WasMouseLeftClick)
+                    {
+                        SelectionInProgress = false;
+                        if (UI.MouseOverOnClickAction == null)
+                        {
+                            Vector2 currentStandard = Isomath.ScreenToStandard(Root.Mouse_NewState.X,
+                                Root.Mouse_NewState.Y, levelPhase.Session);
+                            Rectangle rectSelectionBox = GetSelectionRectangle(StandardCoordinatesSelectionStart,
+                                currentStandard, levelPhase.Session);
+                            SelectThingsInRectangle(levelPhase, rectSelectionBox);
+                        }
+                    }
                 }
             }
         }

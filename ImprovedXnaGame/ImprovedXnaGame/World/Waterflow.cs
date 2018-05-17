@@ -9,14 +9,14 @@ namespace Age.World
 {
     class Waterflow
     {
-        static float SecondsUntilNextChange = 0.2f;
-        static TextureName[] WaterTextures = new[] { TextureName.IsoWater1, TextureName.IsoWater2, TextureName.IsoWater3 }; 
+        private static float secondsUntilNextChange = 0.2f;
+        private static TextureName[] waterTextures = new[] { TextureName.IsoWater1, TextureName.IsoWater2, TextureName.IsoWater3 }; 
         internal static void Flow(float elapsedSeconds, Map map)
         {
-            SecondsUntilNextChange -= elapsedSeconds;
-            if (SecondsUntilNextChange <= 0)
+            secondsUntilNextChange -= elapsedSeconds;
+            if (secondsUntilNextChange <= 0)
             {
-                SecondsUntilNextChange += 0.2f;
+                secondsUntilNextChange += 0.2f;
                 for (int y = map.Height - 1; y >= 0; y--)
                 {
                     for (int x = 0; x < map.Width; x++)
@@ -31,7 +31,7 @@ namespace Age.World
                             }
                             else
                             {
-                                tile.Icon = WaterTextures[R.Next(WaterTextures.Length)];
+                                tile.Icon = waterTextures[R.Next(waterTextures.Length)];
                             }
                         }
                     }

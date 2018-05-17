@@ -14,14 +14,14 @@ namespace Age.Phases
 {
     class LevelPhase : DoorPhase
     {
-        public Session Session { get; set; }
-        public OtherThreads otherThreads;
+        public Session Session;
+        public OtherThreads OtherThreads;
         public Selection Selection = new Selection();
         public Minimap Minimap = new Minimap();
 
         public LevelPhase(Session session)
         {
-            otherThreads = new OtherThreads(this);
+            OtherThreads = new OtherThreads(this);
             Session = session;
             var unit = session.AllUnits.FirstOrDefault(unt => unt.Controller == session.PlayerTroop);
             if (unit != null)
@@ -33,14 +33,14 @@ namespace Age.Phases
         public override void Destruct(Game game)
         {
             base.Destruct(game);
-            otherThreads.EndWorking();
+            OtherThreads.EndWorking();
         }
 
         protected override void Initialize(Game game)
         {
             BackgroundMusicPlayer.Play(BackgroundMusicPlayer.LevelMusic);
             SFX.PlaySound(SoundEffectName.QuestSound);
-            otherThreads.StartWorking(this.Session);
+            OtherThreads.StartWorking(this.Session);
         }
         protected override void Draw(SpriteBatch sb, Game game, float elapsedSeconds, bool topmost)
         {
@@ -55,54 +55,16 @@ namespace Age.Phases
 
         protected override void Update(Game game, float elapsedSeconds)
         {
-            otherThreads.UpdateCycleBegins(this.Session);
+            OtherThreads.UpdateCycleBegins(this.Session);
             elapsedSeconds *= Settings.Instance.TimeFactor;
             base.Update(game, elapsedSeconds);
-            MoveViewport.UpdateMove(Session, elapsedSeconds);
 
+            MoveViewport.UpdateMove(Session, elapsedSeconds);
             Waterflow.Flow(elapsedSeconds, Session.Map);
-            Session.Map.ForEachTile((x, y, tile) =>
-            {
-                if (tile.Fog == FogOfWarStatus.Clear && tile.SecondsUntilFogStatusCanChange <= 0)
-                {
-                    tile.Fog = FogOfWarStatus.Grey;
-                }
-                tile.SecondsUntilFogStatusCanChange -= elapsedSeconds;
-            });
+            Session.Update(elapsedSeconds);
             PerformanceCounter.AddUPSData(Session.Projectiles.Count + " projectiles; " + Session.AllUnits.Count + " units; " + (Session.Map.Width * Session.Map.Height) + " tiles");
-            foreach(var unit in Session.AllUnits.Where(unt => unt.Controller == Session.PlayerTroop))
-            {
-                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Session.Map, Selection.SelectedUnits.Contains(unit));
-            }
-            foreach (var unit in Session.AllBuildings.Where(unt => unt.Controller == Session.PlayerTroop))
-            {
-                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 7, Session.Map, createDebugPoints: false, fromAir: true);
-            }
-            Session.Revealers.ForEach(revealer => revealer.Update(Session.Map));
-            foreach (var unit in Session.AllUnits)
-            {
-                unit.Activity.AttackingInProgress = false;
-                unit.Autoaction(Session, elapsedSeconds);
-                unit.Movement(Session, elapsedSeconds);
-                if (unit.Controller.Convertible)
-                {
-                    foreach(var otherUnit in Session.AllUnits.Where(unt => unt.Controller == Session.PlayerTroop))
-                    {
-                        if (unit.FeetStdPosition.WithinDistance(otherUnit.FeetStdPosition, 3 * Tile.HEIGHT))
-                        {
-                            unit.SwitchControllerTo(otherUnit.Controller);
-                            SFX.PlaySoundUnlessPlaying(SoundEffectName.Harp);
-                        }
-                    }
-                }
-            }
-            foreach(var projectile in Session.Projectiles)
-            {
-                projectile.Update(this.Session, elapsedSeconds);
-            }
-            Session.AllBuildings.ForEach(build => build.Update(elapsedSeconds));
-            Session.AllUnits.RemoveAll(unt => unt.Broken);
-            Session.Projectiles.RemoveAll(pr => pr.Lost);
+          
+            // Some tutorial-level objectives require knowing about selection, so this is here for now, rather than in Session:
             foreach (var objective in Session.Objectives)
             {
                 if (objective.Visible && !objective.Complete)
@@ -129,17 +91,27 @@ namespace Age.Phases
             }
 
             // Order matters, unfortunately:
+
+            // First, test selection.
             Selection.Update(this, elapsedSeconds);
+            // Next, if you are not selecting, you may click on the minimap:
             Minimap.Update(Selection, Session);
+            // Next, if right-click wasn't already used, perform it to change the strategy of selected units or do something else with selection:
             if (Root.WasMouseRightClick)
             {
                 Vector2 standardTarget = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, Session);
                 Session.RightClickOn(Selection, standardTarget);
             }
+
             Cheats.Update(this);
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape))
             {
                 Root.PushPhase(new IngameMenuPhase(this));
+            }
+
+            if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F12))
+            {
+                Root.PushPhase(new SettingsPhase());
             }
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Age.Animation;
+using Age.Core.Activities;
 using Age.HUD;
 using Age.Pathfinding;
 using Auxiliary;
@@ -16,7 +17,9 @@ namespace Age.Core
         public SpriteInstance Sprite;
         public UnitTemplate UnitTemplate;
         public override string Name { get; }
-        public Activity Activity = new Activity();
+        public Strategy Strategy;
+        public Tactics Tactics;
+        public Activity Activity;
         public Tile Occupies;
         public bool Broken;
         public float Speed = Tile.WIDTH;
@@ -31,6 +34,9 @@ namespace Age.Core
             Session = Controller.Session;
             UnitTemplate = unitTemplate;
             Sprite = unitTemplate.Sprite.CreateInstance(controller.LightColor);
+            Strategy = new Strategy(this);
+            Tactics = new Tactics(this);
+            Activity = new Activity(this);
         }
 
         public Rectangle Hitbox
@@ -63,10 +69,9 @@ namespace Age.Core
             // Aggressive
             if (Stance == Stance.Aggressive)
             {
-                if (!Activity.HasAGoal)
+                if (this.FullyIdle)
                 {
-                    Activity.AttackTarget = source;
-                    Activity.SecondsUntilNextRecalculation = 0;
+                    Tactics.ResetTo(source, false);
                 }
             }
         }
@@ -78,14 +83,20 @@ namespace Age.Core
             return Sprite.AnimationTick(elapsedSeconds);
         }
 
+        /// <summary>
+        /// If this unit is fully idle, it may decide to start doing something spontaneously. This something is usually beginning attacking another unit,
+        /// based on its stance. 
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="elapsedSeconds">Seconds since last update.</param>
         public void Autoaction(Session session, float elapsedSeconds)
         {
             // All stances          
-            if (!this.Activity.HasAGoal && Stance != Stance.Stealthy)
+            if (this.FullyIdle && Stance != Stance.Stealthy)
             {
                 foreach (var unit in session.AllUnits)
                 {
-                    if (this.CanRangeAttack(session, unit) && !this.Activity.IsMoving)
+                    if (this.CanRangeAttack(session, unit))
                     {
                         if (unit.Occupies.NaturalObjectOccupant?.EntityKind == EntityKind.TallGrass)
                         {
@@ -93,25 +104,24 @@ namespace Age.Core
                         }
                         else
                         {
-                            if (this.Stance == Stance.Aggressive)
-                            {
-                                this.Activity.AttackTarget = unit;
-                            }
-                            this.AttackIfAble(session, unit, elapsedSeconds);
+                            this.Tactics.ResetTo(unit, this.Stance == Stance.StandYourGround);
                         }
                     }
-                    if (unit.Controller == this.Controller && unit.Activity.AttackTarget != null
-                        && (this.Stance == Stance.Aggressive) && unit.FeetStdPosition.WithinDistance(this.FeetStdPosition, 5*Tile.HEIGHT))
+                    if (unit.Controller == this.Controller && 
+                        unit.Tactics.AttackTarget != null &&
+                        this.Stance == Stance.Aggressive && 
+                        unit.FeetStdPosition.WithinDistance(this.FeetStdPosition, 5*Tile.HEIGHT))
                     {
-                        this.Activity.AttackTarget = unit.Activity.AttackTarget;
-                        this.Activity.SecondsUntilNextRecalculation = 0.2f;
+                        this.Tactics.ResetTo(unit.Tactics.AttackTarget, false);
                     }
                 }
             }
             
         }
 
-        private void AttackIfAble(Session session, Unit target, float elapsedSeconds)
+        public bool FullyIdle => Strategy.Idle && Tactics.Idle && Activity.Idle;
+
+        public void AttackIfAble(Session session, Unit target, float elapsedSeconds)
         {
             this.Activity.AttackingInProgress = true;
             if (this.Activity.SecondsUntilRecharge <= 0)
@@ -150,100 +160,27 @@ namespace Age.Core
             }
         }
 
-        internal void Movement(Session session, float elapsedSeconds)
+        /// <summary>
+        /// Performs the unit's <see cref="Activity"/>, potentially reevaluating its <see cref="Tactics"/> and <see cref="Strategy"/>.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="elapsedSeconds">Seconds since last update.</param>
+        public void DoAssignedActivity(Session session, float elapsedSeconds)
         {
-
-            if (Activity.AttackTarget != null)
+            // Do invalidation first, so that we don't skip frames.
+            if (Activity.AttackTarget?.Broken ?? false)
             {
-                if (Activity.AttackTarget.Broken)
-                {
-                    Activity.AttackTarget = null;
-                }
+                Activity.Invalidate();
             }
+
             if (Activity.SecondsUntilNextRecalculation <= 0)
             {
-                if (Activity.HasAGoal)
-                {
-                    if (Activity.AttackTarget != null && this.CanRangeAttack(session, Activity.AttackTarget))
-                    {
-                        Activity.Speed = Vector2.Zero;
-                    }
-                    else
-                    {
-                        // Recalculate.
-                        LinkedList<Vector2> path = Pathfinding.Pathfinding.AStar(this, Activity.AttackTarget == null ? Activity.MovementTarget
-                            : Activity.AttackTarget.FeetStdPosition, session.Map, PathfindingMode.FindClosestIfDirectIsImpossible);
-                        Activity.PathingCoordinates = path;
-                        if (path == null)
-                        {
-                            Activity.MovementTarget = Vector2.Zero;
-                            Activity.AttackTarget = null;
-                            Activity.Speed = Vector2.Zero;
-                            Sprite.CurrentAnimation = AnimationListKey.Idle;
-                        }
-                        else if (path.Count > 0)
-                        {
-                            Vector2 toNearestPoint = path.First.Value - this.FeetStdPosition;
-                            Vector2 speed = new Vector2(toNearestPoint.X, toNearestPoint.Y);
-                            speed.Normalize();
-                            speed *= this.Speed * (this.Occupies.NaturalObjectOccupant?.SpeedMultiplier ?? 1);
-                            Activity.SecondsUntilNextRecalculation = toNearestPoint.X / speed.X;
-                            if (float.IsNaN(Activity.SecondsUntilNextRecalculation))
-                            {
-                                Activity.SecondsUntilNextRecalculation = toNearestPoint.Y / speed.Y;
-                            }
-                            Activity.Speed = speed;
-                        }
-                        else
-                        {
-                            Activity.MovementTarget = Vector2.Zero;
-                            Activity.Speed = Vector2.Zero;
-                            Activity.AttackTarget = null;
-                            Sprite.CurrentAnimation = AnimationListKey.Idle;
-                        }
-                    }
-                }
-                else
-                {
-                    Activity.Speed = Vector2.Zero;
-                    Sprite.CurrentAnimation = AnimationListKey.Idle;
-                }
+                Tactics.RecalculateAndDetermineActivity();
             }
-            else
-            {
-                if (Activity.AttackTarget != null && this.CanRangeAttack(session, Activity.AttackTarget))
-                {
-                    this.AttackIfAble(session, Activity.AttackTarget, elapsedSeconds);
-                }
-                else if (Activity.Speed != Vector2.Zero)
-                {
-                    Activity.SecondsUntilNextRecalculation -= elapsedSeconds;
-                    Vector2 newPosition = FeetStdPosition + Activity.Speed * elapsedSeconds;
-                    Tile targetTile = session.Map.GetTileFromStandardCoordinates(newPosition);
-                    MoveLegality moveLegality = MovementRules.IsMoveLegal(this, FeetStdPosition, newPosition, targetTile, session);
-                    if (moveLegality.IsLegal)
-                    {
-                        Sprite.CurrentAnimation = Sprite.DetermineAnimationKeyFromMovement(newPosition, FeetStdPosition);
-                        this.UpdatePositionTo(targetTile, newPosition);
-                    }
-                    else
-                    {
-                        // Target moves
-                        Unit obstacle = moveLegality.ObstacleUnit;
-                        if (obstacle != null && obstacle.Controller == this.Controller && !obstacle.Activity.IsMoving)
-                        {
-                            obstacle.Activity.Speed = R.RandomUnitVector() * Speed * 1.8f;
-                            obstacle.Activity.SecondsUntilNextRecalculation = 0.1f;
-                        }
-                        else
-                        {
-                            // Random movement
-                            Activity.Speed = R.RandomUnitVector() * Speed * 1.8f;
-                            Activity.SecondsUntilNextRecalculation = 0.1f;
-                        }
-                    }
-                }
 
+            if (!Activity.Idle)
+            {
+                Activity.Execute(elapsedSeconds);
             }
         }
 
@@ -252,7 +189,7 @@ namespace Age.Core
             return new Tooltip(this.Name + " (" + this.UnitTemplate.Name + ")", this.UnitTemplate.Description);
         }
 
-        private bool CanRangeAttack(Session session, Unit attackTarget)
+        public bool CanRangeAttack(Session session, Unit attackTarget)
         {
             return 
                 this.UnitTemplate.CanAttack &&
@@ -269,7 +206,7 @@ namespace Age.Core
             this.Sprite.Color = controller.LightColor;
         }
 
-        private void UpdatePositionTo(Tile goingTo, Vector2 newPosition)
+        public void UpdatePositionTo(Tile goingTo, Vector2 newPosition)
         {
             if (goingTo != this.Occupies)
             {

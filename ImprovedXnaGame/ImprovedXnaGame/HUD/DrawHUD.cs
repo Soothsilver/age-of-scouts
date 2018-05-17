@@ -146,13 +146,13 @@ namespace Age.HUD
 
             // Buttons
             if (session.AllUnits.Any(unt => unt.Controller == session.PlayerTroop && unt.UnitTemplate.Name == "Pracant" &&
-            !unt.Activity.HasAGoal))
+            unt.FullyIdle))
             {
 
                 UI.DrawImageButton(new Rectangle(rectTopBar.Right - 410 - 64, 0, 64, 100), topmost, "Líný pracant", TextureName.IdleVillager,
                  () => {
-                     Unit idleVillager = session.AllUnits.First(unt => unt.Controller == session.PlayerTroop && unt.UnitTemplate.Name == "Pracant" &&
-               !unt.Activity.HasAGoal);
+                     Unit idleVillager = session.AllUnits.First(unt => unt.Controller == session.PlayerTroop && unt.UnitTemplate.CanBuildStuff &&
+               unt.FullyIdle);
                      mainPhase.Selection.SelectUnits(new Unit[]
                      {
                          idleVillager

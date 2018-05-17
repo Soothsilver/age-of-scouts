@@ -91,30 +91,27 @@ namespace Age.Core
             if (tile != null && selection.SelectedUnits.Count > 0 &&
                 selection.SelectedUnits[0].Controller == PlayerTroop)
             {
+                // Move/attack/gather/build...
                 selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
                 foreach (var target in AllUnits)
                 {
                     if (AreEnemies(selection.SelectedUnits[0], target) &&
                         target.Hitbox.Contains((int) standardTarget.X, (int) standardTarget.Y))
                     {
-                        selection.SelectedUnits.ForEach((unit) =>
-                        {
-                            unit.Activity.Reset();
-                            unit.Activity.AttackTarget = target;
-                        });
+                        selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetTo(target); });
                         return;
                     }
                 }
 
                 selection.SelectedUnits.ForEach((unit) =>
                 {
-                    unit.Activity.Reset();
-                    unit.Activity.MovementTarget = standardTarget;
+                    unit.Strategy.ResetTo(standardTarget);
                 });
             }
             else if (tile != null && selection.SelectedBuilding != null &&
                      selection.SelectedBuilding.Controller == PlayerTroop)
             {
+                // Set rally point
                 selection.SelectedBuilding.RallyPointInStandardCoordinates = standardTarget;
             }
         }
@@ -161,11 +158,12 @@ namespace Age.Core
             return b;
         }
 
-        internal void SpawnBuildingAsConstruction(BuildingTemplate template, Troop controller, Tile tile)
+        internal Building SpawnBuildingAsConstruction(BuildingTemplate template, Troop controller, Tile tile)
         {
             Building b = SpawnBuilding(template, controller, tile);
             b.SelfConstructionInProgress = true;
             b.SelfConstructionProgress = 0.1f;
+            return b;
         }
 
         public void CopyValuesFrom(Session session)
@@ -178,6 +176,66 @@ namespace Age.Core
             this.Map.CopyValuesFrom(session.Map);
             this.CenterOfScreenInStandardPixels = session.CenterOfScreenInStandardPixels;
             this.ZoomLevel = session.ZoomLevel;
+        }
+
+        public void Update(float elapsedSeconds)
+        {
+            Map.Update(elapsedSeconds);
+
+            foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop))
+            {
+                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
+            }
+            foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop))
+            {
+                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 7, Map, fromAir: true);
+            }
+
+            foreach (FogRevealer revealer in Revealers)
+            {
+                revealer.Update(Map);
+            }
+
+            for (int ui = AllUnits.Count - 1; ui >= 0; ui--)
+            {
+                Unit unit = AllUnits[ui];
+                unit.Activity.AttackingInProgress = false;
+                unit.Autoaction(this, elapsedSeconds);
+                unit.DoAssignedActivity(this, elapsedSeconds);
+                if (unit.Controller.Convertible)
+                {
+                    foreach (var otherUnit in AllUnits.Where(unt => unt.Controller == PlayerTroop))
+                    {
+                        if (unit.FeetStdPosition.WithinDistance(otherUnit.FeetStdPosition, 3 * Tile.HEIGHT))
+                        {
+                            unit.SwitchControllerTo(otherUnit.Controller);
+                            SFX.PlaySoundUnlessPlaying(SoundEffectName.Harp);
+                        }
+                    }
+                }
+
+                if (unit.Broken)
+                {
+                    AllUnits.RemoveAt(ui);
+                }
+            }
+
+            for (int pi = Projectiles.Count - 1; pi >=0;pi--)
+            {
+                Projectile projectile = Projectiles[pi];
+                projectile.Update(this, elapsedSeconds);
+                if (projectile.Lost)
+                {
+                    Projectiles.RemoveAt(pi);
+                }
+            }
+
+            foreach (Building building in AllBuildings)
+            {
+                building.Update(elapsedSeconds);
+            }
+
+
         }
     }
 }

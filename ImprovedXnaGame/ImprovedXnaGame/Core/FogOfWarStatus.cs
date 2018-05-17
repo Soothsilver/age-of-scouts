@@ -21,17 +21,24 @@ namespace Age.Core
         }
         public void Update(Map map)
         {
-            FogOfWarMechanics.RevealFogOfWar(StandardCoordinates, (int)(Tile.HEIGHT * TileRange), map, true, 2);
+            FogOfWarMechanics.RevealFogOfWar(StandardCoordinates, (int)(Tile.HEIGHT * TileRange), map);
         }
     }
     public static class FogOfWarMechanics
     {
-
-        internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, bool createDebugPoints, float cleartime = 2, bool fromAir = false)
+        /// <summary>
+        /// Reveals fog of war from the specified point as a circle. WARNING! This method is not yet optimized!
+        /// </summary>
+        /// <param name="source">The center of the circle of clear fog of war.</param>
+        /// <param name="pixelRange">The radius, in standard coordinates.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="cleartime">The number of seconds for which fog should remain revealed.</param>
+        /// <param name="fromAir">If set to <c>true</c>, then this is a bird's eye view reveal that can see past trees.</param>
+        internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, float cleartime = 2, bool fromAir = false)
         {
             Tile tile = map.GetTileFromStandardCoordinates(source);
             tile.SetClearFogStatus(cleartime);
-            for (float angle = 0; angle <= 2 * Math.PI; angle += Microsoft.Xna.Framework.MathHelper.Pi / 40)
+            for (float angle = 0; angle <= 2 * Math.PI; angle += MathHelper.Pi / 40)
             {
                 float dx = (float)Math.Cos(angle) * 10;
                 float dy = (float)Math.Sin(angle) * 10;
@@ -41,7 +48,7 @@ namespace Age.Core
                 {
                     x += dx; y += dy;
                     if ((new Vector2(x, y) - source).LengthSquared() >= pixelRange * pixelRange) break;
-                    if (createDebugPoints && Settings.Instance.ShowDebugPoints)
+                    if (Settings.Instance.ShowDebugPoints)
                     {
                         Debug.DebugPoints.Coordinates.Add(new Vector2(x, y));
                     }

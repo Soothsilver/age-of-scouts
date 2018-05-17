@@ -18,7 +18,7 @@ namespace Age.Core
         {
             this.Used = true;
             // Tisik Spy
-            FogOfWarMechanics.RevealFogOfWar(where, Tile.WIDTH * 7, session.Map, false, cleartime: 7, fromAir: true);
+            FogOfWarMechanics.RevealFogOfWar(where, Tile.WIDTH * 7, session.Map, cleartime: 7, fromAir: true);
         }
     }
 }
