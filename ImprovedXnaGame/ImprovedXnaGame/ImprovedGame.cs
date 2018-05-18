@@ -47,17 +47,19 @@ namespace Age
             Primitives.Fonts[FontFamily.Tiny] = new FontGroup(Library.FontTiny, Library.FontTinyItalics, Library.FontTinyBold, Library.FontTinyItalics);
             Primitives.Fonts[FontFamily.Mid] = new FontGroup(Library.FontMid, Library.FontMidItalics, Library.FontMidBold, Library.FontMidItalics);
             Primitives.Fonts[FontFamily.Normal] = new FontGroup(Library.FontTiny, Library.FontNormal, Library.FontNormalBold, Library.FontNormalItalics);
-            Library.LoadVoicesIntoTextureCacheFromDirectories(Content, "Voice", "SFX", "Voice\\Tutorial");
+            Library.LoadVoicesIntoTextureCacheFromDirectories(Content, "Voice", "SFX", "Voice\\Tutorial", "SFX\\Buildings");
             BackgroundMusicPlayer.Load(Content);
-
+            
             // Initialize
             Sprite.PerformStaticInitialization();
             UnitTemplate.InitUnitTemplates();
             ConstructionOption.InitializeAllConstructionOptions();
 
             // Load unit sounds
-            UnitTemplate.Hadrakostrelec.LoadSounds(SfxKid("Ack1"), SfxKid("Ack2"), SfxKid("AckMove"), SfxKid("Fail"), SfxKid("Joke2"), SfxKid("Joke3"), SfxKid("KidJoke1"), SfxKid("Selection1"), SfxKid("Selection2"), SfxKid("Selection3"), SfxKid("Selection4"));
-            UnitTemplate.Pracant.LoadSounds(SfxKid("Ack1"), SfxKid("Ack2"), SfxKid("AckMove"), SfxKid("Fail"), SfxKid("Joke2"), SfxKid("Joke3"), SfxKid("KidJoke1"), SfxKid("Selection1"), SfxKid("Selection2"), SfxKid("Selection3"), SfxKid("Selection4"));
+            UnitTemplate.Hadrakostrelec.LoadSounds(SfxKid("Ack1"), SfxKid("Ack2"), SfxKid("AckMove"), SfxKid("Fail"), SfxKid("Joke2"), SfxKid("Joke3"), SfxKid("KidJoke1"), SfxKid("Selection1"), SfxKid("Selection2"), SfxKid("Selection3"), SfxKid("Selection4"), SfxKid("Naverbovan1"));
+            UnitTemplate.Hadrakostrelec.LoadAttackSounds(SfxKid("AckAttack"), SfxKid("AckAttack2"));
+            UnitTemplate.Pracant.LoadSounds(SfxPrc("Ack1"), SfxPrc("Ack2"), SfxPrc("AckMove"), SfxKid("Fail"), SfxPrc("Joke1"), SfxPrc("Joke2"), SfxPrc("Joke3"),  SfxPrc("Selection1"), SfxPrc("Selection2"), SfxPrc("Selection3"), SfxPrc("Selection4"), SfxPrc("Naverbovan"));
+            UnitTemplate.Pracant.LoadPracantSounds(SfxPrc("AckBuild"), SfxPrc("Corn"), SfxPrc("Mud"), SfxPrc("Bobule"), SfxPrc("Wood"));
 
             // Go to main menu
             Root.PushPhase(new Phases.AgeMainMenu());
@@ -66,6 +68,10 @@ namespace Age
         private SoundEffect SfxKid(string path)
         {
             return Content.Load<SoundEffect>("Voice\\Kid\\" + path);
+        }
+        private SoundEffect SfxPrc(string path)
+        {
+            return Content.Load<SoundEffect>("Voice\\Pracant\\" + path);
         }
 
 

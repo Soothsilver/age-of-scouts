@@ -1,5 +1,6 @@
 ﻿using Age.HUD;
 using Auxiliary;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -34,7 +35,7 @@ namespace Age.Core
         }
 
         public bool PreventsMovement => this.Type == TileType.Water || (this.NaturalObjectOccupant?.PreventsMovement ?? false)
-            || this.BuildingOccupant != null;
+            || (this.BuildingOccupant != null && !this.BuildingOccupant.SelfConstructionInProgress);
 
         public bool PreventsProjectiles => this.NaturalObjectOccupant?.PreventsProjectiles ?? false;
 
@@ -82,7 +83,10 @@ namespace Age.Core
         public bool Pathfinding_Closed;
         public int Pathfinding_F;
         public int Pathfinding_G;
+        public int Pathfinding_IsTargetDuringThisSearch;
+        public Vector2 Pathfinding_TargetPreciseLocation;
         public Tile Pathfinding_Parent;
+
     }
 
     class Neighbours

@@ -46,7 +46,11 @@ namespace Age.Core
         {
             get
             {
-                if (this.Template.Id == BuildingId.Kitchen)
+                if (this.SelfConstructionInProgress)
+                {
+                    return ConstructionOption.None;
+                }
+                else if (this.Template.Id == BuildingId.Kitchen)
                 {
                     return ConstructionOption.KitchenOptions;
                 }
@@ -54,6 +58,22 @@ namespace Age.Core
                 {
                     return ConstructionOption.None;
                 }
+            }
+        }
+
+        public bool NoUnitsOnThisBuilding
+        {
+            get
+            {
+                for (int x = 0; x < Template.TileWidth; x++)
+                {
+                    for (int y = 0; y < Template.TileHeight; y++)
+                    {
+                        Tile tile = Session.Map.Tiles[x + this.PrimaryTile.X, y + this.PrimaryTile.Y];
+                        if (tile.Occupants.Count > 0) return false;
+                    }
+                }
+                return true;
             }
         }
 
@@ -88,6 +108,26 @@ namespace Age.Core
             
         }
 
+        internal HashSet<Vector2> GetFreeSpotsForBuilders()
+        {
+            HashSet<Vector2> allocation = new HashSet<Vector2>();
+            for (int x = 0; x < Template.TileWidth; x++)
+            {
+                for (int y = 0; y< Template.TileHeight; y++)
+                {
+                    Tile tile = Session.Map.Tiles[x + this.PrimaryTile.X, y + this.PrimaryTile.Y];
+                    foreach(var neighbour in tile.Neighbours.All)
+                    {
+                        if (neighbour.Occupants.Count == 0)
+                        {
+                            allocation.Add(Isomath.TileToStandard(neighbour.X + 0.5f, neighbour.Y + 0.5f));
+                        }
+                    }
+                }
+            }
+            return allocation;
+        }
+
         internal void DrawActionInProgress(Rectangle rectAction, bool topmost)
         {
             // Queue
@@ -116,25 +156,63 @@ namespace Age.Core
                 Primitives.DrawSingleLineText(ConstructionInProgress.Caption + " (" + ((int)(100 * ConstructionInProgress.WorkDoneInSeconds) / (int)ConstructionInProgress.TotalWorkNeeded) + "%)", new Vector2(rectAction.X + 20, rectAction.Y + 45), Color.Black, Library.FontMid);
                 Primitives.DrawImage(ConstructionInProgress.ConstructingWhat.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
             }
+            // Self construction
+            if (SelfConstructionInProgress)
+            {
+                Rectangle rectProgressBar = new Rectangle(rectAction.X + 20, rectAction.Y + 70, rectAction.Width - 40, 40);
+                Primitives.DrawHealthbar(rectProgressBar, Color.Lime, (int)(SelfConstructionProgress * 10000), 10000);
+                Primitives.DrawSingleLineText("Tato stavba se staví...", new Vector2(rectAction.X + 20, rectAction.Y + 30), Color.Black, Library.FontTinyBold);
+                Primitives.DrawSingleLineText(this.Name + " (" + (int)(100 * SelfConstructionProgress) + "%)", new Vector2(rectAction.X + 20, rectAction.Y + 45), Color.Black, Library.FontMid);
+                Primitives.DrawImage(this.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
+            }
         }
 
         public void Update(float elapsedSeconds)
         {
-            if (ConstructionInProgress == null && ConstructionQueue.Count > 0)
+            if (SelfConstructionInProgress)
             {
-                Construction first = ConstructionQueue.First.Value;
-                ConstructionQueue.RemoveFirst();
-                ConstructionInProgress = first;
-            }
-            if (ConstructionInProgress != null)
-            {
-                ConstructionInProgress.WorkDoneInSeconds += elapsedSeconds;               
-                if (ConstructionInProgress.WorkDoneInSeconds >= ConstructionInProgress.TotalWorkNeeded)
+                if (!NoUnitsOnThisBuilding)
                 {
-                    ConstructionInProgress.WorkDoneInSeconds = ConstructionInProgress.TotalWorkNeeded;
-                    if (ConstructionInProgress.Completed(this))
+                    for (int x = 0; x < Template.TileWidth; x++)
                     {
-                        ConstructionInProgress = null;
+                        for (int y = 0; y < Template.TileHeight; y++)
+                        {
+                            Tile tile = Session.Map.Tiles[x + this.PrimaryTile.X, y + this.PrimaryTile.Y];
+                            foreach(Unit unit in tile.Occupants)
+                            {
+                                if (unit.Controller == this.Controller)
+                                {
+                                    unit.AttemptToExitConstructionSite(this);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (SelfConstructionProgress >= 1)
+                {
+                    SelfConstructionProgress = 1;
+                    SelfConstructionInProgress = false;
+                    SFX.PlaySoundUnlessPlaying(SoundEffectName.Harp);
+                }
+            }
+            else
+            {
+                if (ConstructionInProgress == null && ConstructionQueue.Count > 0)
+                {
+                    Construction first = ConstructionQueue.First.Value;
+                    ConstructionQueue.RemoveFirst();
+                    ConstructionInProgress = first;
+                }
+                if (ConstructionInProgress != null)
+                {
+                    ConstructionInProgress.WorkDoneInSeconds += elapsedSeconds;
+                    if (ConstructionInProgress.WorkDoneInSeconds >= ConstructionInProgress.TotalWorkNeeded)
+                    {
+                        ConstructionInProgress.WorkDoneInSeconds = ConstructionInProgress.TotalWorkNeeded;
+                        if (ConstructionInProgress.Completed(this))
+                        {
+                            ConstructionInProgress = null;
+                        }
                     }
                 }
             }

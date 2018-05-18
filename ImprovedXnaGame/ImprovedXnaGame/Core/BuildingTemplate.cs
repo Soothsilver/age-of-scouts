@@ -18,6 +18,8 @@ namespace Age.Core
         public TextureName Icon { get; internal set; }
         public int WoodCost;
         public int FoodCost;
+        public float SecondsToBuild;
+        public SoundEffectName SelectionSfx;
 
         private BuildingTemplate(BuildingId id, string name, string description, TextureName icon, int tileWidth, int tileHeight,
             int food, int wood)
@@ -32,8 +34,16 @@ namespace Age.Core
             Icon = icon;
         }
 
-        public static BuildingTemplate Kitchen = new BuildingTemplate(BuildingId.Kitchen, "Kuchyně", "Kuchyně je nejdůležitější budova ve hře {b}Age of Scouts{/b}. V kuchyni nabíráš {b}Pracanty{/b}, tito do kuchyně přináší nasbírané suroviny, a pomocí kuchyně také postupuješ do vyššího věku. Pokud je tvoje kuchyně zničena a všichni tvoji pracanti vyřazeni ze hry, nebudeš po zbytek úrovně schopný nic stavět, takže na svoji kuchyni dávej pozor.", TextureName.Kitchen,3,3, 0, 400);
-        public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard,1,1, 20, 50);
+        public static BuildingTemplate Kitchen = new BuildingTemplate(BuildingId.Kitchen, "Kuchyně", "Kuchyně je nejdůležitější budova ve hře {b}Age of Scouts{/b}. V kuchyni nabíráš {b}Pracanty{/b}, tito do kuchyně přináší nasbírané suroviny, a pomocí kuchyně také postupuješ do vyššího věku. Pokud je tvoje kuchyně zničena a všichni tvoji pracanti vyřazeni ze hry, nebudeš po zbytek úrovně schopný nic stavět, takže na svoji kuchyni dávej pozor.", TextureName.Kitchen, 3, 3, 0, 400)
+        {
+            SecondsToBuild = 120,
+            SelectionSfx = SoundEffectName.Chord
+        };
+        public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard, 1, 1, 20, 50)
+        {
+            SecondsToBuild = 20,
+            SelectionSfx = SoundEffectName.StandardTent
+        };
 
         internal bool ApplyCost(Troop playerTroop)
         {
@@ -65,6 +75,10 @@ namespace Age.Core
                     Tile alsoOn = session.Map.GetTileFromTileCoordinates(tile.X - x, tile.Y - y);
                     if (alsoOn == null || alsoOn.Type != TileType.Grass || alsoOn.NaturalObjectOccupant != null
                         || alsoOn.PreventsMovement)
+                    {
+                        return false;
+                    }
+                    if (Settings.Instance.EnableFogOfWar && alsoOn.Fog != FogOfWarStatus.Clear)
                     {
                         return false;
                     }

@@ -35,7 +35,7 @@ namespace Age.Phases
                 // Buttons always have priority.
                 return;
             }
-            if (SelectedBuildingToPlace != null)
+            if (SelectedUnits.Count > 0 && SelectedBuildingToPlace != null)
             {
                 if (Root.WasMouseLeftClick)
                 {
@@ -44,6 +44,7 @@ namespace Age.Phases
                         if (SelectedBuildingToPlace.ApplyCost(levelPhase.Session.PlayerTroop))
                         {
                             Building construction = levelPhase.Session.SpawnBuildingAsConstruction(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop, mouseOverTile);
+                            SelectedUnits[0].UnitTemplate.PlayBuildSound();
                             SelectedUnits.ForEach(unit => unit.Strategy.ResetTo(construction));
                             if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift))
                             {
@@ -178,6 +179,7 @@ namespace Age.Phases
                 if (toBeSelectedBuilding != null)
                 {
                     SelectedBuilding = toBeSelectedBuilding;
+                    SFX.PlaySoundUnlessPlaying(SelectedBuilding.Template.SelectionSfx);
                 }
                 else if (toBeSelectedObject != null)
                 {

@@ -11,6 +11,7 @@ namespace Age.HUD
     internal class Minimap
     {
         private Texture2D minimapTexture = null;
+        private Texture2D backBufferMinimapTexture = null;
         private Color[] minimapData = null;
         private static int BASE_TERRAIN_ALPHA = 120;
         private static int TERRAIN_ALPHA = 150;
@@ -55,10 +56,14 @@ namespace Age.HUD
                 }
                 
                 
-                Texture2D newTexture = new Texture2D(Root.GraphicsDevice, minimapTexture.Width, minimapTexture.Height);
-                newTexture.SetData<Color>(minimapData);
-                minimapTexture = newTexture;
                 
+                backBufferMinimapTexture.SetData<Color>(minimapData);
+                lock (this)
+                {
+                    Texture2D swap = minimapTexture;
+                    minimapTexture = backBufferMinimapTexture;
+                    backBufferMinimapTexture = swap;
+                }              
                 
             }
         }
@@ -97,6 +102,7 @@ namespace Age.HUD
         private void Initialize(Map sessionMap, Rectangle rectangle)
         {
             this.minimapTexture = new Texture2D(Root.GraphicsDevice, rectangle.Width, rectangle.Height);
+            this.backBufferMinimapTexture = new Texture2D(Root.GraphicsDevice, rectangle.Width, rectangle.Height);
             this.minimapData = new Color[rectangle.Width * rectangle.Height];
             this.rectangle = rectangle;
             for (int y = 0; y < rectangle.Height; y++)

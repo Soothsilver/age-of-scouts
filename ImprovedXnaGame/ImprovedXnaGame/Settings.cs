@@ -35,5 +35,6 @@ namespace Age
 
         public DisplayModus DisplayMode = DisplayModus.BorderlessWindow;
         public Resolution Resolution = new Resolution(1920, 1080);
+        public bool EnemyUnitsRevealFogOfWar = false;
     }
 }

@@ -11,7 +11,7 @@ namespace Age.Core.Activities
     /// Represents a long-term goal of this unit. Strategy is set exclusively by right-clicking something on the map, or with a rally point,
     /// or by an AI-controlled player.
     /// </summary>
-    class Strategy : Goals
+    class Strategy
     {
         public NaturalObject GatherTarget;
 
@@ -24,49 +24,40 @@ namespace Age.Core.Activities
 
         public void ResetTo(Vector2 movementTarget)
         {
-            ResetAll();
-            MovementTarget = (IntVector)movementTarget;
+            FullStop();
+            owner.Tactics.MovementTarget = (IntVector)movementTarget;
         }
         public void ResetTo(Building construction)
         {
-            ResetAll();
-            BuildingTarget = construction;
+            FullStop();
+            if (owner.CanContributeToBuilding(construction))
+            {
+                owner.Tactics.BuildTarget = construction;
+            }
+            else
+            {
+                owner.Tactics.MovementTarget = (IntVector)construction.FeetStdPosition;
+            }
         }
         public void ResetTo(Unit attackTarget)
         {
-            ResetAll();
-            AttackTarget = attackTarget;
+            FullStop();
+            owner.Tactics.ResetTo(attackTarget, false);
         }
 
-        private void ResetAll()
+        /// <summary>
+        /// Fully stops the unit and destroys its strategy and tactics.
+        /// </summary>
+        private void FullStop()
         {
             Reset();
             owner.Tactics.Reset();
-            owner.Activity.Reset();
+            owner.Activity.ResetActions();
+            owner.Activity.Invalidate();
         }
-        public override void Reset()
+        public void Reset()
         {
-            base.Reset();
             GatherTarget = null;
-        }
-
-        public override bool Idle => base.Idle && this.GatherTarget != null;
-
-        public void RecalculateAndDetermineTactics()
-        {
-            owner.Tactics.Reset();
-            if (AttackTarget != null)
-            {
-                owner.Tactics.AttackTarget = AttackTarget;
-            }
-            else if (MovementTarget != IntVector.Zero)
-            {
-                owner.Tactics.MovementTarget = MovementTarget;
-            }
-            else if (BuildingTarget != null)
-            {
-                owner.Tactics.MovementTarget = (IntVector)BuildingTarget.FeetStdPosition;
-            }
-        }
+        }        
     }
 }

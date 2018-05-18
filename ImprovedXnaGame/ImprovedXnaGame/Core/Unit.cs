@@ -6,6 +6,7 @@ using Age.Animation;
 using Age.Core.Activities;
 using Age.HUD;
 using Age.Pathfinding;
+using Age.World;
 using Auxiliary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -39,6 +40,12 @@ namespace Age.Core
             Activity = new Activity(this);
         }
 
+        internal bool CanContributeToBuilding(Building construction)
+        {
+            return this.UnitTemplate.CanBuildStuff && construction.SelfConstructionInProgress
+                && construction.Controller == this.Controller;
+        }
+
         public Rectangle Hitbox
         {
             get
@@ -58,7 +65,7 @@ namespace Age.Core
         internal void TakeDamage(int dmg, Unit source)
         {
             this.HP -= dmg;
-            if (this.HP <= 0)
+            if (this.HP <= 0 && !this.Broken)
             {
                 this.Broken = true;
                 this.Occupies.BrokenOccupants.Add(new Corpse(this));
@@ -96,7 +103,7 @@ namespace Age.Core
             {
                 foreach (var unit in session.AllUnits)
                 {
-                    if (this.CanRangeAttack(session, unit))
+                    if (this.CanRangeAttack(unit))
                     {
                         if (unit.Occupies.NaturalObjectOccupant?.EntityKind == EntityKind.TallGrass)
                         {
@@ -119,7 +126,7 @@ namespace Age.Core
             
         }
 
-        public bool FullyIdle => Strategy.Idle && Tactics.Idle && Activity.Idle;
+        public bool FullyIdle => Tactics.Idle && Activity.Idle;
 
         public void AttackIfAble(Session session, Unit target, float elapsedSeconds)
         {
@@ -127,7 +134,7 @@ namespace Age.Core
             if (this.Activity.SecondsUntilRecharge <= 0)
             {
                 // Fire
-                session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -10), target.FeetStdPosition + new Vector2(0, -10), this));
+                session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -20), target.FeetStdPosition + new Vector2(0, -20), this));
                 // Recharge
                 this.Activity.SecondsUntilRecharge = 4; // recharge in four seconds
             }
@@ -177,11 +184,8 @@ namespace Age.Core
             {
                 Tactics.RecalculateAndDetermineActivity();
             }
-
-            if (!Activity.Idle)
-            {
-                Activity.Execute(elapsedSeconds);
-            }
+                       
+            Activity.Execute(elapsedSeconds);            
         }
 
         internal Tooltip GetTooltip()
@@ -189,11 +193,11 @@ namespace Age.Core
             return new Tooltip(this.Name + " (" + this.UnitTemplate.Name + ")", this.UnitTemplate.Description);
         }
 
-        public bool CanRangeAttack(Session session, Unit attackTarget)
+        public bool CanRangeAttack(Unit attackTarget)
         {
             return 
                 this.UnitTemplate.CanAttack &&
-                attackTarget != null && session.AreEnemies(this, attackTarget)
+                attackTarget != null && this.Session.AreEnemies(this, attackTarget)
                 && !attackTarget.Broken &&
                 !this.Broken 
                 && this.FeetStdPosition.WithinDistance(attackTarget.FeetStdPosition, 5 * Tile.HEIGHT);
@@ -216,6 +220,43 @@ namespace Age.Core
                 this.Occupies = goingTo;
             }
             this.FeetStdPosition = newPosition;
+        }
+
+        public void AttemptToExitConstructionSite(Building outsideOfBuilding)
+        {
+            if (this.Activity.Speed == Vector2.Zero)
+            {
+                List<Tile> options = new List<Tile>();
+                Tile gotoWhere = null;
+                foreach (var tile in this.Occupies.Neighbours.All)
+                {
+                    if (tile.PreventsMovement || (tile.BuildingOccupant == outsideOfBuilding))
+                    {
+
+                    }
+                    else
+                    {
+                        options.Add(tile);
+                    }
+                }
+                if (options.Count > 0)
+                {
+                    gotoWhere = options[R.Next(options.Count)];
+                }
+                else
+                {
+                    options.AddRange(this.Occupies.Neighbours.All.Where(tl => !tl.PreventsMovement));
+                    if (options.Count > 0)
+                    {
+                        gotoWhere = options[R.Next(options.Count)];
+                    }
+                }
+                if (gotoWhere != null)
+                {
+                    Vector2 m = Isomath.TileToStandard(gotoWhere.X + 0.5f, gotoWhere.Y + 0.5f);
+                    this.Activity.QuicklyWalkTo(m);
+                }
+            }
         }
     }
 }

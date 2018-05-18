@@ -271,7 +271,9 @@ namespace Auxiliary
         Tut9,
         Tut10,
         Tut11,
-        Tut12
+        Tut12,
+        Chord,
+        StandardTent
     }
 
     public enum TextureName

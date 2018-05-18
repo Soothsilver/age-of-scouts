@@ -22,11 +22,22 @@ namespace Age.Core
         private SoundEffect Fail;
         private SoundEffect Joke1;
         private SoundEffect Joke2;
+        private SoundEffect Build;
         private SoundEffect Joke3;
         private SoundEffect Selection1;
         private SoundEffect Selection2;
         private SoundEffect Selection3;
         private SoundEffect Selection4;
+        private SoundEffect AckAttack;
+        private SoundEffect AckAttack2;
+        private SoundEffect UnitCreated;
+        private SoundEffect GatherWood;
+        private SoundEffect GatherMud;
+        private SoundEffect GatherBerries;
+
+       
+
+        private SoundEffect GatherCorn;
 
         private UnitTemplate(string name, string description, TextureName icon, TextureName deadIcon, Sprite sprite,
             int foodcost, int woodcost)
@@ -55,10 +66,23 @@ namespace Age.Core
             Hadrakostrelec = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20);
         }
 
-        public void LoadSounds(SoundEffect ack1, SoundEffect ack2, SoundEffect ackMove, SoundEffect fail, SoundEffect joke1, SoundEffect joke2, SoundEffect joke3, SoundEffect sel1, SoundEffect sel2, SoundEffect sel3, SoundEffect sel4)
+        internal void PlayBuildSound()
         {
-            Ack1 = ack1;
+            if (this.CanBuildStuff)
+            {
+                SFX.Play(Build);
+            }
+            else
+            {
+                PlayMovementSound();
+            }
+        }
+
+        public void LoadSounds(SoundEffect ack1, SoundEffect ack2, SoundEffect ackMove, SoundEffect fail, SoundEffect joke1, SoundEffect joke2, SoundEffect joke3, SoundEffect sel1, SoundEffect sel2, SoundEffect sel3, SoundEffect sel4, SoundEffect born)
+        {
+            Ack1 = Build = GatherBerries = GatherCorn = GatherMud = GatherWood = AckAttack = AckAttack2 = ack1;
             Ack2 = ack2;
+            UnitCreated = born;
             AckMove = ackMove;
             Fail = fail;
             Joke1 = joke1;
@@ -68,6 +92,19 @@ namespace Age.Core
             Selection2 = sel2;
             Selection3 = sel3;
             Selection4 = sel4;
+        }
+        public void LoadAttackSounds(SoundEffect one, SoundEffect two)
+        {
+            AckAttack = one;
+            AckAttack2 = two;
+        }
+        public void LoadPracantSounds(SoundEffect build, SoundEffect corn, SoundEffect mud, SoundEffect berries, SoundEffect wood)
+        {
+            GatherWood = wood;
+            GatherCorn = corn;
+            GatherMud = mud;
+            GatherBerries = berries;
+            Build = build;
         }
 
         internal void PlayMovementSound()
@@ -97,6 +134,14 @@ namespace Age.Core
             {
                 SFX.PlayRandom(Selection1, Selection2, Selection3, Selection4);
             }
+        }
+        internal void PlayUnitCreatedSound()
+        {
+            SFX.Play(UnitCreated);
+        }
+        internal void PlayAttackSound()
+        {
+            SFX.PlayRandom(AckAttack, AckAttack2, Ack1, Ack2);
         }
     }
 }

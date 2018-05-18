@@ -619,7 +619,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Voice\Pracant\" />
+    <Compile Include="SFX\Buildings\StandardTent.wav">
+      <Name>StandardTent</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Units\Kid\KidThrowLeft1.png">
@@ -695,6 +699,112 @@
       <Name>PracantMoveUp3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Voice\Kid\AckAttack.mp3">
+      <Name>AckAttack</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Kid\AckAttack2.mp3">
+      <Name>AckAttack2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Kid\Naverbovan1.mp3">
+      <Name>Naverbovan1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Voice\Pracant\Ack1.mp3">
+      <Name>Ack1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Ack2.mp3">
+      <Name>Ack2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\AckBuild.mp3">
+      <Name>AckBuild</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\AckMove.mp3">
+      <Name>AckMove</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Bobule.mp3">
+      <Name>Bobule</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Corn.mp3">
+      <Name>Corn</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Joke1.mp3">
+      <Name>Joke1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Joke2.mp3">
+      <Name>Joke2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Joke3.mp3">
+      <Name>Joke3</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Mud.mp3">
+      <Name>Mud</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Naverbovan.mp3">
+      <Name>Naverbovan</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Selection1.mp3">
+      <Name>Selection1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Selection2.mp3">
+      <Name>Selection2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Selection3.mp3">
+      <Name>Selection3</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Selection4.mp3">
+      <Name>Selection4</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Voice\Pracant\Wood.mp3">
+      <Name>Wood</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SFX\Buildings\Chord.wav">
+      <Name>Chord</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

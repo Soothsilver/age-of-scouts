@@ -118,7 +118,7 @@
   <ItemGroup>
     <Compile Include="Animation\SpriteCache.cs" />
     <Compile Include="Core\Activities\Activity.cs" />
-    <Compile Include="Core\Activities\Goals.cs" />
+    <Compile Include="Core\Activities\Physics.cs" />
     <Compile Include="Core\Activities\Strategy.cs" />
     <Compile Include="Core\Activities\Tactics.cs" />
     <Compile Include="Core\Building.cs" />

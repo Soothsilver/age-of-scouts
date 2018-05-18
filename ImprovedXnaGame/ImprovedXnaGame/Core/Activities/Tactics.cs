@@ -15,11 +15,17 @@ namespace Age.Core.Activities
     /// A unit's tactics are reevaluated when its activity timeout elapses.
     /// A unit's strategy is not reevaluated until its short-term goal is completed or invalidated.
     /// </summary>
-    class Tactics : Goals
+    class Tactics
     {
         private bool standMyGround;
         private Unit owner;
-        public LinkedList<Vector2> PathingCoordinates;
+        public LinkedList<Vector2> PathingCoordinates;        
+        public IntVector MovementTarget;
+        public Unit AttackTarget;
+        public Building BuildTarget;
+        private int FinalPointMovements = 0;
+
+        public bool Idle => AttackTarget == null && MovementTarget == IntVector.Zero && BuildTarget == null;
 
         public Tactics(Unit owner)
         {
@@ -33,45 +39,87 @@ namespace Age.Core.Activities
             this.standMyGround = standGround;
         }
 
-        public override void Reset()
+        public void Reset()
         {
-            base.Reset();
+            MovementTarget = IntVector.Zero;
+            AttackTarget = null;
+            BuildTarget = null;
+            standMyGround = false;
             PathingCoordinates = null;
+            FinalPointMovements = 0;
         }
 
         private void ResetBoth()
         {
             this.Reset();
-            owner.Activity.Reset();
+            owner.Activity.ResetActions();
+            owner.Activity.Invalidate();
         }
 
         public void RecalculateAndDetermineActivity()
         {
+            owner.Activity.ResetActions();
             if (this.Idle)
             {
-                owner.Strategy.RecalculateAndDetermineTactics();
-            }
-            if (this.Idle) // check again, because recalculating strategy may have caused us to stop being idle
-            {
                 // And we're done.
-                owner.Activity.MakeIdle();
+                owner.Activity.StopForever();
                 return;
             }
             if (AttackTarget != null)
             {
-                // no attacks for now
+                if (AttackTarget.Broken)
+                {
+                    ResetBoth();
+                    RecalculateAndDetermineActivity();
+                    return;
+                }
+                if (owner.CanRangeAttack(AttackTarget))
+                {
+                    owner.Activity.Speed = Vector2.Zero;
+                    owner.Activity.SecondsUntilNextRecalculation = 1;
+                    owner.Activity.AttackTarget = AttackTarget;
+                    return;
+                }
+            }
+            HashSet<Vector2> targetTiles = null;
+            if (BuildTarget != null)
+            {
+                // Can you build ? If yes, start building and stop speed.
+                foreach (var tile in owner.Occupies.Neighbours.All)
+                {
+                    if (tile.BuildingOccupant == BuildTarget)
+                    {
+                        owner.Activity.BuildingWhat = BuildTarget;
+                    }
+                }
+                // Otherwise pick movement targets
+                if (owner.Activity.BuildingWhat == null)
+                {
+                    targetTiles = BuildTarget.GetFreeSpotsForBuilders();
+                }
             }
 
-            if (MovementTarget != IntVector.Zero)
+            if (MovementTarget != IntVector.Zero || AttackTarget != null || targetTiles != null)
             {
                 // Recalculate.
-                LinkedList<Vector2> path = Pathfinding.Pathfinding.AStar(owner, AttackTarget?.FeetStdPosition ?? MovementTarget, owner.Session.Map, PathfindingMode.FindClosestIfDirectIsImpossible);
+                LinkedList<Vector2> path;
+                if (targetTiles != null) {
+                    path  = Pathfinding.Pathfinding.DijkstraMultiple(owner, targetTiles, owner.Session.Map);
+                } else {
+                    path  = Pathfinding.Pathfinding.AStar(owner, AttackTarget?.FeetStdPosition ?? MovementTarget, owner.Session.Map, PathfindingMode.FindClosestIfDirectIsImpossible);
+                }
+                if (path != null && path.Count == 1)
+                {
+                    FinalPointMovements++;
+                    if (FinalPointMovements >= 10)
+                    {
+                        path = null;
+                    }
+                }
                 PathingCoordinates = path;
                 if (path == null || path.Count == 0)
                 {
-                    owner.Activity.MakeIdle();
-                    this.MovementTarget = IntVector.Zero;
-                    owner.Activity.Invalidate();
+                    MovementBlocked();
                 }
                 else if (path.Count > 0)
                 {
@@ -86,6 +134,16 @@ namespace Age.Core.Activities
                     }
                     owner.Activity.Speed = speed;
                 }
+            }
+
+        }
+
+        private void MovementBlocked()
+        {
+            if (MovementTarget != IntVector.Zero)
+            {
+                MovementTarget = IntVector.Zero;
+                RecalculateAndDetermineActivity();
             }
 
         }

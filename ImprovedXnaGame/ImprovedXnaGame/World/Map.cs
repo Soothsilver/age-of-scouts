@@ -97,7 +97,11 @@ namespace Age.World
                 }
                 if (unit.Activity.AttackingInProgress)
                 {
-                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Red.Alpha(150));
+                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Red.Alpha(200));
+                }
+                if (unit.Activity.BuildingWhat != null)
+                {
+                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Cyan.Alpha(200));
                 }
                 if (unit.Tactics.PathingCoordinates != null && selection.SelectedUnits.Contains(unit))
                 {

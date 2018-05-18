@@ -28,11 +28,17 @@ namespace Age.Core
 
         public void Draw(IScreenInformation screen)
         {
-            Primitives.FillCircle(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 80), screen), (int)(4 * screen.ZoomLevel), Color.White);
+            if (this.Height > 0)
+            {
+                Primitives.FillCircle(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 200), screen), (int)(4 * screen.ZoomLevel), Color.White);
+            }
         }
         public void DrawShadow(IScreenInformation screen)
         {
-            Primitives.FillCircle(Isomath.StandardToScreen(Position, screen), (int)(4 * screen.ZoomLevel), Color.Black.Alpha(150));
+            if (this.Height > 0)
+            {
+                Primitives.FillCircle(Isomath.StandardToScreen(Position, screen), (int)(4 * screen.ZoomLevel), Color.Black.Alpha(150));
+            }
         }
         public void Update(Session session, float elapsedSeconds)
         {
@@ -54,7 +60,7 @@ namespace Age.Core
                 {
                     // Do nothing.
                 }
-                else if (this.Height < 0f)
+                else if (this.Height < -2f)
                 {
                     this.Lost = true;
                     // Hit the ground.

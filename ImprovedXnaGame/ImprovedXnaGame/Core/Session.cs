@@ -92,20 +92,35 @@ namespace Age.Core
                 selection.SelectedUnits[0].Controller == PlayerTroop)
             {
                 // Move/attack/gather/build...
-                selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
                 foreach (var target in AllUnits)
                 {
                     if (AreEnemies(selection.SelectedUnits[0], target) &&
                         target.Hitbox.Contains((int) standardTarget.X, (int) standardTarget.Y))
                     {
+                        selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
                         selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetTo(target); });
                         return;
                     }
                 }
 
+                if (tile.BuildingOccupant != null && selection.SelectedUnits[0].CanContributeToBuilding(tile.BuildingOccupant))
+                {
+                    selection.SelectedUnits[0].UnitTemplate.PlayBuildSound();
+                }
+                else
+                {
+                    selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
+                }
                 selection.SelectedUnits.ForEach((unit) =>
                 {
-                    unit.Strategy.ResetTo(standardTarget);
+                    if (tile.BuildingOccupant != null && unit.CanContributeToBuilding(tile.BuildingOccupant))
+                    {
+                        unit.Strategy.ResetTo(tile.BuildingOccupant);
+                    }
+                    else
+                    {
+                        unit.Strategy.ResetTo(standardTarget);
+                    }
                 });
             }
             else if (tile != null && selection.SelectedBuilding != null &&
@@ -151,7 +166,7 @@ namespace Age.Core
 
             if (b.Template.Id == BuildingId.Kitchen)
             {
-                b.RallyPointInStandardCoordinates = b.FeetStdPosition + new Vector2(1, 1);
+                b.RallyPointInStandardCoordinates = b.FeetStdPosition + new Vector2(0, 10);
             }
 
             this.AllBuildings.Add(b);
@@ -182,7 +197,7 @@ namespace Age.Core
         {
             Map.Update(elapsedSeconds);
 
-            foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop))
+            foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
             {
                 FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
             }
@@ -213,11 +228,6 @@ namespace Age.Core
                         }
                     }
                 }
-
-                if (unit.Broken)
-                {
-                    AllUnits.RemoveAt(ui);
-                }
             }
 
             for (int pi = Projectiles.Count - 1; pi >=0;pi--)
@@ -227,6 +237,15 @@ namespace Age.Core
                 if (projectile.Lost)
                 {
                     Projectiles.RemoveAt(pi);
+                }
+            }
+            // Break from projectiles
+            for (int ui = AllUnits.Count - 1; ui >= 0; ui--)
+            {
+                Unit unit = AllUnits[ui];
+                if (unit.Broken)
+                {
+                    AllUnits.RemoveAt(ui);
                 }
             }
 
