@@ -126,6 +126,9 @@ namespace Auxiliary
         Minimap,
         UpdateCycle,
         GetTilesVisibleOnScreen,
-        CopySession
+        CopySession,
+        FogOfWarReveal,
+        AI,
+        Pathfinding
     }
 }

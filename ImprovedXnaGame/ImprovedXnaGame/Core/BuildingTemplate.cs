@@ -57,19 +57,24 @@ namespace Age.Core
         };
         internal int LineOfSightInTiles = 7;
 
-        internal bool ApplyCost(Troop playerTroop)
+        internal bool ApplyCost(Troop troop)
         {
-            if (playerTroop.Food >= this.FoodCost &&
-                playerTroop.Wood >= this.WoodCost)
+            if (AffordableBy(troop))
             {
-                playerTroop.Food -= this.FoodCost;
-                playerTroop.Wood -= this.WoodCost;
+                troop.Food -= this.FoodCost;
+                troop.Wood -= this.WoodCost;
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+
+        internal bool AffordableBy(Troop troop)
+        {
+            return (troop.Food >= this.FoodCost &&
+                troop.Wood >= this.WoodCost);
         }
 
         internal static IEnumerable<BuildingTemplate> GetConstructiblesBy(Troop controller)

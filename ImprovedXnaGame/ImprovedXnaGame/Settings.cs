@@ -19,7 +19,7 @@ namespace Age
         public float MouseMoveSpeed = Tile.WIDTH * 8;
 
         /// <summary>
-        /// Enables display of the fog of war. Fog of war is calculated even if this is disabled.
+        /// Enables display of the fog of war. Fog of war is calculated only if this is enabled.
         /// </summary>
         public bool EnableFogOfWar = true;
 

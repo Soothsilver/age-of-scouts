@@ -20,6 +20,17 @@ namespace Age.Core
         public abstract string Name { get; }
         public abstract Texture2D BottomBarTexture { get; }
         public abstract List<ConstructionOption> ConstructionOptions { get; }
+        public virtual bool CanAttack => false;
+
+        public bool CanRangeAttack(Unit attackTarget)
+        {
+            return
+                this.CanAttack &&
+                attackTarget != null && this.Session.AreEnemies(this, attackTarget)
+                && !attackTarget.Broken 
+                && this.FeetStdPosition.WithinDistance(attackTarget.FeetStdPosition, 5 * Tile.HEIGHT);
+            // && line of effect
+        }
 
         protected Entity(TextureName icon, Vector2 feetPosition)
         {

@@ -13,8 +13,8 @@ namespace Age.Core
         public Vector2 Speed;
         public bool Lost;
         public float Height;
-        public Unit Source;
-        public Projectile(Vector2 startingPosition, Vector2 target, Unit source)
+        public Entity Source;
+        public Projectile(Vector2 startingPosition, Vector2 target, Entity source)
         {
             float scalarSpeed = Tile.WIDTH * 4.5f;
             this.Position = startingPosition;

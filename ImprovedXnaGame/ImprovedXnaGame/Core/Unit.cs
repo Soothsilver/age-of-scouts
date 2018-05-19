@@ -74,7 +74,7 @@ namespace Age.Core
 
         }
 
-        internal void TakeDamage(int dmg, Unit source)
+        internal void TakeDamage(int dmg, Entity source)
         {
             this.HP -= dmg;
             if (this.HP <= 0 && !this.Broken)
@@ -90,7 +90,10 @@ namespace Age.Core
             {
                 if (this.FullyIdle)
                 {
-                    Tactics.ResetTo(source, false);
+                    if (source is Unit sourceUnit)
+                    {
+                        Tactics.ResetTo(sourceUnit, false);
+                    }
                 }
             }
         }
@@ -221,16 +224,8 @@ namespace Age.Core
             return new Tooltip(this.Name + " (" + this.UnitTemplate.Name + ")", this.UnitTemplate.Description);
         }
 
-        public bool CanRangeAttack(Unit attackTarget)
-        {
-            return 
-                this.UnitTemplate.CanAttack &&
-                attackTarget != null && this.Session.AreEnemies(this, attackTarget)
-                && !attackTarget.Broken &&
-                !this.Broken 
-                && this.FeetStdPosition.WithinDistance(attackTarget.FeetStdPosition, 5 * Tile.HEIGHT);
-                // && line of effect
-        }
+
+        public override bool CanAttack => UnitTemplate.CanAttack;
 
         internal void SwitchControllerTo(Troop controller)
         {

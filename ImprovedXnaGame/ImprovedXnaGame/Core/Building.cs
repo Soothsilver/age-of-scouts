@@ -21,6 +21,7 @@ namespace Age.Core
         internal bool SelfConstructionInProgress;
         internal float SelfConstructionProgress;
         internal Vector2 RallyPointInStandardCoordinates;
+        public float SecondsUntilRecharge = 0;
 
         public Building(BuildingTemplate buildingTemplate, Troop controller, Vector2 feetPosition, Tile primaryTile) : base(buildingTemplate.Icon, feetPosition)
         {
@@ -211,6 +212,7 @@ namespace Age.Core
                 Primitives.DrawImage(this.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
             }
         }
+        public override bool CanAttack => Template.Id == BuildingId.Kitchen || Template.Id == BuildingId.HadrkoVez;
 
         public void Update(float elapsedSeconds)
         {
@@ -244,6 +246,25 @@ namespace Age.Core
             }
             else
             {
+                if (CanAttack)
+                {
+                    if (SecondsUntilRecharge > 0)
+                    {
+                        SecondsUntilRecharge -= elapsedSeconds;
+                    }
+                    else 
+                    {
+                        for (int ui = 0; ui < Session.AllUnits.Count; ui++)
+                        {
+                            Unit unit = Session.AllUnits[ui];
+                            if (this.CanRangeAttack(unit))
+                            {
+                                Session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -200), unit.FeetStdPosition + new Vector2(0, -20), this));
+                            }
+                        }
+                        SecondsUntilRecharge = 1;
+                    }
+                }
                 if (ConstructionInProgress == null && ConstructionQueue.Count > 0)
                 {
                     Construction first = ConstructionQueue.First.Value;

@@ -5,6 +5,7 @@ using System.Text;
 using Age.Animation;
 using Age.Pathfinding;
 using Age.World;
+using Auxiliary;
 using Microsoft.Xna.Framework;
 
 namespace Age.Core.Activities
@@ -146,19 +147,15 @@ namespace Age.Core.Activities
             {
                 // Recalculate.
                 LinkedList<Vector2> path;
+
+                PerformanceCounter.StartMeasurement(PerformanceGroup.Pathfinding);
                 if (targetTiles != null) {
                     path  = Pathfinding.Pathfinding.DijkstraMultiple(owner, targetTiles, owner.Session.Map);
                 } else {
                     path  = Pathfinding.Pathfinding.AStar(owner, AttackTarget?.FeetStdPosition ?? MovementTarget, owner.Session.Map, PathfindingMode.FindClosestIfDirectIsImpossible);
                 }
-                if (path != null && path.Count == 1)
-                {
-                    FinalPointMovements++;
-                    if (FinalPointMovements >= 10)
-                    {
-                        path = null;
-                    }
-                }
+                PerformanceCounter.EndMeasurement(PerformanceGroup.Pathfinding);
+            
                 PathingCoordinates = path;
                 if (path == null || path.Count == 0)
                 {
@@ -191,12 +188,13 @@ namespace Age.Core.Activities
             else if (GatherTarget != null)
             {
                 Reset();
-                RecalculateAndDetermineActivity();
+                owner.Strategy.GatherTarget = null;
+                owner.Activity.Invalidate();
             }
             else if (BuildTarget != null)
             {
                 Reset();
-                RecalculateAndDetermineActivity();
+                owner.Activity.Invalidate();
             }
 
         }

@@ -159,7 +159,7 @@ namespace Age.Core
             }
         }
 
-        public bool AreEnemies(Unit unit, Unit target)
+        public bool AreEnemies(Entity unit, Entity target)
         {
             return unit.Controller != target.Controller && !unit.Controller.Convertible &&
                    !target.Controller.Convertible;
@@ -225,17 +225,19 @@ namespace Age.Core
         {
             Map.Update(elapsedSeconds);
 
-            foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
+            PerformanceCounter.StartMeasurement(PerformanceGroup.FogOfWarReveal);
+            if (Settings.Instance.EnableFogOfWar)
             {
-                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
-            }
-            foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
-            {
-                if (!unit.SelfConstructionInProgress)
+                foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
                 {
-
-
-                    FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * unit.Template.LineOfSightInTiles, Map, fromAir: true);
+                    FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
+                }
+                foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
+                {
+                    if (!unit.SelfConstructionInProgress)
+                    { 
+                        FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * unit.Template.LineOfSightInTiles, Map, fromAir: true);
+                    }
                 }
             }
 
@@ -243,6 +245,7 @@ namespace Age.Core
             {
                 revealer.Update(Map);
             }
+            PerformanceCounter.EndMeasurement(PerformanceGroup.FogOfWarReveal);
 
             for (int ui = AllUnits.Count - 1; ui >= 0; ui--)
             {

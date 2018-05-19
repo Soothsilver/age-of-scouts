@@ -102,11 +102,13 @@ namespace Age.Phases
                 Vector2 standardTarget = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, Session);
                 Session.RightClickOn(Selection, standardTarget);
             }
+            PerformanceCounter.StartMeasurement(PerformanceGroup.AI);
             for(int pl = 0; pl < Session.Troops.Count; pl++)
             {
                 Troop troop = Session.Troops[pl];
                 troop.AI.Update(Session);
             }
+            PerformanceCounter.EndMeasurement(PerformanceGroup.AI);
             Cheats.Update(this);
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape))
             {
