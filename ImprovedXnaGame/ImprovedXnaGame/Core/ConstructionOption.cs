@@ -8,12 +8,13 @@ namespace Age.Core
     class ConstructionOption
     {
         public static List<ConstructionOption> None { get; } = new List<ConstructionOption>();
+        public static List<ConstructionOption> MunitionTentOptions { get; internal set; } = new List<ConstructionOption>();
         public static List<ConstructionOption> KitchenOptions { get; internal set; } = new List<ConstructionOption>();
         public static List<ConstructionOption> PracantOptions { get; internal set; } = new List<ConstructionOption>();
 
         public static void InitializeAllConstructionOptions()
         {
-            foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent})
+            foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent, BuildingTemplate.MunitionTent, BuildingTemplate.HadrakoVez})
             {
                 PracantOptions.Add(new ConstructionOption("Postavit budovu " + buildingTemplate.Name, buildingTemplate.Description,
                     (b, s) =>
@@ -23,11 +24,16 @@ namespace Age.Core
             }
             foreach(UnitTemplate unitTemplate in new[] {  UnitTemplate.Pracant, UnitTemplate.Hadrakostrelec })
             {
-                KitchenOptions.Add(new ConstructionOption("Nabrat jednotku " + unitTemplate.Name, unitTemplate.Description,
+                var option = new ConstructionOption("Nabrat jednotku " + unitTemplate.Name, unitTemplate.Description,
                     (b, s) =>
                     {
                         b.EnqueueConstruction(unitTemplate);
-                    }, unitTemplate.FoodCost, unitTemplate.WoodCost, 1, unitTemplate.Icon));
+                    }, unitTemplate.FoodCost, unitTemplate.WoodCost, 1, unitTemplate.Icon);
+                KitchenOptions.Add(option);
+                if (unitTemplate.CanAttack)
+                {
+                    MunitionTentOptions.Add(option);
+                }
             }
         }
 

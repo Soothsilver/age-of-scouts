@@ -12,5 +12,6 @@ namespace Age
     static class StaticData
     {
         public static Stance[] AllStances = new[] { Stance.Aggressive, Stance.StandYourGround, Stance.Stealthy };
+        internal static int CarryingCapacity = 10;
     }
 }

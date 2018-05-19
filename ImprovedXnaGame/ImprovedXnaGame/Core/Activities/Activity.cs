@@ -16,12 +16,44 @@ namespace Age.Core.Activities
 
         public Vector2 Speed;
         public float SecondsUntilRecharge;
+        public float SecondsUntilGatherRecharge;
         public Unit AttackTarget;
         public bool AttackingInProgress;
         private Unit owner;
         public Building BuildingWhat;
+        public NaturalObject GatheringFrom;
 
-        public bool Idle => AttackTarget == null && Speed == Vector2.Zero;
+        public bool Idle => AttackTarget == null && Speed == Vector2.Zero && BuildingWhat == null && GatheringFrom == null;
+
+        public override string ToString()
+        {
+            string all = "";
+            if (Idle)
+            {
+                all += "No immediate activity";
+            }
+            else
+            {
+                if (AttackTarget != null)
+                {
+                    all += "Attacking. ";
+                }
+                if (BuildingWhat != null)
+                {
+                    all += "Building. ";
+                }
+                if (GatheringFrom != null)
+                {
+                    all += "Gathering. ";
+                }
+                if (Speed != Vector2.Zero)
+                {
+                    all += "Moving. ";
+                }
+            }
+            all += "\nRecalc in: " + SecondsUntilNextRecalculation;
+            return all;
+        }
 
         public Activity(Unit owner)
         {
@@ -33,6 +65,7 @@ namespace Age.Core.Activities
             this.AttackingInProgress = false;
             this.AttackTarget = null;
             this.BuildingWhat = null;
+            this.GatheringFrom = null;
             owner.Sprite.CurrentAnimation = AnimationListKey.Idle;
             this.Speed = Vector2.Zero;
         }
@@ -57,8 +90,25 @@ namespace Age.Core.Activities
                 }
                 if (!BuildingWhat.SelfConstructionInProgress)
                 {
+                    if (BuildingWhat.CanAcceptResourcesFrom(owner))
+                    {
+                        BuildingWhat.TakeResourcesFrom(owner);
+                    }
                     BuildingWhat = null;
                     SecondsUntilNextRecalculation = 0;
+                }
+            }
+            if (GatheringFrom != null)
+            {
+                if (SecondsUntilGatherRecharge <= 0)
+                {
+                    GatheringFrom.TransferOneResourceTo(owner);
+                    SecondsUntilNextRecalculation = 0;
+                    SecondsUntilGatherRecharge = 0.5f;
+                }
+                else
+                {
+                    SecondsUntilGatherRecharge -= elapsedSeconds;
                 }
             }
 
@@ -108,10 +158,10 @@ namespace Age.Core.Activities
             var speed = whereToStandard - owner.FeetStdPosition;
             speed.Normalize();
             this.Speed = owner.Speed * 2 * speed;
-            SecondsUntilNextRecalculation = toNearestPoint.X / speed.X;
+            SecondsUntilNextRecalculation = toNearestPoint.X / Speed.X;
             if (float.IsNaN(SecondsUntilNextRecalculation))
             {
-                SecondsUntilNextRecalculation = toNearestPoint.Y / speed.Y;
+                SecondsUntilNextRecalculation = toNearestPoint.Y / Speed.Y;
             }
         }
     }

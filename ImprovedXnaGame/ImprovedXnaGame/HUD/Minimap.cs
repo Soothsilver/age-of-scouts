@@ -13,6 +13,8 @@ namespace Age.HUD
         private Texture2D minimapTexture = null;
         private Texture2D backBufferMinimapTexture = null;
         private Color[] minimapData = null;
+        private Color[] copiableMinimapData = null;
+        private Color[] backBufferminimapData = null;
         private static int BASE_TERRAIN_ALPHA = 120;
         private static int TERRAIN_ALPHA = 150;
         private static Color grass = Color.LimeGreen.Alpha(BASE_TERRAIN_ALPHA).OverlayOnto(Color.White);
@@ -49,7 +51,7 @@ namespace Age.HUD
 
                             for (int i = 0; i < tileWidth; i++)
                             {
-                                minimapData[(screenY + j) * minimapHeight + (screenX + i)] = clr;
+                                backBufferminimapData[(screenY + j) * minimapHeight + (screenX + i)] = clr;
                             }
                         }
                     }
@@ -57,13 +59,14 @@ namespace Age.HUD
                 
                 
                 
-                backBufferMinimapTexture.SetData<Color>(minimapData);
                 lock (this)
                 {
-                    Texture2D swap = minimapTexture;
-                    minimapTexture = backBufferMinimapTexture;
-                    backBufferMinimapTexture = swap;
-                }              
+                    int ln = copiableMinimapData.Length;
+                    for (int i =0; i < ln; i++)
+                    {
+                        copiableMinimapData[i] = backBufferminimapData[i];
+                    }
+                }             
                 
             }
         }
@@ -80,6 +83,16 @@ namespace Age.HUD
             }
 
             // Blit
+            lock (this)
+            {
+
+                int ln = copiableMinimapData.Length;
+                for (int i = 0; i < ln; i++)
+                {
+                    minimapData[i] = copiableMinimapData[i];
+                }
+                minimapTexture.SetData(minimapData);
+            }
             Primitives.DrawImage(minimapTexture, rectangle);
             // Borders
             int movright = tileWidth;
@@ -104,14 +117,19 @@ namespace Age.HUD
             this.minimapTexture = new Texture2D(Root.GraphicsDevice, rectangle.Width, rectangle.Height);
             this.backBufferMinimapTexture = new Texture2D(Root.GraphicsDevice, rectangle.Width, rectangle.Height);
             this.minimapData = new Color[rectangle.Width * rectangle.Height];
+            this.backBufferminimapData = new Color[rectangle.Width * rectangle.Height];
+            this.copiableMinimapData = new Color[rectangle.Width * rectangle.Height];
             this.rectangle = rectangle;
             for (int y = 0; y < rectangle.Height; y++)
             {
                 for (int x = 0; x < rectangle.Width; x++)
                 {
                     minimapData[y * rectangle.Height + x] = Color.Transparent;
+                    backBufferminimapData[y * rectangle.Height + x] = Color.Transparent;
+                    copiableMinimapData[y * rectangle.Height + x] = Color.Transparent;
                 }
             }
+            minimapTexture.SetData(minimapData);
             this.initialized = true;
         }
 
@@ -125,6 +143,10 @@ namespace Age.HUD
             if (tile.Occupants.Count > 0)
             {
                 return tile.Occupants[0].Controller.StrongColor;
+            }
+            if (tile.BuildingOccupant != null)
+            {
+                return tile.BuildingOccupant.Controller.StrongColor;
             }
             if (tile.NaturalObjectOccupant != null)
             {
@@ -142,6 +164,8 @@ namespace Age.HUD
                         return Color.Violet;
                     case EntityKind.Corn:
                         return Color.Yellow;
+                    case EntityKind.CutDownTree:
+                        return grass;
                 }
             }
             switch (tile.Type)
@@ -155,24 +179,37 @@ namespace Age.HUD
 
         public void Update(Selection selection, Session session)
         {
-            /*
-            if (mouseOverTile != null && !selection.SelectionInProgress)
+            if (initialized)
             {
-                Root.WasMouseLeftClick = false;
-                if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                {
-                    session.CenterOfScreenInStandardPixels = Isomath.TileToStandard(mouseOverTile.X + 0.5f, mouseOverTile.Y + 0.5f);
-                    selection.StandardCoordinatesSelectionStart = Vector2.Zero;
-                    selection.SelectionInProgress = false;
-                }
-                if (Root.WasMouseRightClick)
-                {
-                    session.RightClickOn(selection, Isomath.TileToStandard(mouseOverTile.X + 0.5f, mouseOverTile.Y + 0.5f));
-                    Root.WasMouseRightClick = false;
-                }
+                Vector2 mouseOverStandardCoordinates = Vector2.Zero;
+                int minimapMouseX = Root.Mouse_NewState.X - (rectangle.X + rectangle.Width / 2);
+                int minimapMouseY = Root.Mouse_NewState.Y - rectangle.Y;
+                int tileWidth = rectangle.Width / session.Map.Width;
+                int tileHeight = rectangle.Height / session.Map.Height;
 
-            } 
-            */
+                int standardX = minimapMouseX * Tile.WIDTH / tileWidth;
+                int standardY = minimapMouseY * Tile.HEIGHT / tileHeight;
+                Vector2 pointerStandard = new Vector2(standardX, standardY);
+                Tile tile = session.Map.GetTileFromStandardCoordinates(pointerStandard);
+                if (tile != null)
+                {
+                    if (!selection.SelectionInProgress)
+                    {
+                        selection.DontStartSelectionBoxThisFrame = true;
+                        Root.WasMouseLeftClick = false;
+                        if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                        {
+                            session.CenterOfScreenInStandardPixels = pointerStandard;
+                            selection.StandardCoordinatesSelectionStart = Vector2.Zero;
+                        }
+                        if (Root.WasMouseRightClick)
+                        {
+                            session.RightClickOn(selection, pointerStandard);
+                            Root.WasMouseRightClick = false;
+                        }
+                    }
+                }
+            }
         }
     }
 }

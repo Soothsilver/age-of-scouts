@@ -61,6 +61,22 @@ namespace Age.Core
             MoveViewport.SmartCenterTo(this, target);
         }
 
+        internal void DestroyBuilding(Building bld)
+        {
+            // TODO optimization
+            for (int x = 0; x < Map.Width; x++)
+            {
+                for (int y = 0; y< Map.Height; y++)
+                {
+                    if (Map.Tiles[x,y].BuildingOccupant == bld)
+                    {
+                        Map.Tiles[x, y].BuildingOccupant = null;
+                    }
+                }
+            }
+            AllBuildings.Remove(bld);   
+        }
+
         public void SmartCenterTo(Vector2 standardCoordinates)
         {
             MoveViewport.SmartCenterTo(this, standardCoordinates);
@@ -107,6 +123,10 @@ namespace Age.Core
                 {
                     selection.SelectedUnits[0].UnitTemplate.PlayBuildSound();
                 }
+                else if (tile.NaturalObjectOccupant != null && selection.SelectedUnits[0].CanBeOrderedToGatherFrom(tile.NaturalObjectOccupant))
+                {
+                    selection.SelectedUnits[0].UnitTemplate.PlayGatherSound(tile.NaturalObjectOccupant.EntityKind);
+                }
                 else
                 {
                     selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
@@ -114,6 +134,14 @@ namespace Age.Core
                 selection.SelectedUnits.ForEach((unit) =>
                 {
                     if (tile.BuildingOccupant != null && unit.CanContributeToBuilding(tile.BuildingOccupant))
+                    {
+                        unit.Strategy.ResetTo(tile.BuildingOccupant);
+                    }
+                    else if (tile.NaturalObjectOccupant != null && unit.CanBeOrderedToGatherFrom(tile.NaturalObjectOccupant))
+                    {
+                        unit.Strategy.ResetTo(tile.NaturalObjectOccupant);
+                    }
+                    else if (tile.BuildingOccupant != null && tile.BuildingOccupant.CanAcceptResourcesFrom(unit))
                     {
                         unit.Strategy.ResetTo(tile.BuildingOccupant);
                     }
@@ -201,9 +229,14 @@ namespace Age.Core
             {
                 FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
             }
-            foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop))
+            foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
             {
-                FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 7, Map, fromAir: true);
+                if (!unit.SelfConstructionInProgress)
+                {
+
+
+                    FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * unit.Template.LineOfSightInTiles, Map, fromAir: true);
+                }
             }
 
             foreach (FogRevealer revealer in Revealers)

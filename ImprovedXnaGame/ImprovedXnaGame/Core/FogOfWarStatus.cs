@@ -44,7 +44,7 @@ namespace Age.Core
                 float dy = (float)Math.Sin(angle) * 10;
                 float x = source.X;
                 float y = source.Y;
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 200; i++)
                 {
                     x += dx; y += dy;
                     if ((new Vector2(x, y) - source).LengthSquared() >= pixelRange * pixelRange) break;

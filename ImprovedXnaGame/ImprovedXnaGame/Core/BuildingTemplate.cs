@@ -36,7 +36,7 @@ namespace Age.Core
 
         public static BuildingTemplate Kitchen = new BuildingTemplate(BuildingId.Kitchen, "Kuchyně", "Kuchyně je nejdůležitější budova ve hře {b}Age of Scouts{/b}. V kuchyni nabíráš {b}Pracanty{/b}, tito do kuchyně přináší nasbírané suroviny, a pomocí kuchyně také postupuješ do vyššího věku. Pokud je tvoje kuchyně zničena a všichni tvoji pracanti vyřazeni ze hry, nebudeš po zbytek úrovně schopný nic stavět, takže na svoji kuchyni dávej pozor.", TextureName.Kitchen, 3, 3, 0, 400)
         {
-            SecondsToBuild = 120,
+            SecondsToBuild = 180,
             SelectionSfx = SoundEffectName.Chord
         };
         public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard, 1, 1, 20, 50)
@@ -44,6 +44,18 @@ namespace Age.Core
             SecondsToBuild = 20,
             SelectionSfx = SoundEffectName.StandardTent
         };
+        public static BuildingTemplate MunitionTent = new BuildingTemplate(BuildingId.MunitionTent, "Muniční stan", "Dají se z něj nabírat {b}hadrákostřelci{/b}.", TextureName.MunitionTent, 2, 2, 0, 200)
+        {
+            SecondsToBuild = 50,
+            SelectionSfx = SoundEffectName.StandardTent
+        };
+        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 80, 150)
+        {
+            SecondsToBuild = 30,
+            SelectionSfx = SoundEffectName.Chord,
+            LineOfSightInTiles = 14
+        };
+        internal int LineOfSightInTiles = 7;
 
         internal bool ApplyCost(Troop playerTroop)
         {
@@ -104,6 +116,8 @@ namespace Age.Core
     public enum BuildingId
     {
         Kitchen,
-        Tent
+        Tent,
+        HadrkoVez,
+        MunitionTent
     }
 }

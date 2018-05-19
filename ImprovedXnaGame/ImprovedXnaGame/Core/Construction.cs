@@ -33,7 +33,10 @@ namespace Age.Core
             Unit trainee = new Unit(NameGenerator.GenerateBoyName(), building.Controller, ConstructingWhat,
                 building.FindExitPoint());
             building.Session.SpawnUnit(trainee);
-            trainee.UnitTemplate.PlayUnitCreatedSound();
+            if (trainee.Controller == building.Session.PlayerTroop)
+            {
+                trainee.UnitTemplate.PlayUnitCreatedSound();
+            }
             if (building.RallyPointInStandardCoordinates != Vector2.Zero)
             {
                 trainee.Strategy.ResetTo(building.RallyPointInStandardCoordinates);

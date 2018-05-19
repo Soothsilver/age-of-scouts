@@ -27,6 +27,8 @@ namespace Age.Core
         public int HP = 50;
         internal int MaxHP = 50;
         public Stance Stance = Stance.Aggressive;
+        public Resource CarryingResource;
+        public int CarryingHowMuchResource;
 
         public Unit(string name, Troop controller, UnitTemplate unitTemplate, Vector2 feetPosition) : base(TextureName.None, feetPosition)
         {
@@ -38,8 +40,17 @@ namespace Age.Core
             Strategy = new Strategy(this);
             Tactics = new Tactics(this);
             Activity = new Activity(this);
+            if (UnitTemplate.CanGatherStuff)
+            {
+                CarryingResource = Resource.Clay;
+                CarryingHowMuchResource = 3;
+            }
         }
 
+        /// <summary>
+        /// Returns true if the unit can construct or repair the given building.
+        /// </summary>
+        /// <param name="construction">The building that needs to be constructed or repaired.</param>
         internal bool CanContributeToBuilding(Building construction)
         {
             return this.UnitTemplate.CanBuildStuff && construction.SelfConstructionInProgress
@@ -53,7 +64,8 @@ namespace Age.Core
                 return GetHitboxFromFeet(this.FeetStdPosition);
             }
         }
-        
+
+        public string DebugActivityDescription => "Strategy: " + Strategy + "\nTactics: " + Tactics + "\nActivity: " + Activity;
         public override Texture2D BottomBarTexture => SpriteCache.GetColoredTexture(UnitTemplate.Icon, Controller.LightColor);
 
         public Rectangle GetHitboxFromFeet(Vector2 feet)
@@ -168,6 +180,22 @@ namespace Age.Core
         }
 
         /// <summary>
+        /// Returns true if this unit can be ordered to gather from this tile.
+        /// </summary>
+        internal bool CanBeOrderedToGatherFrom(NaturalObject naturalObject)
+        {
+            return this.UnitTemplate.CanGatherStuff &&
+                naturalObject.ResourcesLeft > 0 &&
+                naturalObject.ProvidesResource != 0;
+        }
+        public bool CanNowGatherFrom(NaturalObject naturalObject)
+        {
+             return this.CanBeOrderedToGatherFrom(naturalObject) &&
+                (naturalObject.ProvidesResource != this.CarryingResource ||
+                this.CarryingHowMuchResource < StaticData.CarryingCapacity);
+        }
+
+        /// <summary>
         /// Performs the unit's <see cref="Activity"/>, potentially reevaluating its <see cref="Tactics"/> and <see cref="Strategy"/>.
         /// </summary>
         /// <param name="session">The session.</param>
@@ -257,6 +285,11 @@ namespace Age.Core
                     this.Activity.QuicklyWalkTo(m);
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return Name + " (" + UnitTemplate.Name + ", " + Occupies + ")";
         }
     }
 }

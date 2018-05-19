@@ -16,7 +16,7 @@ namespace Age.Core
         public Unit Source;
         public Projectile(Vector2 startingPosition, Vector2 target, Unit source)
         {
-            float scalarSpeed = Tile.WIDTH * 7;
+            float scalarSpeed = Tile.WIDTH * 4.5f;
             this.Position = startingPosition;
             this.Speed = target - startingPosition;
             this.Speed.Normalize();

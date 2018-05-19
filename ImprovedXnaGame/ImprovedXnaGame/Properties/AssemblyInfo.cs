@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ImprovedXnaGame")]
-[assembly: AssemblyProduct("ImprovedXnaGame")]
-[assembly: AssemblyDescription("Hra vyrobená v C#/XNA 4.0 s použitím knihovny Auxiliary")]
+[assembly: AssemblyTitle("Age of Scouts")]
+[assembly: AssemblyProduct("Age of Scouts")]
+[assembly: AssemblyDescription("Realtimová strategie z prostředí skautského tábora")]
 [assembly: AssemblyCompany("Petr Hudeček")]
-[assembly: AssemblyCopyright("Copyright © Petr Hudeček 2012")]
+[assembly: AssemblyCopyright("Copyright © Petr Hudeček 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

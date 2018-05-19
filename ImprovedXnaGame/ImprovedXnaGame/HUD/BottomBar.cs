@@ -58,8 +58,9 @@ namespace Age.HUD
                 if (primaryUnit != null)
                 {
                     Primitives.DrawSingleLineText(primaryUnit.UnitTemplate.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 30), Color.Black, Library.FontNormal);
+                    Primitives.DrawSingleLineText(primaryUnit.DebugActivityDescription, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 108), Color.Black, Library.FontTiny);
                 }
-                Primitives.DrawImage(primaryEntity.BottomBarTexture, new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, Height - 60, Height - 60));
+                Primitives.DrawImage(primaryEntity.BottomBarTexture, new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, 64, 64));
 
                 // All selected units and/or action currently executed by building
                 Primitives.DrawRectangle(rectAllSelectedUnits, ColorScheme.Foreground);
@@ -86,11 +87,6 @@ namespace Age.HUD
                         // Row 1: Stances
                         int y = 0;
                         int x = 0;
-                        Stance? commonStance = primaryUnit.Stance;
-                        if (selection.SelectedUnits.Any(unt => unt.Stance != commonStance))
-                        {
-                            commonStance = null;
-                        }
                         foreach (Stance stance in StaticData.AllStances)
                         {
                             var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
@@ -101,11 +97,13 @@ namespace Age.HUD
                                     unt.Stance = stance;
                                 }
                             });
-                            if (commonStance == stance)
-                            {
-                                Primitives.DrawRectangle(r.Extend(2, 2), Color.Red, 2);
-                            }
                             x += 64;
+                        }
+                        if (primaryUnit.CarryingHowMuchResource != 0)
+                        {
+                            Primitives.DrawImage(Library.Get(primaryUnit.CarryingResource.ToTextureName()), new Rectangle(rectOptions.X + 10, rectOptions.Bottom - 42, 32, 32));
+                            Primitives.DrawSingleLineText(primaryUnit.CarryingHowMuchResource.ToString(), new Vector2(rectOptions.X + 50, rectOptions.Bottom - 38),
+                                Color.Black, Library.FontTinyBold);
                         }
                     }
                     {
@@ -127,6 +125,25 @@ namespace Age.HUD
                                     levelPhase.EmitWarningMessage("Na tuto budovu nebo jednotku nemáš dost surovin nebo přesahuješ populační limit.");
                                 }
                             });
+                            x += 64;
+                        }
+                    }
+                    if (primaryUnit != null)
+                    {
+                        int x = 0;
+                        int y = 0;
+                        Stance? commonStance = primaryUnit.Stance;
+                        if (selection.SelectedUnits.Any(unt => unt.Stance != commonStance))
+                        {
+                            commonStance = null;
+                        }
+                        foreach (Stance stance in StaticData.AllStances)
+                        {
+                            var r = new Rectangle(rectOptions.X + x, rectOptions.Y + y, 64, 64);
+                            if (commonStance == stance)
+                            {
+                                Primitives.DrawRectangle(r.Extend(2, 2), Color.Red, 2);
+                            }
                             x += 64;
                         }
                     }
@@ -155,7 +172,7 @@ namespace Age.HUD
                 }
                 Primitives.DrawImage(Library.Get(unit.UnitTemplate.Icon), rectOneIcon);
                 Primitives.DrawRectangle(rectOneIcon, Color.Black);
-                Primitives.DrawHealthbar(new Rectangle(rectOneIcon.X, rectOneIcon.Bottom - 5, rectOneIcon.Width, 5), unit.Controller.StrongColor, unit.HP, unit.MaxHP);
+                Primitives.DrawHealthBar(new Rectangle(rectOneIcon.X, rectOneIcon.Bottom - 5, rectOneIcon.Width, 5), unit.Controller.StrongColor, unit.HP, unit.MaxHP);
 
 
                 if ((i + 1) % 6 == 0)

@@ -14,8 +14,11 @@ namespace Age.Core.Activities
     class Strategy
     {
         public NaturalObject GatherTarget;
+        public bool BuildingStuff;
 
         private Unit owner;
+
+        public bool DoesStrategyExist => BuildingStuff || GatherTarget != null;
 
         public Strategy(Unit owner)
         {
@@ -27,10 +30,20 @@ namespace Age.Core.Activities
             FullStop();
             owner.Tactics.MovementTarget = (IntVector)movementTarget;
         }
+        public void ResetTo(NaturalObject gatherTarget)
+        {
+            FullStop();
+            GatherTarget = gatherTarget;
+        }
         public void ResetTo(Building construction)
         {
             FullStop();
             if (owner.CanContributeToBuilding(construction))
+            {
+                owner.Tactics.BuildTarget = construction;
+                BuildingStuff = true;
+            }
+            else if (construction.CanAcceptResourcesFrom(owner))
             {
                 owner.Tactics.BuildTarget = construction;
             }
@@ -58,6 +71,96 @@ namespace Age.Core.Activities
         public void Reset()
         {
             GatherTarget = null;
-        }        
+            BuildingStuff = false;
+        }
+
+        internal void DetermineNextTactics()
+        {
+            if (BuildingStuff)
+            {
+                var buildableNext = owner.Session.AllBuildings.Where(bld => bld.Controller == owner.Controller
+                && bld.SelfConstructionInProgress && bld.FeetStdPosition.WithinDistance(owner.FeetStdPosition, Tile.WIDTH * 8)).FirstOrDefault();
+                if (buildableNext == null)
+                {
+                    // End of strategy, there's nothing to do here.
+                    BuildingStuff = false;
+                }
+                else
+                {
+                    ResetTo(buildableNext);
+                }
+            }
+            else if (GatherTarget != null)
+            {
+                if (owner.CarryingResource != GatherTarget.ProvidesResource || owner.CarryingHowMuchResource < StaticData.CarryingCapacity)
+                {
+                    // Go gather.
+                    if (GatherTarget.ResourcesLeft > 0)
+                    {
+                        owner.Tactics.GatherTarget = GatherTarget;
+                    }
+                    else
+                    {
+                        var adjacents = GatherTarget.Occupies.Neighbours.All.Where(tl => tl.NaturalObjectOccupant != null && tl.NaturalObjectOccupant.ProvidesResource == GatherTarget.ProvidesResource).Select(tl => tl.NaturalObjectOccupant).ToList();
+                        if (adjacents.Count > 0)
+                        {                  
+                            // Gather from something close by.
+                            GatherTarget = owner.Tactics.GatherTarget = adjacents[R.Next(adjacents.Count)];
+                        }
+                        else
+                        {
+                            // End of strategy.
+                            GatherTarget = null;
+                        }
+                    }
+                }
+                else
+                {
+                    // Go deposit.
+                    Building closestDropOffPoint = null;
+                    float distanceToClosestPoint = 0;
+                    foreach(var building in owner.Session.AllBuildings)
+                    {
+                        if (building.CanAcceptResourcesFrom(owner))
+                        {
+                            var distanceToThis = (building.FeetStdPosition - owner.FeetStdPosition).LengthSquared();
+                            if (closestDropOffPoint == null)
+                            {
+                                closestDropOffPoint = building;
+                                distanceToClosestPoint = distanceToThis;
+                            }
+                            else if (distanceToThis < distanceToClosestPoint)
+                            {
+                                distanceToClosestPoint = distanceToThis;
+                                closestDropOffPoint = building;
+                            }
+                        }
+                    }
+                    if (closestDropOffPoint != null)
+                    {
+                        owner.Tactics.BuildTarget = closestDropOffPoint;
+                    }
+                }
+            }
+        }
+        public override string ToString()
+        {
+            if (GatherTarget != null)
+            {
+                return "Gather from: " + GatherTarget;
+            }
+            else if (BuildingStuff)
+            {
+                return "Building stuff";
+            }
+            else if (DoesStrategyExist)
+            {
+                return "UNIDENTIFIED STRATEGY";
+            }
+            else
+            {
+                return "None";
+            }
+        }
     }
 }

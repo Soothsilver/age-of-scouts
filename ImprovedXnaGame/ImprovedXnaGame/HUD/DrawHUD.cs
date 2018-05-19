@@ -29,9 +29,9 @@ namespace Age.HUD
         {
             if (mainPhase.WarningMessage != null)
             {
-                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(29, Root.ScreenHeight - 400), Color.Red,
+                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(29, Root.ScreenHeight - 400 - 1), Color.Black,
                     Library.FontTinyBold);
-                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(30, Root.ScreenHeight - 400), Color.White,
+                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(30, Root.ScreenHeight - 400), Color.Red,
                     Library.FontTinyBold);
                 mainPhase.WarningMessageDisappearsInSeconds -= elapsedSeconds;
                 if (mainPhase.WarningMessageDisappearsInSeconds <= 0)
@@ -100,7 +100,7 @@ namespace Age.HUD
             // Resources
             DrawResourceBox("Jídlo", you.Food.ToString(), TextureName.MeatIcon, new Rectangle(20, 2, 120, 36), "Jídlo sbíráš z {b}kukuřičných polí{/b} a {b}lesních plodů{/b}. Jídlo potřebuješ k nabírání nových skautů, ke cvičení skautů, k některým vylepšením a pro postup do dalšího věku. Skauti nepotřebují jídlo, aby přežili: jakmile jednou skauta nabereš, už pro něj další jídlo není třeba.");
             DrawResourceBox("Dřevo", you.Wood.ToString(), TextureName.WoodIcon, new Rectangle(150, 2, 120, 36), "Dřevo sbíráš kácením {b}stromů{/b}. Dřevo potřebuješ ke stavění táborových staveb, k cvičení některých skautů, k některým vylepšením a pro postup do dalšího věku.");
-            DrawResourceBox("Turbojíl", you.Clay.ToString(), TextureName.MudIcon, new Rectangle(280, 2, 120, 36), "Turbojíl sbíráš z {b}bahenních polí{/b}. Turbojíl potřebuješ ke stavění pokročilých staveb a k cvičení některých skautů.");
+            DrawResourceBox("Turbojíl", you.Clay.ToString(), TextureName.MudIcon, new Rectangle(280, 2, 120, 36), "Turbojíl sbíráš z {b}bahenních polí{/b}. Turbojíl potřebuješ ke stavění pokročilých staveb, k cvičení některých skautů a pro všechny magické nebo nadpřirozené jednotky nebo vylepšení.");
             DrawResourceBox("Skauti", you.PopulationUsed + " / " + you.PopulationLimit, TextureName.PopulationIcon, new Rectangle(410, 2, 120, 36), "Číslo vlevo je počet populačních jednotek, které zabírají tvoji skauti. Číslo vpravo je kapacita tvého tábora v populačních jednotkách. Nemůžeš nabírat další skauty, pokud už nemáš volnou kapacitu. Kapacitu můžeš zvýšit stavěním stanů.");
 
             // Age and god powers

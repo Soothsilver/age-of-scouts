@@ -22,6 +22,7 @@ namespace Age.Phases
 
         public bool SelectionInProgress = false;
         public Vector2 StandardCoordinatesSelectionStart = Vector2.Zero;
+        internal bool DontStartSelectionBoxThisFrame;
 
         public bool IsSomethingSelected => SelectedNaturalObject != null || SelectedBuilding != null || SelectedUnits.Count > 0;
 
@@ -33,9 +34,8 @@ namespace Age.Phases
             if (UI.MouseOverOnClickAction != null)
             {
                 // Buttons always have priority.
-                return;
             }
-            if (SelectedUnits.Count > 0 && SelectedBuildingToPlace != null)
+            else if (SelectedUnits.Count > 0 && SelectedBuildingToPlace != null)
             {
                 if (Root.WasMouseLeftClick)
                 {
@@ -46,7 +46,8 @@ namespace Age.Phases
                             Building construction = levelPhase.Session.SpawnBuildingAsConstruction(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop, mouseOverTile);
                             SelectedUnits[0].UnitTemplate.PlayBuildSound();
                             SelectedUnits.ForEach(unit => unit.Strategy.ResetTo(construction));
-                            if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift))
+                            if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
+                                && !Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
                             {
                                 SelectedBuildingToPlace = null;
                             }
@@ -95,9 +96,12 @@ namespace Age.Phases
                 {
                     if (Root.Mouse_OldState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
                     {
-                        SelectionInProgress = true;
-                        StandardCoordinatesSelectionStart = Isomath.ScreenToStandard(Root.Mouse_NewState.X,
-                            Root.Mouse_NewState.Y, levelPhase.Session);
+                        if (!DontStartSelectionBoxThisFrame)
+                        {
+                            SelectionInProgress = true;
+                            StandardCoordinatesSelectionStart = Isomath.ScreenToStandard(Root.Mouse_NewState.X,
+                                Root.Mouse_NewState.Y, levelPhase.Session);
+                        }
                     }
                 }
                 else if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
@@ -117,6 +121,7 @@ namespace Age.Phases
                     }
                 }
             }
+            DontStartSelectionBoxThisFrame = false;
         }
 
         internal Entity GetPrimaryEntity()

@@ -13,9 +13,10 @@ namespace Age.Core
     {
         private const int STANDARD_FOOD_STORE = 600;
         private const int STANDARD_TREE_WOOD_STORE = 150;
+        private const Resource NO_RESOURCE = 0;
 
         internal EntityKind EntityKind;
-        public bool PreventsMovement => SpeedMultiplier == 0;
+        public bool PreventsMovement => SpeedMultiplier == 0;      
         public float SpeedMultiplier = 1;
         public bool PreventsProjectiles = false;
         public override string Name { get; }
@@ -78,6 +79,11 @@ namespace Age.Core
                     name = "Kukuřice";
                     desc = "Z této části kukuřičného pole můžou tvoji {b}Pracanti{/b} odnést kukuřici do kuchyně a získat tak {lime}jídlo{/lime}.";
                     break;
+                case EntityKind.CutDownTree:
+                    speedMultiplier = 1;
+                    name = "Pařez";
+                    desc = "Tady kdysi byl strom.";
+                    break;
                 case EntityKind.TallGrass:
                     speedMultiplier = 0.8f;
                     name = "Vysoká tráva";
@@ -103,16 +109,66 @@ namespace Age.Core
 
         }
 
+        internal void TransferOneResourceTo(Unit owner)
+        {
+            if (ResourcesLeft > 0)
+            {
+                ResourcesLeft--;
+                if (owner.CarryingResource != this.ProvidesResource)
+                {
+                    owner.CarryingHowMuchResource = 0;
+                    owner.CarryingResource = ProvidesResource;
+                }
+                owner.CarryingHowMuchResource++;
+                if (this.EntityKind == EntityKind.UntraversableTree)
+                {
+                    if (this.ResourcesLeft > 0)
+                    {
+                        this.Icon = TextureName.TreeCutDown;
+                    }
+                }
+                if (ResourcesLeft == 0)
+                {
+                    this.Occupies.NaturalObjectOccupant = null;
+                    if (this.EntityKind == EntityKind.UntraversableTree)
+                    {
+                        NaturalObject stump = NaturalObject.Create(TextureName.TreeStump, EntityKind.CutDownTree, this.Occupies.X, this.Occupies.Y, this.Session);
+                        this.Occupies.NaturalObjectOccupant = stump;
+                    }
+                }
+            }
+        }
+
         public override List<ConstructionOption> ConstructionOptions => ConstructionOption.None;
 
         internal void DrawActionInProgress(Rectangle rectAllSelectedUnits)
         {
-            if (ProvidesResource != 0)
+            if (ProvidesResource != NO_RESOURCE)
             {
                 Primitives.DrawImage(Library.Get(ProvidesResource.ToTextureName()), new Rectangle(rectAllSelectedUnits.X + 10, rectAllSelectedUnits.Bottom - 42, 32, 32));
                 Primitives.DrawSingleLineText(ResourcesLeft.ToString(), new Vector2(rectAllSelectedUnits.X + 50, rectAllSelectedUnits.Bottom - 38),
                     Color.Black, Library.FontTinyBold);
             }
+        }
+
+        internal HashSet<Vector2> GetFreeSpotsForGatherers()
+        {
+            HashSet<Vector2> allocation = new HashSet<Vector2>();
+            
+            foreach (var neighbour in Occupies.Neighbours.All)
+            {
+                if (neighbour.Occupants.Count == 0)
+                {
+                    allocation.Add(Isomath.TileToStandard(neighbour.X + 0.5f, neighbour.Y + 0.5f));
+                }
+            }
+
+            return allocation;
+        }
+
+        public override string ToString()
+        {
+            return this.EntityKind + " (" + this.Occupies.ToString() + ")";
         }
     }
 }

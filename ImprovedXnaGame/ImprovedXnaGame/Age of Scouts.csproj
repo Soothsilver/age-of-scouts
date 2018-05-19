@@ -116,6 +116,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\AggressiveAI.cs" />
+    <Compile Include="AI\BaseAI.cs" />
+    <Compile Include="AI\DoNothingAI.cs" />
     <Compile Include="Animation\SpriteCache.cs" />
     <Compile Include="Core\Activities\Activity.cs" />
     <Compile Include="Core\Activities\Physics.cs" />

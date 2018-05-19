@@ -357,6 +357,10 @@ namespace Auxiliary
         PracantMoveLeft2,
         PracantMoveDown3,
         PracantMoveDown,
-        PracantMoveDown2
+        PracantMoveDown2,
+        TreeCutDown,
+        TreeStump,
+        MunitionTent,
+        Tower
     }
 }

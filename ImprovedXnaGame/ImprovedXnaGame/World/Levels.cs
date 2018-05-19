@@ -1,4 +1,5 @@
-﻿using Age.Core;
+﻿using Age.AI;
+using Age.Core;
 using Age.Voice;
 using Auxiliary;
 using Microsoft.Xna.Framework;
@@ -167,6 +168,7 @@ namespace Age.World
             Session s = CreateBasic1v1();
             LoadMapIntoSession(s, "Levels\\BlankMap.tmx");
             var enemy = s.Troops[1];
+            enemy.AI = new AggressiveAI(enemy);
             s.Objectives.Add(new Objective("Vyřaď všechny nepřátelské jednotky.")
             {
                 Visible = true,

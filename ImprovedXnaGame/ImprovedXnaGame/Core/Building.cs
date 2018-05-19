@@ -40,6 +40,11 @@ namespace Age.Core
 
         public override string Name => this.Template.Name;
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public override Texture2D BottomBarTexture => SpriteCache.GetColoredTexture(Template.Icon, Controller.LightColor);
 
         public override List<ConstructionOption> ConstructionOptions
@@ -53,6 +58,10 @@ namespace Age.Core
                 else if (this.Template.Id == BuildingId.Kitchen)
                 {
                     return ConstructionOption.KitchenOptions;
+                }
+                else if (this.Template.Id == BuildingId.MunitionTent)
+                {
+                    return ConstructionOption.MunitionTentOptions;
                 }
                 else
                 {
@@ -69,7 +78,7 @@ namespace Age.Core
                 {
                     for (int y = 0; y < Template.TileHeight; y++)
                     {
-                        Tile tile = Session.Map.Tiles[x + this.PrimaryTile.X, y + this.PrimaryTile.Y];
+                        Tile tile = Session.Map.GetTileFromTileCoordinates(this.PrimaryTile.X - x, this.PrimaryTile.Y - y);
                         if (tile.Occupants.Count > 0) return false;
                     }
                 }
@@ -77,11 +86,42 @@ namespace Age.Core
             }
         }
 
-        internal void EnqueueConstruction(UnitTemplate unitTemplate)
+        internal void TakeResourcesFrom(Unit owner)
         {
-            this.Controller.Food -= unitTemplate.FoodCost;
-            this.Controller.Wood -= unitTemplate.WoodCost;
-            ConstructionQueue.AddLast(new Construction(unitTemplate));
+            switch (owner.CarryingResource)
+            {
+                case Resource.Clay:
+                    Controller.Clay += owner.CarryingHowMuchResource;
+                    break;
+                case Resource.Wood:
+                    Controller.Wood += owner.CarryingHowMuchResource;
+                    break;
+                case Resource.Food:
+                    Controller.Food += owner.CarryingHowMuchResource;
+                    break;
+            }
+            owner.CarryingHowMuchResource = 0;
+        }
+
+        internal bool CanAcceptResourcesFrom(Unit owner)
+        {
+            return this.Template.Id == BuildingId.Kitchen && this.Controller == owner.Controller && owner.CarryingHowMuchResource > 0;
+        }
+
+        internal bool EnqueueConstruction(UnitTemplate unitTemplate)
+        {
+            if (this.Controller.Wood > unitTemplate.WoodCost &&
+                this.Controller.Food > unitTemplate.FoodCost)
+            {
+                this.Controller.Food -= unitTemplate.FoodCost;
+                this.Controller.Wood -= unitTemplate.WoodCost;
+                ConstructionQueue.AddLast(new Construction(unitTemplate));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Draw(IScreenInformation screen, Selection selection)
@@ -96,6 +136,8 @@ namespace Age.Core
                 Rectangle srcRect = new Rectangle(0, what.Height - textureHeight, what.Width, textureHeight);
                 Primitives.SpriteBatch.Draw(what, destinationRectangle, srcRect, Color.White.Alpha(200));
                 Primitives.DrawRectangle(rectWhere.Extend(1, 1), this.Controller.StrongColor);
+                Rectangle rectHealthBar = new Rectangle(rectWhere.X, rectWhere.Y - 2, rectWhere.Width, 8);
+                Primitives.DrawHealthBar(rectHealthBar, this.Controller.StrongColor, (int)(1000 * this.SelfConstructionProgress), 1000);
             }
             else
             {
@@ -115,12 +157,15 @@ namespace Age.Core
             {
                 for (int y = 0; y< Template.TileHeight; y++)
                 {
-                    Tile tile = Session.Map.Tiles[x + this.PrimaryTile.X, y + this.PrimaryTile.Y];
-                    foreach(var neighbour in tile.Neighbours.All)
+                    Tile tile = Session.Map.GetTileFromTileCoordinates(this.PrimaryTile.X - x, this.PrimaryTile.Y - y);
+                    if (tile != null)
                     {
-                        if (neighbour.Occupants.Count == 0)
+                        foreach (var neighbour in tile.Neighbours.All)
                         {
-                            allocation.Add(Isomath.TileToStandard(neighbour.X + 0.5f, neighbour.Y + 0.5f));
+                            if (neighbour.Occupants.Count == 0)
+                            {
+                                allocation.Add(Isomath.TileToStandard(neighbour.X + 0.5f, neighbour.Y + 0.5f));
+                            }
                         }
                     }
                 }
@@ -151,7 +196,7 @@ namespace Age.Core
             if (ConstructionInProgress != null)
             {
                 Rectangle rectProgressBar = new Rectangle(rectAction.X + 20, rectAction.Y + 70, rectAction.Width - 40, 40);
-                Primitives.DrawHealthbar(rectProgressBar, Color.Gold, (int)(1000 * ConstructionInProgress.WorkDoneInSeconds), (1000 * (int)ConstructionInProgress.TotalWorkNeeded));
+                Primitives.DrawHealthBar(rectProgressBar, Color.Gold, (int)(1000 * ConstructionInProgress.WorkDoneInSeconds), (1000 * (int)ConstructionInProgress.TotalWorkNeeded));
                 Primitives.DrawSingleLineText(ConstructionInProgress.Subcaption, new Vector2(rectAction.X + 20, rectAction.Y + 30), Color.Black, Library.FontTinyBold);
                 Primitives.DrawSingleLineText(ConstructionInProgress.Caption + " (" + ((int)(100 * ConstructionInProgress.WorkDoneInSeconds) / (int)ConstructionInProgress.TotalWorkNeeded) + "%)", new Vector2(rectAction.X + 20, rectAction.Y + 45), Color.Black, Library.FontMid);
                 Primitives.DrawImage(ConstructionInProgress.ConstructingWhat.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
@@ -160,7 +205,7 @@ namespace Age.Core
             if (SelfConstructionInProgress)
             {
                 Rectangle rectProgressBar = new Rectangle(rectAction.X + 20, rectAction.Y + 70, rectAction.Width - 40, 40);
-                Primitives.DrawHealthbar(rectProgressBar, Color.Lime, (int)(SelfConstructionProgress * 10000), 10000);
+                Primitives.DrawHealthBar(rectProgressBar, Color.Lime, (int)(SelfConstructionProgress * 10000), 10000);
                 Primitives.DrawSingleLineText("Tato stavba se staví...", new Vector2(rectAction.X + 20, rectAction.Y + 30), Color.Black, Library.FontTinyBold);
                 Primitives.DrawSingleLineText(this.Name + " (" + (int)(100 * SelfConstructionProgress) + "%)", new Vector2(rectAction.X + 20, rectAction.Y + 45), Color.Black, Library.FontMid);
                 Primitives.DrawImage(this.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
@@ -177,12 +222,14 @@ namespace Age.Core
                     {
                         for (int y = 0; y < Template.TileHeight; y++)
                         {
-                            Tile tile = Session.Map.Tiles[x + this.PrimaryTile.X, y + this.PrimaryTile.Y];
-                            foreach(Unit unit in tile.Occupants)
-                            {
-                                if (unit.Controller == this.Controller)
+                            Tile tile = Session.Map.GetTileFromTileCoordinates(this.PrimaryTile.X - x, this.PrimaryTile.Y - y);
+                            if (tile != null) {
+                                foreach (Unit unit in tile.Occupants)
                                 {
-                                    unit.AttemptToExitConstructionSite(this);
+                                    if (unit.Controller == this.Controller)
+                                    {
+                                        unit.AttemptToExitConstructionSite(this);
+                                    }
                                 }
                             }
                         }

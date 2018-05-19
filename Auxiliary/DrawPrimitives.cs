@@ -71,7 +71,7 @@ namespace Auxiliary
             SpriteBatch.Draw(Library.Pixel, startPoint, null, color, angle, Vector2.Zero, new Vector2(length, width), SpriteEffects.None, 0);
         }
 
-        public static void DrawHealthbar(Rectangle rectangle, Color strongColor, int HP, int maxHP)
+        public static void DrawHealthBar(Rectangle rectangle, Color strongColor, int HP, int maxHP)
         {
             Primitives.FillRectangle(rectangle, Color.White);
             Primitives.FillRectangle(new Rectangle(rectangle.X, rectangle.Y, rectangle.Width * HP / maxHP, rectangle.Height), strongColor);

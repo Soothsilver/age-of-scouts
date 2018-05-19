@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Age.AI;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Age.Core
             this.StrongColor = strongColor;
             this.LightColor = lightColor;
             this.LeaderPowers.Add(new LeaderPowerInstance(LeaderPower.CreateSpy(), false));
+            this.AI = new DoNothingAI(this);
         }
 
         public string Name { get; set; }
@@ -30,9 +32,10 @@ namespace Age.Core
         public int Wood { get; set; } = 1000;
         public int Clay { get; set; } = 1000;
         public int PopulationUsed => Session.AllUnits.Count(unt => unt.Controller == this);
-        public int PopulationLimit => Session.AllBuildings.Count(bld => bld.Template.Id == BuildingId.Tent && bld.Controller == this) * 2;
+        public int PopulationLimit => Session.AllBuildings.Count(bld => bld.Template.Id == BuildingId.Tent && !bld.SelfConstructionInProgress && bld.Controller == this) * 2;
 
         public static Troop Gaia { get; internal set; }
+        public BaseAI AI;
 
         public int GetResourceStore(Resource resource)
         {
@@ -49,8 +52,10 @@ namespace Age.Core
         {
             foreach(var unit in Session.AllUnits.Where(unt => unt.Controller == this))
             {
-                unit.HP = 0;
+                unit.TakeDamage(unit.HP, unit);
             }
+            Session.AllBuildings.Where(bld => bld.Controller == this).ToList().ForEach(
+                bld => Session.DestroyBuilding(bld));
         }
     }
 }

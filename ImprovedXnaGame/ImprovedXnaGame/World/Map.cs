@@ -101,7 +101,11 @@ namespace Age.World
                 }
                 if (unit.Activity.BuildingWhat != null)
                 {
-                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Cyan.Alpha(200));
+                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Blue.Alpha(200));
+                }
+                if (unit.Activity.GatheringFrom != null)
+                {
+                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Lime.Alpha(200));
                 }
                 if (unit.Tactics.PathingCoordinates != null && selection.SelectedUnits.Contains(unit))
                 {
@@ -158,7 +162,7 @@ namespace Age.World
 
                             if (unit.HP < unit.MaxHP)
                             {
-                                Primitives.DrawHealthbar(
+                                Primitives.DrawHealthBar(
                                     new Rectangle(rewHitbox.X, rewHitbox.Y - 5, rewHitbox.Width, 5),
                                     unit.Controller.StrongColor, unit.HP, unit.MaxHP);
                             }

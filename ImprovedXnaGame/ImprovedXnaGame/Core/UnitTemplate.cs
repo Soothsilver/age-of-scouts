@@ -56,11 +56,14 @@ namespace Age.Core
         internal int FoodCost;
         internal int WoodCost;
 
+        public bool CanGatherStuff;
+
         public static void InitUnitTemplates()
         {
             Pracant = new UnitTemplate("Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Pracant, 50, 0)
             {
                 CanBuildStuff = true,
+                CanGatherStuff = true,
                 CanAttack = false
             };
             Hadrakostrelec = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20);
@@ -135,12 +138,31 @@ namespace Age.Core
                 SFX.PlayRandom(Selection1, Selection2, Selection3, Selection4);
             }
         }
+
+        internal void PlayGatherSound(EntityKind kind)
+        {
+            SFX.LastUnitSelectedXTimes = 0;
+            switch (kind)
+            {
+                case EntityKind.BerryBush:
+                    SFX.Play(GatherBerries);
+                    break;
+                case EntityKind.Corn:
+                    SFX.Play(GatherCorn);
+                    break;
+                case EntityKind.UntraversableTree:
+                    SFX.Play(GatherWood);
+                    break;
+            }
+        }
+
         internal void PlayUnitCreatedSound()
         {
             SFX.Play(UnitCreated);
         }
         internal void PlayAttackSound()
         {
+            SFX.LastUnitSelectedXTimes = 0;
             SFX.PlayRandom(AckAttack, AckAttack2, Ack1, Ack2);
         }
     }

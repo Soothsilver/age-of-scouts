@@ -92,17 +92,21 @@ namespace Age.Phases
 
             // Order matters, unfortunately:
 
-            // First, test selection.
-            Selection.Update(this, elapsedSeconds);
-            // Next, if you are not selecting, you may click on the minimap:
+            // First, see if you clicked on map.
             Minimap.Update(Selection, Session);
+            // Next, update selection but note that minimap may have overridden it.
+            Selection.Update(this, elapsedSeconds);
             // Next, if right-click wasn't already used, perform it to change the strategy of selected units or do something else with selection:
             if (Root.WasMouseRightClick)
             {
                 Vector2 standardTarget = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, Session);
                 Session.RightClickOn(Selection, standardTarget);
             }
-
+            for(int pl = 0; pl < Session.Troops.Count; pl++)
+            {
+                Troop troop = Session.Troops[pl];
+                troop.AI.Update(Session);
+            }
             Cheats.Update(this);
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape))
             {

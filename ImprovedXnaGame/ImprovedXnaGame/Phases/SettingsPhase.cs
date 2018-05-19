@@ -37,5 +37,14 @@ namespace Age.Phases
 
             base.Draw(sb, game, elapsedSeconds, topmost);
         }
+
+        protected override void Update(Game game, float elapsedSeconds)
+        {
+            if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F12) || Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape))
+            {
+                Root.PopFromPhase();
+            }
+            base.Update(game, elapsedSeconds);
+        }
     }
 }

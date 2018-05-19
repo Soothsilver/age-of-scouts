@@ -7,6 +7,7 @@
         UnalignedTent,
         TutorialFlag,
         BerryBush,
-        Corn
+        Corn,
+        CutDownTree
     }
 }
