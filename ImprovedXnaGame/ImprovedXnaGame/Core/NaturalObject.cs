@@ -11,8 +11,8 @@ namespace Age.Core
 {
     class NaturalObject : Entity
     {
-        private const int STANDARD_FOOD_STORE = 600;
-        private const int STANDARD_TREE_WOOD_STORE = 150;
+        private const int STANDARD_FOOD_STORE = 300;
+        private const int STANDARD_TREE_WOOD_STORE = 80;
         private const Resource NO_RESOURCE = 0;
 
         internal EntityKind EntityKind;
@@ -52,6 +52,10 @@ namespace Age.Core
                     ProvidesResource = Resource.Wood;
                     ResourcesLeft = STANDARD_TREE_WOOD_STORE;
                     break;
+                case EntityKind.MudMine:
+                    ProvidesResource = Resource.Clay;
+                    ResourcesLeft = STANDARD_FOOD_STORE;
+                    break;
             }
         }
 
@@ -70,6 +74,10 @@ namespace Age.Core
        
             switch (entityKind)
             {
+                case EntityKind.MudMine:
+                    name = "Bahenní pole";
+                    desc = "Zde mohou tvoji {b}Pracanti{/b} těžit {blue}turbojíl{/blue}.";
+                    break;
                 case EntityKind.BerryBush:
                     name = "Lesní plody";
                     desc = "Z tohoto keře můžou tvoji {b}Pracanti{/b} sbírat lesní plody. Až je donesou zpět do kuchyně, získáš {lime}jídlo{/lime}.";

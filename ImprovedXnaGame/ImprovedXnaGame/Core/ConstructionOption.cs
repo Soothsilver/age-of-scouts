@@ -5,7 +5,7 @@ using Auxiliary;
 
 namespace Age.Core
 {
-    class ConstructionOption
+    class ConstructionOption : IHasCosts
     {
         public static List<ConstructionOption> None { get; } = new List<ConstructionOption>();
         public static List<ConstructionOption> MunitionTentOptions { get; internal set; } = new List<ConstructionOption>();
@@ -14,13 +14,14 @@ namespace Age.Core
 
         public static void InitializeAllConstructionOptions()
         {
-            foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent, BuildingTemplate.MunitionTent, BuildingTemplate.HadrakoVez})
+            foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent, BuildingTemplate.MunitionTent, BuildingTemplate.HadrakoVez,
+            BuildingTemplate.MajestatniSocha})
             {
                 PracantOptions.Add(new ConstructionOption("Postavit budovu " + buildingTemplate.Name, buildingTemplate.Description,
                     (b, s) =>
                     {
                         s.SelectedBuildingToPlace = buildingTemplate;
-                    }, buildingTemplate.FoodCost, buildingTemplate.WoodCost, 0, buildingTemplate.Icon));
+                    }, buildingTemplate.FoodCost, buildingTemplate.WoodCost, buildingTemplate.ClayCost, 0, buildingTemplate.Icon));
             }
             foreach(UnitTemplate unitTemplate in new[] {  UnitTemplate.Pracant, UnitTemplate.Hadrakostrelec })
             {
@@ -28,7 +29,7 @@ namespace Age.Core
                     (b, s) =>
                     {
                         b.EnqueueConstruction(unitTemplate);
-                    }, unitTemplate.FoodCost, unitTemplate.WoodCost, 1, unitTemplate.Icon);
+                    }, unitTemplate.FoodCost, unitTemplate.WoodCost, 0, 1, unitTemplate.Icon);
                 KitchenOptions.Add(option);
                 if (unitTemplate.CanAttack)
                 {
@@ -37,11 +38,12 @@ namespace Age.Core
             }
         }
 
-        private ConstructionOption(string caption, string description, Action<Building, Selection> whatDo, int foodCost, int woodCost, int populationCost, TextureName icon)
+        private ConstructionOption(string caption, string description, Action<Building, Selection> whatDo, int foodCost, int woodCost, int mudCost, int populationCost, TextureName icon)
         {
             this.foodCost = foodCost;
             this.populationCost = populationCost;
             this.woodCost = woodCost;
+            this.mudCost = mudCost;
             OnClick = whatDo;
             Description = description;
             this.caption = caption;
@@ -49,8 +51,17 @@ namespace Age.Core
         }
 
         private int foodCost;
+        private int mudCost;
         private int woodCost;
         private int populationCost;
+
+        public int FoodCost => foodCost;
+
+        public int WoodCost => woodCost;
+
+        public int ClayCost => mudCost;
+
+        public int PopulationCost => populationCost;
         private string caption;
         public string TooltipCaption => caption + " (" + GetResourceCost() + ")";
 
@@ -60,7 +71,7 @@ namespace Age.Core
             if (foodCost > 0)
             {
                 s += foodCost + " jídla";
-                if (woodCost > 0)
+                if (woodCost > 0 || mudCost > 0)
                 {
                     s += ", ";
                 }
@@ -68,6 +79,14 @@ namespace Age.Core
             if (woodCost > 0)
             {
                 s += woodCost + " dřeva";
+                if (mudCost > 0)
+                {
+                    s += ", ";
+                }
+            }
+            if (mudCost > 0)
+            {
+                s += mudCost + " turbojílu";
             }
             return s;
         }
@@ -77,6 +96,7 @@ namespace Age.Core
         internal bool AffordableBy(Troop controller)
         {
             return controller.Wood >= this.woodCost && controller.Food >= this.foodCost && 
+                controller.Clay >= this.mudCost &&
                 (this.populationCost == 0 || (controller.PopulationLimit - controller.PopulationUsed) >= this.populationCost);
         }
 

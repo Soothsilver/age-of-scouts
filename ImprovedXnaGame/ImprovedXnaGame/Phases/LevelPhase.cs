@@ -128,5 +128,29 @@ namespace Age.Phases
             WarningMessage = message;
             WarningMessageDisappearsInSeconds = 7;
         }
+
+        internal void EmitInsufficientResourcesFor(IHasCosts building, Troop playerTroop)
+        {
+            if (building.FoodCost > playerTroop.Food)
+            {
+                EmitWarningMessage("Nemáš dost jídla. Pošli pracanty sbírat bobule nebo sklízet kukuřici.");
+                SFX.PlaySoundUnlessPlaying(SoundEffectName.NotEnoughFood);
+            }
+            else if (building.WoodCost > playerTroop.Wood)
+            {
+                EmitWarningMessage("Nemáš dost dřeva. Pošli pracanty kácet stromy.");
+                SFX.PlaySoundUnlessPlaying(SoundEffectName.NotEnoughWood);
+            }
+            else if (building.ClayCost > playerTroop.Clay)
+            {
+                EmitWarningMessage("Nemáš dost turbojílu. Pošli pracanty do bahenních polí.");
+                SFX.PlaySoundUnlessPlaying(SoundEffectName.NotEnoughClay);
+            }
+            else if (building.PopulationCost > playerTroop.PopulationLimit- playerTroop.PopulationUsed && building.PopulationCost > 0)
+            {
+                EmitWarningMessage("Postav více stanů, abys mohl nabrat další skauty.");
+                SFX.PlaySoundUnlessPlaying(SoundEffectName.NotEnoughPopulationLimit);
+            }
+        }
     }
 }

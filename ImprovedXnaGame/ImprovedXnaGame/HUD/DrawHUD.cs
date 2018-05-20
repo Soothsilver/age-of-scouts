@@ -29,7 +29,12 @@ namespace Age.HUD
         {
             if (mainPhase.WarningMessage != null)
             {
-                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(29, Root.ScreenHeight - 400 - 1), Color.Black,
+                Primitives.FillRectangle(new Rectangle(20, Root.ScreenHeight - 405, 700, 25), ColorScheme.SemitransparentWhite);
+                // Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(29, Root.ScreenHeight - 400 - 1), Color.Black,
+                //     Library.FontTinyBold);
+                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(30-1, Root.ScreenHeight - 400-1), Color.White,
+                    Library.FontTinyBold);
+                Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(30+1, Root.ScreenHeight - 400+1), Color.White,
                     Library.FontTinyBold);
                 Primitives.DrawSingleLineText(mainPhase.WarningMessage, new Vector2(30, Root.ScreenHeight - 400), Color.Red,
                     Library.FontTinyBold);

@@ -81,7 +81,7 @@ namespace Age.World
         private static float SmartCenterRemainingSeconds = 0;
         internal static void SmartCenterTo(Session session, Vector2 target)
         {
-            SmartCenterRemainingSeconds = 0.5f;
+            SmartCenterRemainingSeconds = 0.1f;
             SmartCenterSpeed = (target - session.CenterOfScreenInStandardPixels) / SmartCenterRemainingSeconds;
         }
 

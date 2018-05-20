@@ -153,6 +153,9 @@ namespace Age.Core
                 case EntityKind.UntraversableTree:
                     SFX.Play(GatherWood);
                     break;
+                case EntityKind.MudMine:
+                    SFX.Play(GatherMud);
+                    break;
             }
         }
 

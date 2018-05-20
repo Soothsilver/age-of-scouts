@@ -43,5 +43,12 @@ namespace Age.Core
             }
             return true;
         }
+
+        internal void Rebate(Troop controller)
+        {
+            controller.Food += ConstructingWhat.FoodCost;
+            controller.Wood += ConstructingWhat.WoodCost;
+            controller.Clay += 0; // TODO clay units
+        }
     }
 }

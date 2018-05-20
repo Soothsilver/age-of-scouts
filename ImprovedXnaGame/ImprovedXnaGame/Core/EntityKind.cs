@@ -8,6 +8,7 @@
         TutorialFlag,
         BerryBush,
         Corn,
-        CutDownTree
+        CutDownTree,
+        MudMine
     }
 }

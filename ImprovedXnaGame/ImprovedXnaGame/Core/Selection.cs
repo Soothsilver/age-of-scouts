@@ -54,12 +54,13 @@ namespace Age.Phases
                         }
                         else
                         {
-                            levelPhase.EmitWarningMessage("Na tuto budovu nemáš dost surovin.");
+                            levelPhase.EmitInsufficientResourcesFor(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop);
                         }
                     }
                     else
                     {
                         levelPhase.EmitWarningMessage("Sem budovu nemůžeš postavit.");
+                        SFX.PlaySoundUnlessPlaying(SoundEffectName.Error);
                     }
                     Root.WasMouseLeftClick = false;
                 }

@@ -273,7 +273,16 @@ namespace Auxiliary
         Tut11,
         Tut12,
         Chord,
-        StandardTent
+        StandardTent,
+        SmallFanfare,
+        LadderClimb,
+        MunitionTent,
+        NotEnoughFood,
+        NotEnoughClay,
+        NotEnoughWood,
+        NotEnoughPopulationLimit,
+        SoftFanfare,
+        Error
     }
 
     public enum TextureName
@@ -361,6 +370,10 @@ namespace Auxiliary
         TreeCutDown,
         TreeStump,
         MunitionTent,
-        Tower
+        Tower,
+        RoadTile,
+        MudTile,
+        MudMine,
+        Statue
     }
 }

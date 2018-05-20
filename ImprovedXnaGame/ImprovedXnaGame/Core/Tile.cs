@@ -39,6 +39,29 @@ namespace Age.Core
 
         public bool PreventsProjectiles => this.NaturalObjectOccupant?.PreventsProjectiles ?? false;
 
+        public float SpeedMultiplier
+        {
+            get
+            {
+                if (NaturalObjectOccupant != null)
+                {
+                    return NaturalObjectOccupant.SpeedMultiplier;
+                }
+                if (this.Type == TileType.Road)
+                {
+                    return 2;
+                }
+                else if (Type == TileType.Mud)
+                {
+                    return 0.5f;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
         public override string ToString()
         {
             return X + ":" + Y;

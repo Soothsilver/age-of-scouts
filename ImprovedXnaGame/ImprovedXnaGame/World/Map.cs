@@ -95,17 +95,20 @@ namespace Age.World
                     Primitives.DrawImage(Library.Get(TextureName.WhiteTile), rectTile, Color.Red.Alpha(150));
                     Primitives.FillCircle(Isomath.StandardToScreen(unit.FeetStdPosition, session), 5, Color.DarkRed);
                 }
-                if (unit.Activity.AttackingInProgress)
+                if (!Settings.Instance.EnableFogOfWar || unit.Occupies.Fog == FogOfWarStatus.Clear)
                 {
-                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Red.Alpha(200));
-                }
-                if (unit.Activity.BuildingWhat != null)
-                {
-                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Blue.Alpha(200));
-                }
-                if (unit.Activity.GatheringFrom != null)
-                {
-                    Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Lime.Alpha(200));
+                    if (unit.Activity.AttackingInProgress)
+                    {
+                        Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Red.Alpha(200));
+                    }
+                    if (unit.Activity.BuildingWhat != null)
+                    {
+                        Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Blue.Alpha(200));
+                    }
+                    if (unit.Activity.GatheringFrom != null)
+                    {
+                        Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Lime.Alpha(200));
+                    }
                 }
                 if (unit.Tactics.PathingCoordinates != null && selection.SelectedUnits.Contains(unit))
                 {

@@ -164,6 +164,8 @@ namespace Age.HUD
                         return Color.Violet;
                     case EntityKind.Corn:
                         return Color.Yellow;
+                    case EntityKind.MudMine:
+                        return Color.Brown;
                     case EntityKind.CutDownTree:
                         return grass;
                 }
@@ -173,6 +175,10 @@ namespace Age.HUD
                 case TileType.Grass:
                     return grass;
                 case TileType.Water: return water;
+                case TileType.Mud:
+                    return tallGrass;
+                case TileType.Road:
+                    return Color.Yellow;
                 default: return Color.Red;
             }
         }

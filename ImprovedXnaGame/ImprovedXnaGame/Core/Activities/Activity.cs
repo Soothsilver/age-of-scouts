@@ -114,7 +114,7 @@ namespace Age.Core.Activities
 
             if (Speed != Vector2.Zero)
             {
-                Vector2 newPosition = owner.FeetStdPosition + Speed * elapsedSeconds;
+                Vector2 newPosition = owner.FeetStdPosition + Speed * (owner.Occupies.SpeedMultiplier) * elapsedSeconds;
                 Tile targetTile = session.Map.GetTileFromStandardCoordinates(newPosition);
                 MoveLegality moveLegality = MovementRules.IsMoveLegal(owner, owner.FeetStdPosition, newPosition, targetTile, session);
                 if (moveLegality.IsLegal)

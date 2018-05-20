@@ -185,6 +185,7 @@ namespace Age.Core
                     "Odstranit z fronty tuto položku", n.ConstructingWhat.Description,
                     () =>
                     {
+                        n.Rebate(this.Controller);
                         ConstructionQueue.Remove(n);
                     });
                 x += 64;
@@ -200,7 +201,13 @@ namespace Age.Core
                 Primitives.DrawHealthBar(rectProgressBar, Color.Gold, (int)(1000 * ConstructionInProgress.WorkDoneInSeconds), (1000 * (int)ConstructionInProgress.TotalWorkNeeded));
                 Primitives.DrawSingleLineText(ConstructionInProgress.Subcaption, new Vector2(rectAction.X + 20, rectAction.Y + 30), Color.Black, Library.FontTinyBold);
                 Primitives.DrawSingleLineText(ConstructionInProgress.Caption + " (" + ((int)(100 * ConstructionInProgress.WorkDoneInSeconds) / (int)ConstructionInProgress.TotalWorkNeeded) + "%)", new Vector2(rectAction.X + 20, rectAction.Y + 45), Color.Black, Library.FontMid);
-                Primitives.DrawImage(ConstructionInProgress.ConstructingWhat.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
+                UI.DrawIconButton(new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64), topmost, ConstructionInProgress.ConstructingWhat.Icon.Color(this.Controller),
+                 "Zrušit položku, na které se právě pracuje", ConstructionInProgress.ConstructingWhat.Description,
+                 () =>
+                 {
+                     ConstructionInProgress.Rebate(this.Controller);
+                     ConstructionInProgress = null;
+                 });
             }
             // Self construction
             if (SelfConstructionInProgress)
@@ -212,6 +219,12 @@ namespace Age.Core
                 Primitives.DrawImage(this.Icon.Color(this.Controller), new Rectangle(rectAction.Right - 68, rectAction.Y + 4, 64, 64));
             }
         }
+
+        internal void SwitchControllerTo(Troop controller)
+        {
+            this.Controller = controller;
+        }
+
         public override bool CanAttack => Template.Id == BuildingId.Kitchen || Template.Id == BuildingId.HadrkoVez;
 
         public void Update(float elapsedSeconds)
@@ -241,7 +254,10 @@ namespace Age.Core
                 {
                     SelfConstructionProgress = 1;
                     SelfConstructionInProgress = false;
-                    SFX.PlaySoundUnlessPlaying(SoundEffectName.Harp);
+                    if (this.Controller == Session.PlayerTroop)
+                    {
+                        SFX.PlaySoundUnlessPlaying(SoundEffectName.Harp);
+                    }
                 }
             }
             else

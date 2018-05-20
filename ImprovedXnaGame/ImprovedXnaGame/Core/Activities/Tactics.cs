@@ -166,7 +166,7 @@ namespace Age.Core.Activities
                     Vector2 toNearestPoint = path.First.Value - owner.FeetStdPosition;
                     Vector2 speed = new Vector2(toNearestPoint.X, toNearestPoint.Y);
                     speed.Normalize();
-                    speed *= owner.Speed * (owner.Occupies.NaturalObjectOccupant?.SpeedMultiplier ?? 1);
+                    speed *= owner.Speed;
                     owner.Activity.SecondsUntilNextRecalculation = toNearestPoint.X / speed.X;
                     if (float.IsNaN(owner.Activity.SecondsUntilNextRecalculation))
                     {

@@ -122,7 +122,7 @@ namespace Age.HUD
                                 }
                                 else
                                 {
-                                    levelPhase.EmitWarningMessage("Na tuto budovu nebo jednotku nemáš dost surovin nebo přesahuješ populační limit.");
+                                    levelPhase.EmitInsufficientResourcesFor(building, levelPhase.Session.PlayerTroop);
                                 }
                             });
                             x += 64;

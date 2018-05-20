@@ -118,6 +118,14 @@ namespace Age.World
                     tile.Icon = TextureName.IsoWater;
                     tile.Type = TileType.Water;
                     break;
+                case "Road":
+                    tile.Icon = TextureName.RoadTile;
+                    tile.Type = TileType.Road;
+                    break;
+                case "MudTile":
+                    tile.Icon = TextureName.MudTile;
+                    tile.Type = TileType.Mud;
+                    break;
                 case "Flag":
                     tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BasicFlag, EntityKind.TutorialFlag, tile, session);
                     break;
@@ -129,6 +137,9 @@ namespace Age.World
                     break;
                 case "BerryBush":
                     tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.BerryBush, EntityKind.BerryBush, tile, session);
+                    break;
+                case "MudMine":
+                    tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.MudMine, EntityKind.MudMine, tile, session);
                     break;
                 case "Corn":
                     tile.NaturalObjectOccupant = SpawnNaturalObject(TextureName.Corn, EntityKind.Corn, tile, session);

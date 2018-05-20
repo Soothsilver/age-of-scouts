@@ -158,7 +158,7 @@ namespace Age.Pathfinding
 
         private static int Heuristic(Tile start, Tile target)
         {
-            return Math.Abs(start.X - target.X) * 130 + Math.Abs(start.Y - target.Y) * 130;
+            return Math.Max(Math.Abs(start.X - target.X), Math.Abs(start.Y - target.Y)) * 64;
         }
 
         private static void SetPathfindingInformation(Tile t, int searchId, bool closed, int g, int f, Tile parent)

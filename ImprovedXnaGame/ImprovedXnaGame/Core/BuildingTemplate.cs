@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Age.Core
 {
-    internal class BuildingTemplate
+    internal class BuildingTemplate : IHasCosts
     {
         public BuildingId Id;
         public string Name;
@@ -16,15 +16,18 @@ namespace Age.Core
         public int TileWidth;
         public int TileHeight;
         public TextureName Icon { get; internal set; }
-        public int WoodCost;
-        public int FoodCost;
+        public int WoodCost { get; }
+        public int FoodCost { get; }
+        public int ClayCost { get; }
+        public int PopulationCost => 0;
         public float SecondsToBuild;
         public SoundEffectName SelectionSfx;
 
         private BuildingTemplate(BuildingId id, string name, string description, TextureName icon, int tileWidth, int tileHeight,
-            int food, int wood)
+            int food, int wood, int mud)
         {
             Id = id;
+            ClayCost = mud;
             FoodCost = food;
             WoodCost = wood;
             Name = name;
@@ -34,28 +37,33 @@ namespace Age.Core
             Icon = icon;
         }
 
-        public static BuildingTemplate Kitchen = new BuildingTemplate(BuildingId.Kitchen, "Kuchyně", "Kuchyně je nejdůležitější budova ve hře {b}Age of Scouts{/b}. V kuchyni nabíráš {b}Pracanty{/b}, tito do kuchyně přináší nasbírané suroviny, a pomocí kuchyně také postupuješ do vyššího věku. Pokud je tvoje kuchyně zničena a všichni tvoji pracanti vyřazeni ze hry, nebudeš po zbytek úrovně schopný nic stavět, takže na svoji kuchyni dávej pozor.", TextureName.Kitchen, 3, 3, 0, 400)
+        public static BuildingTemplate Kitchen = new BuildingTemplate(BuildingId.Kitchen, "Kuchyně", "Kuchyně je nejdůležitější budova ve hře {b}Age of Scouts{/b}. V kuchyni nabíráš {b}Pracanty{/b}, tito do kuchyně přináší nasbírané suroviny, a pomocí kuchyně také postupuješ do vyššího věku. Pokud je tvoje kuchyně zničena a všichni tvoji pracanti vyřazeni ze hry, nebudeš po zbytek úrovně schopný nic stavět, takže na svoji kuchyni dávej pozor.", TextureName.Kitchen, 3, 3, 0, 600, 0)
         {
             SecondsToBuild = 180,
             SelectionSfx = SoundEffectName.Chord
         };
-        public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard, 1, 1, 20, 50)
+        public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard, 1, 1, 20, 50, 0)
         {
             SecondsToBuild = 20,
             SelectionSfx = SoundEffectName.StandardTent
         };
-        public static BuildingTemplate MunitionTent = new BuildingTemplate(BuildingId.MunitionTent, "Muniční stan", "Dají se z něj nabírat {b}hadrákostřelci{/b}.", TextureName.MunitionTent, 2, 2, 0, 200)
+        public static BuildingTemplate MunitionTent = new BuildingTemplate(BuildingId.MunitionTent, "Muniční stan", "Dají se z něj nabírat {b}hadrákostřelci{/b}.", TextureName.MunitionTent, 2, 2, 0, 200, 0)
         {
             SecondsToBuild = 50,
-            SelectionSfx = SoundEffectName.StandardTent
+            SelectionSfx = SoundEffectName.MunitionTent
         };
-        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 80, 150)
+        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 80, 150, 100)
         {
             SecondsToBuild = 30,
-            SelectionSfx = SoundEffectName.Chord,
-            LineOfSightInTiles = 14
+            SelectionSfx = SoundEffectName.LadderClimb,
+            LineOfSightInTiles = 7
         };
-        internal int LineOfSightInTiles = 7;
+        public static BuildingTemplate MajestatniSocha = new BuildingTemplate(BuildingId.MajestatniSocha, "Majestátní socha", "Obrovské umělecké dílo, které je důkazem schopností, vytrvalosti a oddanosti skautů ve tvém oddíle. Jakmile postavíš Majestatní sochu, začne odpočet, na jehož konci automaticky vyhraješ úroveň, pokud do té doby nikdo tvoji sochu nezboří.", TextureName.Statue, 4, 4, 200, 500, 1500)
+        {
+            SecondsToBuild = 500,
+            SelectionSfx = SoundEffectName.SmallFanfare
+        };
+        internal int LineOfSightInTiles = 3;
 
         internal bool ApplyCost(Troop troop)
         {
@@ -63,6 +71,7 @@ namespace Age.Core
             {
                 troop.Food -= this.FoodCost;
                 troop.Wood -= this.WoodCost;
+                troop.Clay -= this.ClayCost;
                 return true;
             }
             else
@@ -73,14 +82,10 @@ namespace Age.Core
 
         internal bool AffordableBy(Troop troop)
         {
-            return (troop.Food >= this.FoodCost &&
-                troop.Wood >= this.WoodCost);
-        }
-
-        internal static IEnumerable<BuildingTemplate> GetConstructiblesBy(Troop controller)
-        {
-            yield return Kitchen;
-            yield return Tent;
+            return
+                troop.Food >= this.FoodCost &&
+                troop.Wood >= this.WoodCost &&
+                troop.Clay >= this.ClayCost;
         }
 
         public bool PlaceableOn(Session session, Tile tile)
@@ -123,6 +128,7 @@ namespace Age.Core
         Kitchen,
         Tent,
         HadrkoVez,
-        MunitionTent
+        MunitionTent,
+        MajestatniSocha
     }
 }

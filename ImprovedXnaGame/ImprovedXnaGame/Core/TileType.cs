@@ -3,6 +3,8 @@
     public enum TileType
     {
         Grass,
-        Water
+        Water,
+        Road,
+        Mud
     }
 }

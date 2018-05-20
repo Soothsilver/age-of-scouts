@@ -228,11 +228,11 @@ namespace Age.Core
             PerformanceCounter.StartMeasurement(PerformanceGroup.FogOfWarReveal);
             if (Settings.Instance.EnableFogOfWar)
             {
-                foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
+                foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || PlayerTroop.Omniscience))
                 {
                     FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
                 }
-                foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar))
+                foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || PlayerTroop.Omniscience))
                 {
                     if (!unit.SelfConstructionInProgress)
                     { 

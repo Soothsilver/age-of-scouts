@@ -85,6 +85,7 @@ namespace Auxiliary
                 this.total[key] = 0;
             }
 
+            Primitives.FillRectangle(new Rectangle((int)where.X - 4, (int)where.Y - 4, 500, 200), Color.Brown.Alpha(200));
             Primitives.DrawSingleLineText(fpsUpsString + "\n" + upsDataSoFar + "\n" + fpsDataSoFar + "\n" + performanceGroupData,
                 new Vector2(where.X + 1 ,where.Y - 1 ), Color.Black, Library.FontTinyBold);
             Primitives.DrawSingleLineText(fpsUpsString + "\n" + upsDataSoFar + "\n" + fpsDataSoFar + "\n" + performanceGroupData,

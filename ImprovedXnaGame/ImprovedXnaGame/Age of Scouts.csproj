@@ -133,6 +133,7 @@
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\EntityKind.cs" />
     <Compile Include="Core\FogOfWarStatus.cs" />
+    <Compile Include="Core\IHasCosts.cs" />
     <Compile Include="Core\IScreenInformation.cs" />
     <Compile Include="Core\LeaderPowerInstance.cs" />
     <Compile Include="Core\LeaderPower.cs" />

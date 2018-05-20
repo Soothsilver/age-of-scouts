@@ -143,6 +143,43 @@ namespace Age.World
             return s;
         }
 
+        internal static Session AIvsAI()
+        {
+            Session session = new Session();
+            session.OtherTriggers.Clear();
+            session.Troops.Add(new Troop("Divák", session, Era.EraRadcu, Color.FromNonPremultiplied(4, 44, 204, 255), Color.FromNonPremultiplied(153, 173, 255, 255)));
+            Troop enemyTroop = new Troop("9. skautský oddíl Rudý havran", session, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255));
+            session.Troops.Add(enemyTroop);
+            Troop friendTroop = new Troop("8. skautský oddíl Zelené příšery", session, Era.EraRadcu, Color.FromNonPremultiplied(158,244,66, 255), Color.FromNonPremultiplied(204,255,150, 255));
+            session.Troops.Add(friendTroop);
+            LoadMapIntoSession(session, "Levels\\BlankMap.tmx");
+            var enemy = session.Troops[1];
+            enemy.AI = new AggressiveAI(enemy);
+            var friend = session.Troops[2];
+            friend.AI = new AggressiveAI(friend);
+            foreach(var unt in session.AllUnits)
+            {
+                if (unt.Controller == session.Troops[0])
+                {
+                    unt.SwitchControllerTo(friend);
+                }
+            }
+            foreach (var unt in session.AllBuildings)
+            {
+                if (unt.Controller == session.Troops[0])
+                {
+                    unt.SwitchControllerTo(friend);
+                }
+            }
+            session.Objectives.Add(new Objective("Sleduj hru.")
+            {
+                Visible = true
+            });
+            session.ObjectivesChanged = false;
+            session.PlayerTroop.Omniscience = true;
+            return session;
+        }
+
         private static void LoadMapIntoSession(Session session, string pathFile)
         {
             MapLoader mapLoader = new MapLoader(pathFile);

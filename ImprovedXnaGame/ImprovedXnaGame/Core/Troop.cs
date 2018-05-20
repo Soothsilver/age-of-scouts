@@ -36,6 +36,7 @@ namespace Age.Core
 
         public static Troop Gaia { get; internal set; }
         public BaseAI AI;
+        internal bool Omniscience;
 
         public int GetResourceStore(Resource resource)
         {
