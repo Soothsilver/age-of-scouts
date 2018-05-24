@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Age.Core;
+using Age.World;
 
 namespace Age.AI
 {
@@ -32,7 +33,7 @@ namespace Age.AI
             int soldiers = 0;
             int idleSoldiers = 0;
             int population = Self.PopulationUsed;
-            int limit = Self.PopulationLimit;
+            int limit = session.AllBuildings.Count(bld => bld.Template.Id == BuildingId.Tent && bld.Controller == Self) * 2; // including buildings that are in progress
 
             // Need a tent?
             bool wantATent = limit - population < 5;
@@ -116,13 +117,14 @@ namespace Age.AI
             // Order soldiers to fight:
             if (idleSoldiers >=  10)
             {
-                var targets = session.AllUnits.Where(unt => unt.Controller != Self).ToList();
+                var targets = session.AllUnits.Where(unt => unt.Controller != Self).Cast<AttackableEntity>()
+                    .Concat(session.AllBuildings.Where(bld => bld.Controller != Self)).ToList();
                 if (targets.Count > 0)
                 {
                     var target = targets[R.Next(targets.Count)];
                     foreach(var unt in session.AllUnits.Where(unt => unt.CanAttack && unt.FullyIdle && unt.Controller == Self))
                     {
-                        unt.Strategy.ResetTo(target);
+                        unt.Strategy.ResetToAttackMove((IntVector)target.FeetStdPosition);
                     }
                 }
             }
@@ -173,15 +175,37 @@ namespace Age.AI
 
         private Tile WhereToPlaceBuilding(Unit unit, Session session, BuildingTemplate buildingToPlace)
         {
-            for (int i = 0; i < 50; i++)
+            List<Tile> options = new List<Tile>();
+            foreach (var building in session.AllBuildings.Where(bld => bld.Controller == Self))
             {
-                int x = R.Next(-7, 7);
-                int y = R.Next(-7, 7);
-                Tile tile = session.Map.GetTileFromTileCoordinates(unit.Occupies.X + x, unit.Occupies.Y + y);
-                if (tile != null && buildingToPlace.PlaceableOn(session, tile))
+                int x1 = building.PrimaryTile.X - building.Template.TileWidth - 1;
+                int x2 = building.PrimaryTile.X + 2;
+                int y1 = building.PrimaryTile.Y - building.Template.TileHeight - 1;
+                int y2 = building.PrimaryTile.Y + 2;
+
+                for (int x = x1; x <= x2; x++)
                 {
-                    return tile;
+                    for (int y = y1; y <= y2; y++)
+                    {
+                        if (x == x1 || x == x2 || y == y1 || y == y2)
+                        {
+                            Tile tile = session.Map.GetTileFromTileCoordinates(x, y);
+                            if (tile != null && buildingToPlace.PlaceableOn(session, tile, true))
+                            {
+                                if (tile.Neighbours.All.All(tl =>
+                                    tl.BuildingOccupant == null && tl.NaturalObjectOccupant == null))
+                                {
+                                    options.Add(tile);
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+
+            if (options.Count > 0)
+            {
+                return options[R.Next(options.Count)];
             }
             return null;
         }

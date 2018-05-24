@@ -14,7 +14,6 @@ namespace Age.Core
         public Session Session;
 
 
-
         public Troop Controller;
 
         public abstract string Name { get; }
@@ -22,7 +21,7 @@ namespace Age.Core
         public abstract List<ConstructionOption> ConstructionOptions { get; }
         public virtual bool CanAttack => false;
 
-        public bool CanRangeAttack(Unit attackTarget)
+        public bool CanRangeAttack(AttackableEntity attackTarget)
         {
             return
                 this.CanAttack &&

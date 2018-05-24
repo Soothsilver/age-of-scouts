@@ -107,6 +107,13 @@ namespace Age.Core
             if (tile != null && selection.SelectedUnits.Count > 0 &&
                 selection.SelectedUnits[0].Controller == PlayerTroop)
             {
+                if (Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) ||
+                    Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
+                {
+                    selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                    selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttackMove((IntVector)standardTarget); });
+                    return;
+                }
                 // Move/attack/gather/build...
                 foreach (var target in AllUnits)
                 {
@@ -114,14 +121,19 @@ namespace Age.Core
                         target.Hitbox.Contains((int) standardTarget.X, (int) standardTarget.Y))
                     {
                         selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
-                        selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetTo(target); });
+                        selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttack(target); });
                         return;
                     }
                 }
-
                 if (tile.BuildingOccupant != null && selection.SelectedUnits[0].CanContributeToBuilding(tile.BuildingOccupant))
                 {
                     selection.SelectedUnits[0].UnitTemplate.PlayBuildSound();
+                }
+                else if (tile.BuildingOccupant != null && selection.SelectedUnits.Any(unt => unt.CanAttack) &&
+                         AreEnemies(selection.SelectedUnits[0], tile.BuildingOccupant))
+                {
+                    selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                    selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttack(tile.BuildingOccupant); });
                 }
                 else if (tile.NaturalObjectOccupant != null && selection.SelectedUnits[0].CanBeOrderedToGatherFrom(tile.NaturalObjectOccupant))
                 {
@@ -181,6 +193,7 @@ namespace Age.Core
         internal Building SpawnBuilding(BuildingTemplate kitchen, Troop controller, Tile tile)
         {
             var b = new Building(kitchen, controller, Isomath.TileToStandard(tile.X + 1, tile.Y + 1), tile);
+            b.HP = b.MaxHP = kitchen.MaxHP;
             for (int y = 0; y < kitchen.TileHeight; y++)
             {
                 for (int x = 0; x < kitchen.TileWidth; x++)
@@ -219,33 +232,20 @@ namespace Age.Core
             this.Map.CopyValuesFrom(session.Map);
             this.CenterOfScreenInStandardPixels = session.CenterOfScreenInStandardPixels;
             this.ZoomLevel = session.ZoomLevel;
+            this.AllBuildings.Clear();
+            this.AllUnits.Clear();
+            this.Revealers.Clear();
+            this.AllUnits.AddRange(session.AllUnits);
+            this.AllBuildings.AddRange(session.AllBuildings);
+            this.Troops.Clear();
+            this.Troops.AddRange(session.Troops);
+            this.Revealers.AddRange(session.Revealers);
         }
 
         public void Update(float elapsedSeconds)
         {
             Map.Update(elapsedSeconds);
 
-            PerformanceCounter.StartMeasurement(PerformanceGroup.FogOfWarReveal);
-            if (Settings.Instance.EnableFogOfWar)
-            {
-                foreach (var unit in AllUnits.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || PlayerTroop.Omniscience))
-                {
-                    FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, Map);
-                }
-                foreach (var unit in AllBuildings.Where(unt => unt.Controller == PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || PlayerTroop.Omniscience))
-                {
-                    if (!unit.SelfConstructionInProgress)
-                    { 
-                        FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * unit.Template.LineOfSightInTiles, Map, fromAir: true);
-                    }
-                }
-            }
-
-            foreach (FogRevealer revealer in Revealers)
-            {
-                revealer.Update(Map);
-            }
-            PerformanceCounter.EndMeasurement(PerformanceGroup.FogOfWarReveal);
 
             for (int ui = AllUnits.Count - 1; ui >= 0; ui--)
             {

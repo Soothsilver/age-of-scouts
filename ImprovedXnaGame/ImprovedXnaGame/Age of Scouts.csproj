@@ -9,8 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Age</RootNamespace>
     <AssemblyName>Age of Scouts</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>HiDef</XnaProfile>
@@ -94,6 +93,9 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Priority Queue, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OptimizedPriorityQueue.4.1.1\lib\net45\Priority Queue.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -124,6 +126,7 @@
     <Compile Include="Core\Activities\Physics.cs" />
     <Compile Include="Core\Activities\Strategy.cs" />
     <Compile Include="Core\Activities\Tactics.cs" />
+    <Compile Include="Core\AttackableEntity.cs" />
     <Compile Include="Core\Building.cs" />
     <Compile Include="Core\BuildingTemplate.cs" />
     <Compile Include="Core\Construction.cs" />

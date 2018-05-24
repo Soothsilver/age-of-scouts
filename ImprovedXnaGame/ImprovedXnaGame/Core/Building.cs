@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Age.Core
 {
-    class Building : Entity
+    class Building : AttackableEntity
     {
         public Tile PrimaryTile;
         public BuildingTemplate Template;
@@ -22,6 +22,7 @@ namespace Age.Core
         internal float SelfConstructionProgress;
         internal Vector2 RallyPointInStandardCoordinates;
         public float SecondsUntilRecharge = 0;
+        public float SecondsInExistence;
 
         public Building(BuildingTemplate buildingTemplate, Troop controller, Vector2 feetPosition, Tile primaryTile) : base(buildingTemplate.Icon, feetPosition)
         {
@@ -148,7 +149,23 @@ namespace Age.Core
                     Primitives.DrawRectangle(rectWhere.Extend(1, 1), this.Controller.StrongColor);
                 }
             }
+
+            if (this.HP < this.MaxHP)
+            {
+                Rectangle rectHealthBar = new Rectangle(rectWhere.X, rectWhere.Y + 2, rectWhere.Width, 8);
+                Primitives.DrawHealthBar(rectHealthBar, this.Controller.StrongColor, this.HP, this.MaxHP);
+            }
             
+        }
+
+        public override void TakeDamage(int dmg, Entity source)
+        {
+            this.HP -= dmg;
+            if (this.HP <= 0 && !this.Broken)
+            {
+                this.Broken = true;
+                Session.DestroyBuilding(this);
+            }
         }
 
         internal HashSet<Vector2> GetFreeSpotsForBuilders()
@@ -276,9 +293,19 @@ namespace Age.Core
                             if (this.CanRangeAttack(unit))
                             {
                                 Session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -200), unit.FeetStdPosition + new Vector2(0, -20), this));
+                                break;
                             }
                         }
-                        SecondsUntilRecharge = 1;
+                        SecondsUntilRecharge = 4;
+                    }
+                }
+
+                if (Template.Id == BuildingId.MajestatniSocha)
+                {
+                    SecondsInExistence += elapsedSeconds;
+                    if (SecondsInExistence > StaticData.WonderTimeLimitInSeconds)
+                    {
+                        Controller.WinTheGame();
                     }
                 }
                 if (ConstructionInProgress == null && ConstructionQueue.Count > 0)

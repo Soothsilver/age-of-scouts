@@ -40,30 +40,36 @@ namespace Age.Core
         public static BuildingTemplate Kitchen = new BuildingTemplate(BuildingId.Kitchen, "Kuchyně", "Kuchyně je nejdůležitější budova ve hře {b}Age of Scouts{/b}. V kuchyni nabíráš {b}Pracanty{/b}, tito do kuchyně přináší nasbírané suroviny, a pomocí kuchyně také postupuješ do vyššího věku. Pokud je tvoje kuchyně zničena a všichni tvoji pracanti vyřazeni ze hry, nebudeš po zbytek úrovně schopný nic stavět, takže na svoji kuchyni dávej pozor.", TextureName.Kitchen, 3, 3, 0, 600, 0)
         {
             SecondsToBuild = 180,
+            MaxHP = 500,
             SelectionSfx = SoundEffectName.Chord
         };
         public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard, 1, 1, 20, 50, 0)
         {
             SecondsToBuild = 20,
-            SelectionSfx = SoundEffectName.StandardTent
+            SelectionSfx = SoundEffectName.StandardTent,
+            MaxHP = 100
         };
         public static BuildingTemplate MunitionTent = new BuildingTemplate(BuildingId.MunitionTent, "Muniční stan", "Dají se z něj nabírat {b}hadrákostřelci{/b}.", TextureName.MunitionTent, 2, 2, 0, 200, 0)
         {
             SecondsToBuild = 50,
-            SelectionSfx = SoundEffectName.MunitionTent
+            SelectionSfx = SoundEffectName.MunitionTent,
+            MaxHP = 250
         };
         public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 80, 150, 100)
         {
             SecondsToBuild = 30,
             SelectionSfx = SoundEffectName.LadderClimb,
-            LineOfSightInTiles = 7
+            LineOfSightInTiles = 7,
+            MaxHP = 250
         };
         public static BuildingTemplate MajestatniSocha = new BuildingTemplate(BuildingId.MajestatniSocha, "Majestátní socha", "Obrovské umělecké dílo, které je důkazem schopností, vytrvalosti a oddanosti skautů ve tvém oddíle. Jakmile postavíš Majestatní sochu, začne odpočet, na jehož konci automaticky vyhraješ úroveň, pokud do té doby nikdo tvoji sochu nezboří.", TextureName.Statue, 4, 4, 200, 500, 1500)
         {
             SecondsToBuild = 500,
-            SelectionSfx = SoundEffectName.SmallFanfare
+            SelectionSfx = SoundEffectName.SmallFanfare,
+            MaxHP = 1500
         };
         internal int LineOfSightInTiles = 3;
+        public int MaxHP;
 
         internal bool ApplyCost(Troop troop)
         {
@@ -88,8 +94,9 @@ namespace Age.Core
                 troop.Clay >= this.ClayCost;
         }
 
-        public bool PlaceableOn(Session session, Tile tile)
+        public bool PlaceableOn(Session session, Tile tile, bool canYouBuildInFogOfWar)
         {
+            if (tile == null) return false;
             for (int x = 0; x < TileWidth; x++)
             {
                 for (int y = 0; y< TileHeight; y++)
@@ -100,7 +107,7 @@ namespace Age.Core
                     {
                         return false;
                     }
-                    if (Settings.Instance.EnableFogOfWar && alsoOn.Fog != FogOfWarStatus.Clear)
+                    if (!canYouBuildInFogOfWar && alsoOn.Fog != FogOfWarStatus.Clear)
                     {
                         return false;
                     }
@@ -115,7 +122,7 @@ namespace Age.Core
             Vector2 whereTo = Isomath.TileToStandard(tile.X + 1, tile.Y + 1);
             Rectangle rectWhere = Isomath.StandardPersonToScreen(whereTo, what.Width, what.Height, screen);
             Color clrTint = Color.White.Alpha(150);
-            if (!PlaceableOn(session, tile))
+            if (!PlaceableOn(session, tile, !Settings.Instance.EnableFogOfWar))
             {
                 clrTint = Color.Red;
             }

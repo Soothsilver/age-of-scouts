@@ -3,6 +3,7 @@ using Auxiliary;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Priority_Queue;
 
 namespace Age.Core
 {
@@ -49,7 +50,7 @@ namespace Age.Core
                 }
                 if (this.Type == TileType.Road)
                 {
-                    return 2;
+                    return 1.1f;
                 }
                 else if (Type == TileType.Mud)
                 {
@@ -91,6 +92,7 @@ namespace Age.Core
             this.Fog = realMapTile.Fog;
             this.Icon = realMapTile.Icon;
             this.Type = realMapTile.Type;
+            this.SecondsUntilFogStatusCanChange = realMapTile.SecondsUntilFogStatusCanChange;
             this.NaturalObjectOccupant = realMapTile.NaturalObjectOccupant; // TODO not thread safe
             this.BuildingOccupant = realMapTile.BuildingOccupant; // TODO not thread safe
             this.Occupants.Clear();
@@ -99,7 +101,7 @@ namespace Age.Core
         }
     }
 
-    internal class PathingVertex
+    internal class PathingVertex : FastPriorityQueueNode
     {
 
         public int Pathfinding_EncounteredDuringSearch;

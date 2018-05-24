@@ -17,7 +17,7 @@ namespace Age.Core.Activities
         public Vector2 Speed;
         public float SecondsUntilRecharge;
         public float SecondsUntilGatherRecharge;
-        public Unit AttackTarget;
+        public AttackableEntity AttackTarget;
         public bool AttackingInProgress;
         private Unit owner;
         public Building BuildingWhat;
@@ -87,6 +87,10 @@ namespace Age.Core.Activities
                 if (BuildingWhat.SelfConstructionInProgress && BuildingWhat.NoUnitsOnThisBuilding)
                 {
                     BuildingWhat.SelfConstructionProgress += elapsedSeconds / BuildingWhat.Template.SecondsToBuild;
+                    if (Settings.Instance.Aegis)
+                    {
+                        BuildingWhat.SelfConstructionProgress = 1;
+                    }
                 }
                 if (!BuildingWhat.SelfConstructionInProgress)
                 {

@@ -67,6 +67,7 @@ namespace Age.HUD
         private static void DrawChatLine(Session session, float elapsedSeconds)
         {
             ChatLine current = session.CurrentVoiceLine;
+            string text = "";
             if (current == null)
             {
                 if (session.VoiceQueue.Count > 0)
@@ -77,16 +78,36 @@ namespace Age.HUD
                     SFX.PlaySound(current.Sfx);
                 }
             }
+
             if (current != null)
             {
-                Rectangle bounds = BasicStringDrawer.GetMultiLineTextBounds(current.Text, new Rectangle(10, 200, 400, 300), Library.FontTinyBold);
-                Primitives.FillRectangle(new Rectangle(5, 195, 410, Math.Max(bounds.Height, 30) + 10), Color.Brown.Alpha(200));
-                BasicStringDrawer.DrawMultiLineText(current.Text, new Rectangle(10, 200, 400, 300), Color.White, Library.FontTinyBold, Primitives.TextAlignment.TopLeft);
+                text = current.Text;
                 current.SecondsRemaining -= elapsedSeconds;
                 if (current.SecondsRemaining <= 0)
                 {
                     session.CurrentVoiceLine = null;
                 }
+            }
+
+            foreach (Building b in session.AllBuildings)
+            {
+                if (b.Template.Id == BuildingId.MajestatniSocha && !b.SelfConstructionInProgress)
+                {
+                    text += "Majestátní socha (" + b.Controller.Name + "): " +
+                            TimeSpan.FromSeconds(StaticData.WonderTimeLimitInSeconds - b.SecondsInExistence)
+                                .ToString("m\\:ss");
+                }
+            }
+
+            if (text != "")
+            {
+                Rectangle bounds =
+                    BasicStringDrawer.GetMultiLineTextBounds(text, new Rectangle(10, 200, 400, 300),
+                        Library.FontTinyBold);
+                Primitives.FillRectangle(new Rectangle(5, 195, 410, Math.Max(bounds.Height, 30) + 10),
+                    Color.Brown.Alpha(200));
+                BasicStringDrawer.DrawMultiLineText(text, new Rectangle(10, 200, 400, 300), Color.White,
+                    Library.FontTinyBold, Primitives.TextAlignment.TopLeft);
             }
         }
 

@@ -58,5 +58,17 @@ namespace Age.Core
             Session.AllBuildings.Where(bld => bld.Controller == this).ToList().ForEach(
                 bld => Session.DestroyBuilding(bld));
         }
+
+        public void WinTheGame()
+        {
+            if (this == Session.PlayerTroop)
+            {
+                Session.AchieveEnding(Ending.Victory);
+            }
+            else
+            {
+                Session.AchieveEnding(Ending.Defeat);
+            }
+        }
     }
 }

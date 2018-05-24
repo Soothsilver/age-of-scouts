@@ -6,48 +6,48 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Priority_Queue;
+
 
 namespace Age.Pathfinding
 {
-    class Pathfinding {
-        private static int PathfindingSearchId = 0;
+    class Pathfinding
+    {
+        private static int mapTotalSize;
+        private static FastPriorityQueue<Tile> openSet;
+        private static int pathfindingSearchId = 0;
         public static LinkedList<Vector2> AStar(Unit who, Vector2 targetPrecise, Map map, PathfindingMode mode)
         {
-            PathfindingSearchId++;
+            InitializeOpenSetIfNecessary(map);
+            pathfindingSearchId++;
             Tile start = who.Occupies;
             Tile target = map.GetTileFromStandardCoordinates(targetPrecise);
             Tile closestToTargetSoFar = start;
-            HashSet<Tile> openSet = new HashSet<Tile>
-            {
-                start
-            };
-            SetPathfindingInformation(start, PathfindingSearchId, false, 0, Pathfinding.Heuristic(start, target), null);
+            openSet.Clear();
+            int initH = Pathfinding.Heuristic(start, target);
+            SetPathfindingInformation(start, pathfindingSearchId, false, 0, initH, null);
+            openSet.Enqueue(start, initH);
+            int closestToTargetHeuristicSoFar = initH;
 
-            while (openSet.Any())
+            while (openSet.Count > 0)
             {
-                Tile current = null;
-                foreach (var tile in openSet)
-                {
-                    if (current == null || tile.Pathfinding_F < current.Pathfinding_F) current = tile;
-                }
+                Tile current = openSet.Dequeue();
                 if (current == target)
                 {
                     return ReconstructPrettyPath(start, target, who.FeetStdPosition, targetPrecise);
                 }
-                openSet.Remove(current);
                 current.Pathfinding_Closed = true;
                 foreach (var edge in current.Neighbours.Traversable)
                 {
                     Tile neighbour = edge.Destination;
-                    if (neighbour.Pathfinding_EncounteredDuringSearch == PathfindingSearchId &&
+                    if (neighbour.Pathfinding_EncounteredDuringSearch == pathfindingSearchId &&
                         neighbour.Pathfinding_Closed) continue;
                     if (neighbour.PreventsMovement) continue;
-                    //if (neighTile.PathfindingOccupants.Any(un => un != who)) continue;
 
-                    if (neighbour.Pathfinding_EncounteredDuringSearch < PathfindingSearchId)
+                    if (neighbour.Pathfinding_EncounteredDuringSearch < pathfindingSearchId)
                     {
-                        SetPathfindingInformation(neighbour, PathfindingSearchId, false, int.MaxValue, int.MaxValue, current);
-                        openSet.Add(neighbour);
+                        SetPathfindingInformation(neighbour, pathfindingSearchId, false, int.MaxValue, int.MaxValue, current);
+                        openSet.Enqueue(neighbour, int.MaxValue);
                     }
 
                     int tentativeGScore = current.Pathfinding_G + edge.Difficulty; 
@@ -55,10 +55,13 @@ namespace Age.Pathfinding
 
                     neighbour.Pathfinding_Parent = current;
                     neighbour.Pathfinding_G = tentativeGScore;
-                    neighbour.Pathfinding_F = neighbour.Pathfinding_G + Heuristic(neighbour, target);
-                    if (neighbour.Pathfinding_F < closestToTargetSoFar.Pathfinding_F)
+                    int heuristic = Heuristic(neighbour, target);
+                    neighbour.Pathfinding_F = neighbour.Pathfinding_G + heuristic;
+                    openSet.UpdatePriority(neighbour, neighbour.Pathfinding_F);
+                    if (heuristic < closestToTargetHeuristicSoFar)
                     {
                         closestToTargetSoFar = neighbour;
+                        closestToTargetHeuristicSoFar = heuristic;
                     }
                 }
             }
@@ -92,44 +95,39 @@ namespace Age.Pathfinding
 
         internal static LinkedList<Vector2> DijkstraMultiple(Unit who, HashSet<Vector2> targetTiles, Map map)
         {
-            PathfindingSearchId++;
+            InitializeOpenSetIfNecessary(map);
+            pathfindingSearchId++;
             Tile start = who.Occupies;
             foreach(Vector2 vector in targetTiles)
             {
                 Tile target = map.GetTileFromStandardCoordinates(vector);
-                target.Pathfinding_IsTargetDuringThisSearch = PathfindingSearchId;
+                target.Pathfinding_IsTargetDuringThisSearch = pathfindingSearchId;
                 target.Pathfinding_TargetPreciseLocation = vector;
             }
-            HashSet<Tile> openSet = new HashSet<Tile>
-            {
-                start
-            };
-            SetPathfindingInformation(start, PathfindingSearchId, false, 0, 0, null);
 
-            while (openSet.Any())
+            openSet.Clear();
+            SetPathfindingInformation(start, pathfindingSearchId, false, 0, 0, null);
+            openSet.Enqueue(start, 0);
+
+            while (openSet.Count > 0)
             {
-                Tile current = null;
-                foreach (var tile in openSet)
-                {
-                    if (current == null || tile.Pathfinding_F < current.Pathfinding_F) current = tile;
-                }
-                if (current.Pathfinding_IsTargetDuringThisSearch == PathfindingSearchId)
+                Tile current = openSet.Dequeue();
+                if (current.Pathfinding_IsTargetDuringThisSearch == pathfindingSearchId)
                 {
                     return ReconstructPrettyPath(start, current, who.FeetStdPosition, current.Pathfinding_TargetPreciseLocation);
                 }
-                openSet.Remove(current);
                 current.Pathfinding_Closed = true;
                 foreach (var edge in current.Neighbours.Traversable)
                 {
                     Tile neighbour = edge.Destination;
-                    if (neighbour.Pathfinding_EncounteredDuringSearch == PathfindingSearchId &&
+                    if (neighbour.Pathfinding_EncounteredDuringSearch == pathfindingSearchId &&
                         neighbour.Pathfinding_Closed) continue;
                     if (neighbour.PreventsMovement) continue;
 
-                    if (neighbour.Pathfinding_EncounteredDuringSearch < PathfindingSearchId)
+                    if (neighbour.Pathfinding_EncounteredDuringSearch < pathfindingSearchId)
                     {
-                        SetPathfindingInformation(neighbour, PathfindingSearchId, false, int.MaxValue, int.MaxValue, current);
-                        openSet.Add(neighbour);
+                        SetPathfindingInformation(neighbour, pathfindingSearchId, false, int.MaxValue, int.MaxValue, current);
+                        openSet.Enqueue(neighbour, int.MaxValue);
                     }
 
                     int tentativeGScore = current.Pathfinding_G + edge.Difficulty;
@@ -138,9 +136,20 @@ namespace Age.Pathfinding
                     neighbour.Pathfinding_Parent = current;
                     neighbour.Pathfinding_G = tentativeGScore;
                     neighbour.Pathfinding_F = neighbour.Pathfinding_G;
+                    openSet.UpdatePriority(neighbour, neighbour.Pathfinding_F);
                 }
             }
             return null;
+        }
+
+        private static void InitializeOpenSetIfNecessary(Map map)
+        {
+            int totalSize = map.Width * map.Height;
+            if (mapTotalSize < totalSize)
+            {
+                openSet = new FastPriorityQueue<Tile>(totalSize);
+                mapTotalSize = totalSize;
+            }
         }
 
         private static LinkedList<Tile> ReconstructPath(Tile start, Tile current)

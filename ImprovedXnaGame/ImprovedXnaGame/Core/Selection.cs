@@ -39,7 +39,7 @@ namespace Age.Phases
             {
                 if (Root.WasMouseLeftClick)
                 {
-                    if (SelectedBuildingToPlace.PlaceableOn(levelPhase.Session, mouseOverTile))
+                    if (SelectedBuildingToPlace.PlaceableOn(levelPhase.Session, mouseOverTile, !Settings.Instance.EnableFogOfWar))
                     {
                         if (SelectedBuildingToPlace.ApplyCost(levelPhase.Session.PlayerTroop))
                         {

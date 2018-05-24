@@ -16,9 +16,9 @@ namespace Age.Core
 
         internal void Use(Vector2 where, Session session)
         {
-            this.Used = true;
             // Tisik Spy
-            FogOfWarMechanics.RevealFogOfWar(where, Tile.WIDTH * 7, session.Map, cleartime: 7, fromAir: true);
+            this.Used = true;
+            session.Revealers.Add(new FogRevealer(where, Tile.HEIGHT * 6, fromAir: true, cleartime: 7));
         }
     }
 }

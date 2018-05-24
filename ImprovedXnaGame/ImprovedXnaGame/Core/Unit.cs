@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Age.Core
 {
-    class Unit : Entity
+    class Unit : AttackableEntity
     {
         public SpriteInstance Sprite;
         public UnitTemplate UnitTemplate;
@@ -22,10 +22,7 @@ namespace Age.Core
         public Tactics Tactics;
         public Activity Activity;
         public Tile Occupies;
-        public bool Broken;
         public float Speed = Tile.WIDTH;
-        public int HP = 50;
-        internal int MaxHP = 50;
         public Stance Stance = Stance.Aggressive;
         public Resource CarryingResource;
         public int CarryingHowMuchResource;
@@ -74,7 +71,7 @@ namespace Age.Core
 
         }
 
-        internal void TakeDamage(int dmg, Entity source)
+        public override void TakeDamage(int dmg, Entity source)
         {
             this.HP -= dmg;
             if (this.HP <= 0 && !this.Broken)
@@ -88,7 +85,7 @@ namespace Age.Core
             // Aggressive
             if (Stance == Stance.Aggressive)
             {
-                if (this.FullyIdle)
+                if (this.FullyIdle && this.CanAttack)
                 {
                     if (source is Unit sourceUnit)
                     {
@@ -114,7 +111,7 @@ namespace Age.Core
         public void Autoaction(Session session, float elapsedSeconds)
         {
             // All stances          
-            if (this.FullyIdle && Stance != Stance.Stealthy)
+            if (this.CanAttack && this.FullyIdle && Stance != Stance.Stealthy)
             {
                 foreach (var unit in session.AllUnits)
                 {
@@ -143,7 +140,7 @@ namespace Age.Core
 
         public bool FullyIdle => Tactics.Idle && Activity.Idle;
 
-        public void AttackIfAble(Session session, Unit target, float elapsedSeconds)
+        public void AttackIfAble(Session session, AttackableEntity target, float elapsedSeconds)
         {
             this.Activity.AttackingInProgress = true;
             if (this.Activity.SecondsUntilRecharge <= 0)

@@ -22,7 +22,8 @@ namespace Age.Core.Activities
         private Unit owner;
         public LinkedList<Vector2> PathingCoordinates;        
         public IntVector MovementTarget;
-        public Unit AttackTarget;
+        public bool IfDetectEnemiesSwitchToThem;
+        public AttackableEntity AttackTarget;
         /// <summary>
         /// The unit will try to move as close as possible to this building, and then, if possible: construct it, repair it and drop off resources at it.
         /// </summary>
@@ -40,7 +41,7 @@ namespace Age.Core.Activities
             this.owner = owner;
         }
 
-        public void ResetTo(Unit target, bool standGround)
+        public void ResetTo(AttackableEntity target, bool standGround)
         {
             ResetBoth();
             this.AttackTarget = target;
@@ -49,6 +50,7 @@ namespace Age.Core.Activities
 
         public void Reset()
         {
+            IfDetectEnemiesSwitchToThem = false;
             MovementTarget = IntVector.Zero;
             AttackTarget = null;
             BuildTarget = null;
@@ -65,6 +67,12 @@ namespace Age.Core.Activities
             owner.Activity.Invalidate();
         }
 
+        public void ResetToMovement(IntVector movementTarget, bool isAttackMove)
+        {
+            this.Reset();
+            this.MovementTarget = movementTarget;
+            this.IfDetectEnemiesSwitchToThem = isAttackMove;
+        }
         public void RecalculateAndDetermineActivity()
         {
             owner.Activity.ResetActions();
@@ -143,6 +151,18 @@ namespace Age.Core.Activities
                     }
                 }
             }
+
+            if (IfDetectEnemiesSwitchToThem)
+            {
+                AttackableEntity enemy = owner.Session.AllUnits.Cast<AttackableEntity>()
+                    .Concat(owner.Session.AllBuildings)
+                    .FirstOrDefault(entity => owner.CanRangeAttack(entity));
+                if (enemy != null)
+                {
+                    ResetTo(enemy, true);
+                    return;
+                }
+            }
             if (MovementTarget != IntVector.Zero || AttackTarget != null || targetTiles != null)
             {
                 // Recalculate.
@@ -183,6 +203,7 @@ namespace Age.Core.Activities
             if (MovementTarget != IntVector.Zero)
             {
                 MovementTarget = IntVector.Zero;
+                owner.Strategy.AttackMoveTarget = IntVector.Zero;
                 RecalculateAndDetermineActivity();
             }
             else if (GatherTarget != null)

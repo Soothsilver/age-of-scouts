@@ -14,6 +14,7 @@ namespace Age.Core
         public bool Lost;
         public float Height;
         public Entity Source;
+
         public Projectile(Vector2 startingPosition, Vector2 target, Entity source)
         {
             float scalarSpeed = Tile.WIDTH * 4.5f;
@@ -30,26 +31,36 @@ namespace Age.Core
         {
             if (this.Height > 0)
             {
-                Primitives.FillCircle(Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 200), screen), (int)(4 * screen.ZoomLevel), Color.White);
+                Primitives.FillCircle(
+                    Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 200), screen),
+                    (int) (4 * screen.ZoomLevel), Color.White);
             }
         }
+
         public void DrawShadow(IScreenInformation screen)
         {
             if (this.Height > 0)
             {
-                Primitives.FillCircle(Isomath.StandardToScreen(Position, screen), (int)(4 * screen.ZoomLevel), Color.Black.Alpha(150));
+                Primitives.FillCircle(Isomath.StandardToScreen(Position, screen), (int) (4 * screen.ZoomLevel),
+                    Color.Black.Alpha(150));
             }
         }
+
         public void Update(Session session, float elapsedSeconds)
         {
             this.YSpeed -= GRAVITY * elapsedSeconds;
             this.Height += this.YSpeed * elapsedSeconds;
-            this.Position += this.Speed * elapsedSeconds;           
+            this.Position += this.Speed * elapsedSeconds;
             if (!this.Lost)
             {
                 Tile whereAmI = session.Map.GetTileFromStandardCoordinates(this.Position);
                 if (whereAmI == null)
                 {
+                    this.Lost = true;
+                }
+                else if (whereAmI.BuildingOccupant != null && session.AreEnemies(Source, whereAmI.BuildingOccupant))
+                {
+                    whereAmI.BuildingOccupant.TakeDamage(10, Source);
                     this.Lost = true;
                 }
                 else if (whereAmI.PreventsProjectiles)
@@ -65,16 +76,21 @@ namespace Age.Core
                     this.Lost = true;
                     // Hit the ground.
                 }
-                else foreach (var target in session.AllUnits)
+                else
                 {
-                    if (session.AreEnemies(Source, target) && target.Hitbox.Contains((int)this.Position.X, (int)this.Position.Y)) 
+                    foreach (var target in session.AllUnits)
                     {
-                        target.TakeDamage(10, Source);
-                        this.Lost = true;
-                        break;
+                        if (session.AreEnemies(Source, target) &&
+                            target.Hitbox.Contains((int) this.Position.X, (int) this.Position.Y))
+                        {
+                            target.TakeDamage(10, Source);
+                            this.Lost = true;
+                            break;
+                        }
                     }
                 }
             }
         }
+
     }
 }

@@ -13,12 +13,13 @@ namespace Age.Core.Activities
     /// </summary>
     class Strategy
     {
+        public IntVector AttackMoveTarget;
         public NaturalObject GatherTarget;
         public bool BuildingStuff;
 
         private Unit owner;
 
-        public bool DoesStrategyExist => BuildingStuff || GatherTarget != null;
+        public bool DoesStrategyExist => BuildingStuff || GatherTarget != null || AttackMoveTarget != IntVector.Zero;
 
         public Strategy(Unit owner)
         {
@@ -28,7 +29,7 @@ namespace Age.Core.Activities
         public void ResetTo(Vector2 movementTarget)
         {
             FullStop();
-            owner.Tactics.MovementTarget = (IntVector)movementTarget;
+            owner.Tactics.ResetToMovement((IntVector) movementTarget, false);
         }
         public void ResetTo(NaturalObject gatherTarget)
         {
@@ -49,10 +50,10 @@ namespace Age.Core.Activities
             }
             else
             {
-                owner.Tactics.MovementTarget = (IntVector)construction.FeetStdPosition;
+                owner.Tactics.ResetToMovement((IntVector)construction.FeetStdPosition, false);
             }
         }
-        public void ResetTo(Unit attackTarget)
+        public void ResetToAttack(AttackableEntity attackTarget)
         {
             FullStop();
             owner.Tactics.ResetTo(attackTarget, false);
@@ -71,6 +72,7 @@ namespace Age.Core.Activities
         public void Reset()
         {
             GatherTarget = null;
+            AttackMoveTarget = IntVector.Zero;
             BuildingStuff = false;
         }
 
@@ -78,8 +80,21 @@ namespace Age.Core.Activities
         {
             if (BuildingStuff)
             {
-                var buildableNext = owner.Session.AllBuildings.Where(bld => bld.Controller == owner.Controller
-                && bld.SelfConstructionInProgress && bld.FeetStdPosition.WithinDistance(owner.FeetStdPosition, Tile.WIDTH * 8)).FirstOrDefault();
+                var buildables = owner.Session.AllBuildings.Where(bld => bld.Controller == owner.Controller
+                                                                            && bld.SelfConstructionInProgress &&
+                                                                            bld.FeetStdPosition.WithinDistance(
+                                                                                owner.FeetStdPosition, Tile.WIDTH * 8));
+                Building buildableNext = null;
+                float bestDistance = int.MaxValue;
+                foreach (var building in buildables)
+                {
+                    float dst = (building.FeetStdPosition - owner.FeetStdPosition).LengthSquared();
+                    if (dst < bestDistance)
+                    {
+                        bestDistance = dst;
+                        buildableNext = building;
+                    }
+                }
                 if (buildableNext == null)
                 {
                     // End of strategy, there's nothing to do here.
@@ -142,6 +157,10 @@ namespace Age.Core.Activities
                     }
                 }
             }
+            else if (AttackMoveTarget != IntVector.Zero)
+            {
+                owner.Tactics.ResetToMovement(AttackMoveTarget, true);
+            }
         }
         public override string ToString()
         {
@@ -153,6 +172,10 @@ namespace Age.Core.Activities
             {
                 return "Building stuff";
             }
+            else if (AttackMoveTarget != IntVector.Zero)
+            {
+                return "Attack move";
+            }
             else if (DoesStrategyExist)
             {
                 return "UNIDENTIFIED STRATEGY";
@@ -161,6 +184,12 @@ namespace Age.Core.Activities
             {
                 return "None";
             }
+        }
+
+        public void ResetToAttackMove(IntVector standardTarget)
+        {
+            FullStop();
+            AttackMoveTarget = standardTarget;
         }
     }
 }

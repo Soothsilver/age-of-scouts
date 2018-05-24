@@ -150,7 +150,7 @@ namespace Age.World
             session.Troops.Add(new Troop("Divák", session, Era.EraRadcu, Color.FromNonPremultiplied(4, 44, 204, 255), Color.FromNonPremultiplied(153, 173, 255, 255)));
             Troop enemyTroop = new Troop("9. skautský oddíl Rudý havran", session, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255));
             session.Troops.Add(enemyTroop);
-            Troop friendTroop = new Troop("8. skautský oddíl Zelené příšery", session, Era.EraRadcu, Color.FromNonPremultiplied(158,244,66, 255), Color.FromNonPremultiplied(204,255,150, 255));
+            Troop friendTroop = new Troop("8. skautský oddíl Zelené příšery", session, Era.EraRadcu, Color.FromNonPremultiplied(4,142,15, 255), Color.FromNonPremultiplied(0,255,21, 255));
             session.Troops.Add(friendTroop);
             LoadMapIntoSession(session, "Levels\\BlankMap.tmx");
             var enemy = session.Troops[1];

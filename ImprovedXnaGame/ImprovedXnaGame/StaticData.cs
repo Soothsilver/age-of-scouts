@@ -13,5 +13,6 @@ namespace Age
     {
         public static Stance[] AllStances = new[] { Stance.Aggressive, Stance.StandYourGround, Stance.Stealthy };
         internal static int CarryingCapacity = 10;
+        public static float WonderTimeLimitInSeconds = 60 * 5;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Age.World;
+using Auxiliary;
 using Microsoft.Xna.Framework;
 
 namespace Age.Core
@@ -14,17 +16,33 @@ namespace Age.Core
     {
         public Vector2 StandardCoordinates;
         public float TileRange;
-        public FogRevealer(Vector2 coordinates, float range)
+        public bool FromAir;
+        public bool OnceOnly;
+        public float ClearTime;
+        public bool UsedUp;
+        public FogRevealer(Vector2 coordinates, float range, float cleartime = 2, bool fromAir = false, bool onceOnly = false)
         {
+            OnceOnly = onceOnly;
+            ClearTime = cleartime;
+            FromAir = fromAir;
             StandardCoordinates = coordinates;
             TileRange = range;
         }
         public void Update(Map map)
         {
-            FogOfWarMechanics.RevealFogOfWar(StandardCoordinates, (int)(Tile.HEIGHT * TileRange), map);
+            if (!UsedUp)
+            {
+                FogOfWarMechanics.RevealFogOfWar(StandardCoordinates, (int) (Tile.HEIGHT * TileRange), map, ClearTime,
+                    FromAir);
+
+                if (OnceOnly)
+                {
+                    UsedUp = true;
+                }
+            }
         }
     }
-    public static class FogOfWarMechanics
+    static class FogOfWarMechanics
     {
         /// <summary>
         /// Reveals fog of war from the specified point as a circle. WARNING! This method is not yet optimized!
@@ -65,6 +83,87 @@ namespace Age.Core
                 }
             }
            
+        }
+
+        private static object lockRevealChangesSwap = new object();
+        private static FogOfWarStatus[,] revealChangesMap;
+        private static int mapWidth;
+        private static int mapHeight;
+
+        public static void PerformFogOfWarReveal(Session sessionUsedInOtherThreads)
+        {
+            // Reveal.
+
+            PerformanceCounter.StartMeasurement(PerformanceGroup.FogOfWarReveal);
+            if (Settings.Instance.EnableFogOfWar)
+            {
+                for (int y = 0; y < sessionUsedInOtherThreads.Map.Height; y++)
+                {
+                    for (int x = 0; x < sessionUsedInOtherThreads.Map.Width; x++)
+                    {
+                        Tile tile = sessionUsedInOtherThreads.Map.Tiles[x, y];
+                        if (tile.Fog == FogOfWarStatus.Clear && tile.SecondsUntilFogStatusCanChange <= 0)
+                        {
+                            tile.Fog = FogOfWarStatus.Grey;
+                        }
+                    }
+                };
+
+                foreach (var unit in sessionUsedInOtherThreads.AllUnits.Where(unt => unt.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
+                {
+                    FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, sessionUsedInOtherThreads.Map);
+                }
+                foreach (var building in sessionUsedInOtherThreads.AllBuildings.Where(unt => unt.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
+                {
+                    if (!building.SelfConstructionInProgress)
+                    {
+                        FogOfWarMechanics.RevealFogOfWar(building.FeetStdPosition, Tile.HEIGHT * building.Template.LineOfSightInTiles, sessionUsedInOtherThreads.Map, fromAir: true);
+                    }
+                }
+            }
+
+            foreach (FogRevealer revealer in sessionUsedInOtherThreads.Revealers)
+            {
+                revealer.Update(sessionUsedInOtherThreads.Map);
+            }
+            PerformanceCounter.EndMeasurement(PerformanceGroup.FogOfWarReveal);
+
+            // Swap.
+            lock (lockRevealChangesSwap)
+            {
+                if (revealChangesMap == null || sessionUsedInOtherThreads.Map.Width != mapWidth || sessionUsedInOtherThreads.Map.Height != mapHeight)
+                {
+                    mapWidth = sessionUsedInOtherThreads.Map.Width;
+                    mapHeight = sessionUsedInOtherThreads.Map.Height;
+                    revealChangesMap = new FogOfWarStatus[mapWidth, mapHeight];
+                }
+
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    for (int y = 0; y < mapHeight; y++)
+                    {
+                        revealChangesMap[x, y] = sessionUsedInOtherThreads.Map.Tiles[x, y].Fog;
+                    }
+                }
+            }
+        }
+
+        public static void AcceptRevealChanges(Session session)
+        {
+            lock (lockRevealChangesSwap)
+            {
+                if (revealChangesMap == null)
+                {
+                    return;
+                }
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    for (int y = 0; y < mapHeight; y++)
+                    {
+                        session.Map.Tiles[x, y].Fog = revealChangesMap[x, y];
+                    }
+                }
+            }
         }
     }
 }

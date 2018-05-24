@@ -312,16 +312,11 @@ namespace Age.World
 
         public void Update(float elapsedSeconds)
         {
-
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
                     Tile tile = Tiles[x, y];
-                    if (tile.Fog == FogOfWarStatus.Clear && tile.SecondsUntilFogStatusCanChange <= 0)
-                    {
-                        tile.Fog = FogOfWarStatus.Grey;
-                    }
                     tile.SecondsUntilFogStatusCanChange -= elapsedSeconds;
                 }
             };

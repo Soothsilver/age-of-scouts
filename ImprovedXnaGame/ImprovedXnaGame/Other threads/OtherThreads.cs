@@ -111,7 +111,8 @@ namespace Age.Phases
                 sessionUsedInOtherThreads = sessionModifiedFromRealtime;
                 sessionModifiedFromRealtime = swap;
             }
-            
+
+            FogOfWarMechanics.PerformFogOfWarReveal(sessionUsedInOtherThreads);
             levelPhase.Minimap.UpdateTexture(sessionUsedInOtherThreads.Map);
             
         }
@@ -131,6 +132,7 @@ namespace Age.Phases
             {
                 sessionModifiedFromRealtime.CopyValuesFrom(session);
             }
+            FogOfWarMechanics.AcceptRevealChanges(session);
         }
     }
 }
