@@ -106,7 +106,8 @@ namespace Age.World
 
         private void AssignDataFromTileType(Session session, Tile tile, string tiletype, string layerName)
         {
-            Troop controller = layerName == "Blue" ? session.PlayerTroop : session.Troops[1];
+            Troop controller = layerName == "Blue" ? session.PlayerTroop : 
+                            (layerName == "Green" ? session.Troops[2] : session.Troops[1]);
 
             switch (tiletype)
             {
@@ -149,6 +150,12 @@ namespace Age.World
                     tile.Neighbours.TopLeft.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopLeft, session);
                     tile.Neighbours.Top.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.Top, session);
                     tile.Neighbours.TopRight.NaturalObjectOccupant = SpawnNaturalObject(TextureName.None, EntityKind.UnalignedTent, tile.Neighbours.TopRight, session);
+                    break;
+                case "MunitionTent":
+                    session.SpawnBuilding(BuildingTemplate.MunitionTent, controller, tile);
+                    break;
+                case "Tower":
+                    session.SpawnBuilding(BuildingTemplate.HadrakoVez, controller, tile);
                     break;
                 case "Kitchen":
                     session.SpawnBuilding(BuildingTemplate.Kitchen, controller, tile);

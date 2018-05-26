@@ -143,6 +143,8 @@ namespace Age.World
             return s;
         }
 
+     
+
         internal static Session AIvsAI()
         {
             Session session = new Session();
@@ -190,8 +192,8 @@ namespace Age.World
         private static Session CreateBasic1v1()
         {
             Session session = new Session();
-            session.Troops.Add(new Troop("7. chlapecký oddíl Karibu", session, Era.EraRadcu, Color.FromNonPremultiplied(4, 44, 204, 255), Color.FromNonPremultiplied(153, 173, 255, 255)));
-            Troop enemyTroop = new Troop("3. chlapecký oddíl Cviční nepřátelé", session, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255));
+            session.Troops.Add(new Troop("7. skautský oddíl Karibu", session, Era.EraRadcu, Color.FromNonPremultiplied(4, 44, 204, 255), Color.FromNonPremultiplied(153, 173, 255, 255)));
+            Troop enemyTroop = new Troop("3. skautský oddíl Cviční nepřátelé", session, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255));
             session.Troops.Add(enemyTroop);
             Troop gaia = new Troop("Ztracení skautíci", session, Era.EraRadcu, Color.FromNonPremultiplied(188, 185, 0, 255), Color.Yellow)
             {
@@ -200,6 +202,42 @@ namespace Age.World
             session.Troops.Add(gaia);
             session.LevelName = "Basic 1v1";
             return session;
+        }
+        internal static Session BlackCastle()
+        {
+            Session s = new Session();
+            s.LevelName = "Raseliniste";
+            s.Troops.Add(new Troop("7. skautský oddíl Karibu", s, Era.EraRadcu, Color.FromNonPremultiplied(4, 44, 204, 255), Color.FromNonPremultiplied(153, 173, 255, 255)));
+            s.Troops.Add(new Troop("4. skautský oddíl Jaguáři", s, Era.EraRadcu, Color.FromNonPremultiplied(0, 33, 86, 255), Color.FromNonPremultiplied(178,178,178, 255)));
+            s.Troops.Add(new Troop("11. skautský oddíl Medvědi", s, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255)));
+            s.Troops[1].AI = new AggressiveAI(s.Troops[1]);
+            s.Troops[2].AI = new AggressiveAI(s.Troops[2]);
+            LoadMapIntoSession(s, "Levels\\BlackCastle.tmx");
+            s.Objectives.Add(new Objective("Znič všechny kuchyně obou nepřátelských oddílů.")
+            {
+                OnComplete = (ss) => ss.AchieveEnding(Ending.Victory),
+                StateTrigger = (ss) => ss.Session.AllBuildings.Count(bld => bld.Controller != ss.Session.PlayerTroop && bld.Template.Id == BuildingId.Kitchen) == 0
+            });
+            return s;
+        }
+
+        internal static Session LevelRadenin()
+        {
+            Session s = CreateBasic1v1();
+            s.LevelName = "Radenin";
+            LoadMapIntoSession(s, "Levels\\Radenin.tmx");
+            s.Troops.ForEach(trp =>
+            {
+                trp.Food = 0;
+                trp.Clay = 0;
+                trp.Wood = 0;
+            });
+            s.Objectives.Add(new Objective("Finální úkol: Znič nepřátelskou věž.")
+            {
+                OnComplete = (ss) => ss.AchieveEnding(Ending.Victory),
+                StateTrigger = (ss)=> ss.Session.AllBuildings.Count(bld => bld.Controller != ss.Session.PlayerTroop) == 0
+            });
+            return s;
         }
 
         internal static Session FreeGame()

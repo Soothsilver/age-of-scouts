@@ -1,14 +1,9 @@
-YES: Nastavení hlasitosti
 Build skript
-Encyklopedie
-- Základ
-- Humor
-- Klik z jednotky
 
 Null Reference na konci
 Pracant zaseklý na stanu
-Mise 2 radenín
-Mise 3 Temný hrad
+IN PROGRESS: Mise 2 radenín
+IN PROGRESS: Mise 3 Temný hrad
 
 Pøihlášky pro skauty na dabing
 Feedback button
@@ -20,3 +15,5 @@ YES: Instalátor
 YES: Eqatec
 YES: Rozlišení
 YES: Nastavení rozlišení
+YES: Nastavení hlasitosti
+YES: - Klik z jednotky

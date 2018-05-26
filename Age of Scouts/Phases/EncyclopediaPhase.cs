@@ -47,7 +47,7 @@ namespace Age.Phases
 
             Primitives.DrawMultiLineText("{b}" + Title + "{/b}\n\n" + Description, rectMenu.Extend(-4, -4), Color.Black, FontFamily.Mid);
 
-            UI.DrawButton(new Rectangle(rectMenu.Right - 310, rectMenu.Height - 50, 300, 40), topmost,
+            UI.DrawButton(new Rectangle(rectMenu.Right - 310, rectMenu.Bottom - 50, 300, 40), topmost,
                 "Zavřít", () => Root.PopFromPhase());
 
             base.Draw(sb, game, elapsedSeconds, topmost);
