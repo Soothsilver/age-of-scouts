@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Age.Core;
 
 namespace Age.Internet
 {
@@ -59,6 +60,11 @@ namespace Age.Internet
 
             }
             instance.onlineWorkerInProgress = 0;
+        }
+
+        internal static string Identify(Session session)
+        {
+            return session.LevelName + " (" + session.Map.Width + "x" + session.Map.Height + ")";
         }
 
         private string Sanitize(string data)

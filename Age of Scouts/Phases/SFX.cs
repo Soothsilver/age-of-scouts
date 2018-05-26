@@ -15,7 +15,7 @@ namespace Age.Phases
         {
             var sfx = Library.Get(sfxName);
             EndsIn[sfxName] = DateTime.Now.Add(sfx.Duration);
-            sfx.Play();
+            sfx.Play(Settings.Instance.SfxVolume, 0, 0);
         }
 
         internal static void PlaySoundUnlessPlaying(SoundEffectName sfxName)
@@ -33,12 +33,12 @@ namespace Age.Phases
         internal static void PlayRandom(params SoundEffect[] sfxs)
         {
             SoundEffect sfx = sfxs[R.Next(sfxs.Length)];
-            sfx.Play();
+            sfx.Play(Settings.Instance.SfxVolume, 0, 0);
         }
 
         internal static void Play(SoundEffect sfx)
         {
-            sfx.Play();
+            sfx.Play(Settings.Instance.SfxVolume, 0, 0);
         }
     }
 }

@@ -80,6 +80,11 @@ namespace Age.Music
             }
         }
 
+        internal static void SetVolume(float value)
+        {
+            MediaPlayer.Volume = value;
+        }
+
         private enum FlagStatus
         {
             Down,

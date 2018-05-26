@@ -1,4 +1,5 @@
 ﻿using Age.Animation;
+using Age.Internet;
 using Age.Phases;
 using Age.Voice;
 using Age.World;
@@ -18,6 +19,7 @@ namespace Age.Core
             get { return Troops[0]; }
         }
 
+        public string LevelName;
         public List<Troop> Troops = new List<Troop>();
         public List<Unit> AllUnits = new List<Unit>();
         public List<Building> AllBuildings = new List<Building>();
@@ -47,11 +49,13 @@ namespace Age.Core
             {
                 SFX.PlaySound(SoundEffectName.Fanfare);
                 SFX.PlaySound(SoundEffectName.MiseBylaUspesneSplnena);
+                Eqatec.ScheduleSendMessage("END:VICTORY", Eqatec.Identify(this));
             }
             else
             {
                 SFX.PlaySound(SoundEffectName.ItIsOver);
                 SFX.PlaySound(SoundEffectName.MiseNebylaSplnena);
+                Eqatec.ScheduleSendMessage("END:DEFEAT", Eqatec.Identify(this));
             }
         }
 

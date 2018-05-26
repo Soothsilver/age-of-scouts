@@ -58,8 +58,13 @@ namespace Age.HUD
                 if (primaryUnit != null)
                 {
                     Primitives.DrawSingleLineText(primaryUnit.UnitTemplate.Name, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 30), Color.Black, Library.FontNormal);
-                    Primitives.DrawSingleLineText(primaryUnit.DebugActivityDescription, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 108), Color.Black, Library.FontTiny);
+                    Primitives.DrawSingleLineText(primaryUnit.DebugActivityDescription, new Vector2(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 128), Color.Black, Library.FontTiny);
                 }
+                UI.DrawIconButton(new Rectangle(rectPrimaryIcon.Right - 34, rectPrimaryIcon.Bottom - 34, 32, 32), topmost,
+                    Library.IconInformation, "Zobrazit encyklopedické informace", "Zobrazí podrobnější informace o této jednotce, stavbě nebo věci. Můžete se také dozvědět, jak souvisí se skutečnými skautskými tábory.", () =>
+                    {
+                        Root.PushPhase(new EncyclopediaPhase(primaryEntity));
+                    });
                 Primitives.DrawImage(primaryEntity.BottomBarTexture, new Rectangle(rectPrimaryIcon.X + 5, rectPrimaryIcon.Y + 50, 64, 64));
 
                 // All selected units and/or action currently executed by building

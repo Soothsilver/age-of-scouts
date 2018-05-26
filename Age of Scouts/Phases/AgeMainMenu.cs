@@ -17,7 +17,7 @@ namespace Age.Phases
         {
             Primitives.FillRectangle(Root.Screen, Color.FromNonPremultiplied(144, 237, 192, 255));
             Primitives.DrawImage(Library.Get(TextureName.AgeOfScoutsLogo), new Rectangle(10, 10, 600, 200));
-            Primitives.DrawSingleLineText("Toto je alfa verze technického dema. Tato hra není ještě doprogramována.\nPokud bys chtěl nebo chtěla pomoci, napiš mi prosím\nna petrhudecek2010@gmail.com", new Vector2(10, 230), Color.Black, Library.FontNormal);
+            Primitives.DrawSingleLineText("Toto je alfa verze technického dema. Tato hra není ještě doprogramována.\nPokud bys chtěl nebo chtěla pomoci, napiš mi prosím\nna petrhudecek2010@gmail.com\n\nVerze " + Debug.Version.AsString, new Vector2(10, 230), Color.Black, Library.FontNormal);
 
             UI.DrawButton(new Rectangle(Root.ScreenWidth - 310, 200, 300, 40), topmost, "Úroveň 1: Přepad (tutoriál)", () => { TransitionTo(new LevelPhase(Levels.Tutorial())); }, "V této výukové úrovni se naučíš, jak pohybovat s jednotkami a bojovat proti nepříteli tak, že přepadneš nepřátelský tábor.");
             UI.DrawButton(new Rectangle(Root.ScreenWidth - 310, 300, 300, 40), topmost, "Volná hra", () => { TransitionTo(new LevelPhase(Levels.FreeGame())); }, "Na této mapě není žádný příběh. Začínáš s kuchyní a několika pracanty, a hraješ proti počítačovému soupeři, který je na tom podobně. Abys vyhrál, musíš zneškodit všechny soupeřovy jednotky.");

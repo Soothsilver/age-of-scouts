@@ -17,7 +17,7 @@ namespace Age_of_Scouts_Launcher
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             string directory = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
             string pathtorealgame = System.IO.Path.Combine(directory, "Age of Scouts.exe");

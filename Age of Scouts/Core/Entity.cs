@@ -12,6 +12,7 @@ namespace Age.Core
         public int PixelHeight;
         public Vector2 FeetStdPosition;
         public Session Session;
+        public abstract string EncyclopediaFilename { get; }
 
 
         public Troop Controller;

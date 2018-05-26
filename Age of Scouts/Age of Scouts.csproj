@@ -154,6 +154,7 @@
     <Compile Include="Core\Unit.cs" />
     <Compile Include="Core\UnitTemplate.cs" />
     <Compile Include="Debug\DebugPoints.cs" />
+    <Compile Include="Debug\Version.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HUD\BottomBar.cs" />
     <Compile Include="HUD\Minimap.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Pathfinding\MovementRules.cs" />
     <Compile Include="Debug\Cheats.cs" />
     <Compile Include="Other threads\OtherThreads.cs" />
+    <Compile Include="Phases\EncyclopediaPhase.cs" />
     <Compile Include="Phases\SettingsPhase.cs" />
     <Compile Include="Phases\SFX.cs" />
     <Compile Include="Phases\ViewObjectivesPhase.cs" />
@@ -244,6 +246,18 @@
   <ItemGroup>
     <Content Include="AgeOfScoutsLogo.ico" />
     <Content Include="AgeOfScoutsLogo.png" />
+    <Content Include="Encyclopedia\Hadrakostrelec.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\Kukurice.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\ObytnyStan.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\Pracant.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Levels\AgeOfScouts.tsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

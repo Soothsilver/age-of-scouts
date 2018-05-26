@@ -40,5 +40,7 @@ namespace Age
         /// If true, then all buildings are completed instantly, for all players.
         /// </summary>
         public bool Aegis;
+        public float MusicVolume = 1;
+        public float SfxVolume = 1;
     }
 }

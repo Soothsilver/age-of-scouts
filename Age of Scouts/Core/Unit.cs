@@ -26,6 +26,7 @@ namespace Age.Core
         public Stance Stance = Stance.Aggressive;
         public Resource CarryingResource;
         public int CarryingHowMuchResource;
+        public override string EncyclopediaFilename => UnitTemplate.EncyclopediaFilename;
 
         public Unit(string name, Troop controller, UnitTemplate unitTemplate, Vector2 feetPosition) : base(TextureName.None, feetPosition)
         {

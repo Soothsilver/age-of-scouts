@@ -1,0 +1,8 @@
+﻿Obytný stan
+Každý obytný stan zvyšuje tvůj populační limit o 2.
+
+V {b}podsadových stanech{/b} bydlí většina obyvatel tábora. Podsadový stan sestává z dřevěné "podsady" včetně dvou postelí a z plachty. Stan má jedny dvířka. Na noc se dvířka zavřou a plachta stáhne a sevře shora dolů tak, aby byl vnitřek stanů chráněn před deštěm.
+
+Podsadový stan má 2x2 metry.
+
+Většina českých skautských táborů používá právě podsadové stany.

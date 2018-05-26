@@ -139,7 +139,7 @@ namespace Age.World
             s.EnqueueVoice(new ChatLine("Ahoj, hráči. Vítej ve hře \"Age of Scouts\". V tomto tutoriálu zkusíš cvičně přepadnout nepřátelský tábor.", SoundEffectName.Tut1));
             s.EnqueueVoice(new ChatLine("Nejprve se ale musíme naučit chodit.", SoundEffectName.Tut2));
             s.EnqueueVoice(new ChatLine("Klikni levým tlačítkem myši na skauta uprostřed obrazovky.", SoundEffectName.Tut3));
-
+            s.LevelName = "Tutorial";
             return s;
         }
 
@@ -177,6 +177,7 @@ namespace Age.World
             });
             session.ObjectivesChanged = false;
             session.PlayerTroop.Omniscience = true;
+            session.LevelName = "AI vs. AI";
             return session;
         }
 
@@ -197,6 +198,7 @@ namespace Age.World
                 Convertible = true
             };
             session.Troops.Add(gaia);
+            session.LevelName = "Basic 1v1";
             return session;
         }
 
@@ -213,6 +215,7 @@ namespace Age.World
                 OnComplete = (session) => session.AchieveEnding(Ending.Victory)
             });
             s.ObjectivesChanged = false;
+            s.LevelName = "Volná hra";
             return s;
         }
 
@@ -223,6 +226,7 @@ namespace Age.World
             s.Troops[1].Surrender();
             s.Objectives.Add(new Objective("Nemáš žádné úkoly. Dělej, co chceš!"));
             s.ObjectivesChanged = false;
+            s.LevelName = "Bez nepřátel";
             return s;
         }
         internal static Session DebugMap()
@@ -231,6 +235,7 @@ namespace Age.World
             LoadMapIntoSession(s, "Levels\\DebugMap.tmx");
             s.Objectives.Add(new Objective("Programuj ^^"));
             s.ObjectivesChanged = false;
+            s.LevelName = "debug mapa";
             return s;
         }
     }

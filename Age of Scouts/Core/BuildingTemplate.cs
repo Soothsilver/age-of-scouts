@@ -22,6 +22,7 @@ namespace Age.Core
         public int PopulationCost => 0;
         public float SecondsToBuild;
         public SoundEffectName SelectionSfx;
+        public string EncyclopediaFilename;
 
         private BuildingTemplate(BuildingId id, string name, string description, TextureName icon, int tileWidth, int tileHeight,
             int food, int wood, int mud)
@@ -48,6 +49,7 @@ namespace Age.Core
             SecondsToBuild = 20,
             SelectionSfx = SoundEffectName.StandardTent,
             MaxHP = 100
+            ,EncyclopediaFilename = "ObytnyStan"
         };
         public static BuildingTemplate MunitionTent = new BuildingTemplate(BuildingId.MunitionTent, "Muniční stan", "Dají se z něj nabírat {b}hadrákostřelci{/b}.", TextureName.MunitionTent, 2, 2, 0, 200, 0)
         {

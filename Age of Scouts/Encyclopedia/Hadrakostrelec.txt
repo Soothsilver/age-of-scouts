@@ -1,0 +1,11 @@
+﻿Hadrákostřelec
+Hadrákostřelec je základní bojová jednotka. Lze ji nabrat v {b}kuchyni{/b} anebo v {b}muničním stanu{/b}.
+
+{b}Papírové míčky{/b} jsou také zvané "hadráky", protože mohou být obaleny ponožkou nebo jiným oblečením, přestože skautské oddíly častěji používají jednoduchou izolepu. 
+
+Tyto míčky se používají jako střelivo v bojových hrách. V takové hře pravidla většinou povolují, aby měl každý u sebe určité množství míčků, které může házet po soupeřích. Koho se míček dotkne, je dočasně vyřazen ze hry, a musí například dojít na tzv. "oživiště". Hráči mohou být rozděleni do týmů, a každý tým musí pomocí svých míčků buď ubránit strategický bod nebo ho zabrat.
+
+Hadráky se používají častěji než šišky, protože jsou bezpečné, a častěji než plastové míčky, protože jsou levné a dostupné. I v zimě mají výhodu oproti sněhovým koulím, že se nemohou rozpadnout.
+
+Podle pravidel hry {b}Age of Scouts{/b} si skaut zasažený určitým množstvím hadráků lehne na zem a je vyřazen ze hry permanentně.
+

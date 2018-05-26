@@ -1,0 +1,8 @@
+﻿Pracant
+Pracant je nejdůležitější jednotka v {b}Age of Scouts{/b}. Umí stavět stavby a sbírat suroviny.
+
+Součástí mnoha skautských táborů je stavba tzv. "táborových staveb". Ty zahrnují jak nejdůležitější potřebné stavby v každém táboře jako jsou podsadové stany a kuchyně, ale také podpůrné a dekorativní stavby jako jsou vstupní brána, sušák na prádlo, táborový kruh, věž a další.
+
+Na táborových stavbách se mohou podílet všichni účastníci tábora, od činovníků až po vlčata, byť většina práce je určena pro skauty a rovery. 
+
+Stavby se tvoří ze dřeva, hřebíků, provazů a provázků. Jako nástroje se používají sekery, pily, kladiva a lopaty.

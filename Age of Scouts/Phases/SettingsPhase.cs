@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Age.HUD;
+using Age.Music;
 using Auxiliary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,23 +18,40 @@ namespace Age.Phases
         {
             Primitives.DrawAndFillRectangle(rectMenu, ColorScheme.Background, ColorScheme.Foreground);
 
-            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 50, 300, 40), topmost, "Celoobrazovkový režim", () => Root.GoToFullscreen(Settings.Instance.Resolution));
-            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 90, 300, 40), topmost, "Celoobrazovkové okno", () => Root.GoToBorderlessWindow(Settings.Instance.Resolution));
-            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 130, 300, 40), topmost, "Okno", () =>
-                {
-                    Root.GoToNormalWindow(Settings.Instance.Resolution);
-                });
+            UI.DrawRadioButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 50, 300, 40), topmost, "Celoobrazovkový režim", () =>
+            {
+                Root.GoToFullscreen(Settings.Instance.Resolution);
+                Settings.Instance.DisplayMode = DisplayModus.Fullscreen;
+            }, () => Settings.Instance.DisplayMode == DisplayModus.Fullscreen, "V celoobrazovkovém režimu má hra největší výkon, ale automaticky se minimalizuje, když se přesuneš na jiné okno, a nemusí se zobrazovat správně, pokud má jiné rozlišení než nativní rozlišení tvého monitoru.");
+            UI.DrawRadioButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 90, 300, 40), topmost, "Okno na celou obrazovku", () =>
+            {
+                Root.GoToBorderlessWindow(Settings.Instance.Resolution);
+                Settings.Instance.DisplayMode = DisplayModus.BorderlessWindow;
+            }, () => Settings.Instance.DisplayMode == DisplayModus.BorderlessWindow, "Hra v tomto režimu zabírá celý monitor, ale nezabírá si celou grafickou kartu jen pro sebe. Ve vzácných případech ale může panel úloh překrývat tuto hru.");
+            UI.DrawRadioButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 130, 300, 40), topmost, "Okno", () =>
+            {
+                Settings.Instance.DisplayMode = DisplayModus.Windowed;
+                Root.GoToNormalWindow(Settings.Instance.Resolution);
+                }, () => Settings.Instance.DisplayMode == DisplayModus.Windowed, "Hra je v okně podobně jako ostatní aplikace.");
 
-            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 190, 580, 40), topmost, "Synchronizovat se zatemňovacím impulsem (vsync)", () =>
+            UI.DrawCheckbox(new Rectangle(rectMenu.X + 10, rectMenu.Y + 190, 300, 40), topmost, "VSync", () =>
             {
-                Root.SynchronizeWithVerticalRetrace = true;
-            });
-            UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Y + 230, 300, 40), topmost, "Zakázat vsync", () =>
+                Root.SynchronizeWithVerticalRetrace = !Root.SynchronizeWithVerticalRetrace;
+            }, () => game.IsFixedTimeStep, "Když zašrktneš {b}VSync{/b}, bude hra sladěna s obnovovací frekvencí tvého monitoru. Sníží se tak \"trhání\" obrazu, který může tak být plynulejší, ale výkon se může snížit.");
+
+            UI.DrawSlider(new Rectangle(rectMenu.X + 10, rectMenu.Y + 240, 300, 40), topmost, "Hlasitost hudby", (value) =>
             {
-                Root.SynchronizeWithVerticalRetrace = false;
-            });
+                Settings.Instance.MusicVolume = value;
+                BackgroundMusicPlayer.SetVolume(value);
+            }, () => Settings.Instance.MusicVolume, null);
+            UI.DrawSlider(new Rectangle(rectMenu.X + 10, rectMenu.Y + 290, 300, 40), topmost, "Hlasitost zvuků", (value) =>
+            {
+                Settings.Instance.SfxVolume = value;
+            }, () => Settings.Instance.SfxVolume, null);
 
             UI.DrawButton(new Rectangle(rectMenu.X + 10, rectMenu.Bottom - 50, 300, 40), topmost, "Zavřít", Root.PopFromPhase);
+
+            UI.MajorTooltip?.Draw(new Rectangle(rectMenu.X + 10, rectMenu.Bottom - 150, 400, 90));
 
             base.Draw(sb, game, elapsedSeconds, topmost);
         }

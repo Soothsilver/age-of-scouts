@@ -24,6 +24,8 @@ namespace Age.Core
         public Resource ProvidesResource = 0;
         public int ResourcesLeft;
         public Tile Occupies;
+        private string encyclopediaFilename;
+        public override string EncyclopediaFilename => encyclopediaFilename;
 
         private NaturalObject(String name, string description, TextureName icon, int pixelWidth, int pixelHeight, Vector2 feetPosition, Tile occupies, EntityKind entityKind,
             float speedMultiplier, bool preventsProjectiles, Session session) : base(icon, pixelWidth, pixelHeight, feetPosition)
@@ -71,6 +73,7 @@ namespace Age.Core
             float speedMultiplier = 0;
             string name = null;
             string desc = null;
+            string encyc = null;
        
             switch (entityKind)
             {
@@ -86,6 +89,7 @@ namespace Age.Core
                     speedMultiplier = 0.5f;
                     name = "Kukuřice";
                     desc = "Z této části kukuřičného pole můžou tvoji {b}Pracanti{/b} odnést kukuřici do kuchyně a získat tak {lime}jídlo{/lime}.";
+                    encyc = "Kukurice";
                     break;
                 case EntityKind.CutDownTree:
                     speedMultiplier = 1;
@@ -113,7 +117,10 @@ namespace Age.Core
                     desc = "Stomy blokují pohyb, ale tvoji {b}Pracanti{/b} ho mohou pokácet a odnést do kuchyně nebo dřevního kouta a získat tak {red}dřevo{/red}.";
                     break;
             }
-            return new NaturalObject(name, desc, icon, width, height, feet, session.Map.Tiles[tileX, tileY], entityKind, speedMultiplier, preventsProjectiles, session);
+            return new NaturalObject(name, desc, icon, width, height, feet, session.Map.Tiles[tileX, tileY], entityKind, speedMultiplier, preventsProjectiles, session)
+            {
+                encyclopediaFilename = encyc
+            };
 
         }
 

@@ -23,6 +23,7 @@ namespace Age.Core
         internal Vector2 RallyPointInStandardCoordinates;
         public float SecondsUntilRecharge = 0;
         public float SecondsInExistence;
+        public override string EncyclopediaFilename => Template.EncyclopediaFilename;
 
         public Building(BuildingTemplate buildingTemplate, Troop controller, Vector2 feetPosition, Tile primaryTile) : base(buildingTemplate.Icon, feetPosition)
         {

@@ -15,6 +15,7 @@ namespace Age.Core
         public TextureName DeadIcon;
         public bool CanBuildStuff;
         public bool CanAttack = true;
+        public string EncyclopediaFilename;
 
         private SoundEffect Ack1;
         private SoundEffect Ack2;
@@ -64,9 +65,13 @@ namespace Age.Core
             {
                 CanBuildStuff = true,
                 CanGatherStuff = true,
-                CanAttack = false
+                CanAttack = false,
+                EncyclopediaFilename = "Pracant"
             };
-            Hadrakostrelec = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20);
+            Hadrakostrelec = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20)
+            {
+                EncyclopediaFilename = "Hadrakostrelec"
+            };
         }
 
         internal void PlayBuildSound()
