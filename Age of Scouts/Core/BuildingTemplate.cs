@@ -104,7 +104,7 @@ namespace Age.Core
                 for (int y = 0; y< TileHeight; y++)
                 {
                     Tile alsoOn = session.Map.GetTileFromTileCoordinates(tile.X - x, tile.Y - y);
-                    if (alsoOn == null || alsoOn.Type != TileType.Grass || alsoOn.NaturalObjectOccupant != null
+                    if (alsoOn == null || alsoOn.NaturalObjectOccupant != null
                         || alsoOn.PreventsMovement)
                     {
                         return false;
