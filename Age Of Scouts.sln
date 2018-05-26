@@ -5,18 +5,22 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auxiliary", "Auxiliary\Auxiliary.csproj", "{EC031C5F-CAFA-499C-8B8E-948132A3C4E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Age of Scouts", "ImprovedXnaGame\ImprovedXnaGame\Age of Scouts.csproj", "{37701058-C14C-4C28-9CDB-FE21A8D96D1C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Age of Scouts", "Age of Scouts\Age of Scouts.csproj", "{37701058-C14C-4C28-9CDB-FE21A8D96D1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimaryContent", "ImprovedXnaGame\ImprovedXnaGameContent\PrimaryContent.contentproj", "{1A620733-890A-4F3C-A445-81C9F432224C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimaryContent", "PrimaryContent\PrimaryContent.contentproj", "{1A620733-890A-4F3C-A445-81C9F432224C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuxiliaryContent", "AuxiliaryContent\AuxiliaryContent.contentproj", "{6D1B8518-2ED6-4858-B9DC-59AC2332FDD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cother", "Cother\Cother.csproj", "{501E8363-3A27-49F3-83B9-0111C1DDC740}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B19329A-A1BD-4B87-BAC8-8404EEC1F41D}"
+	ProjectSection(SolutionItems) = preProject
+		FutureChangelog.txt = FutureChangelog.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Age of Scouts Launcher", "Age of Scouts Launcher\Age of Scouts Launcher.csproj", "{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -70,12 +74,37 @@ Global
 		{501E8363-3A27-49F3-83B9-0111C1DDC740}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{501E8363-3A27-49F3-83B9-0111C1DDC740}.Release|x86.ActiveCfg = Release|Any CPU
 		{501E8363-3A27-49F3-83B9-0111C1DDC740}.Release|x86.Build.0 = Release|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Debug|x86.Build.0 = Debug|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Release|x86.ActiveCfg = Release|Any CPU
+		{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5A56F1F-C7D7-45E8-BB89-57D7AF5DCD4D}
+	EndGlobalSection
+	GlobalSection(AutomaticVersions) = postSolution
+		UpdateAssemblyVersion = True
+		UpdateAssemblyFileVersion = False
+		UpdateAssemblyInfoVersion = True
+		AssemblyVersionSettings = None.IncrementOnDemand.IncrementWithResetOnIncrease.DeltaDayStamp
+		AssemblyInfoVersionSettings = None.IncrementOnDemand.IncrementWithResetOnIncrease.DeltaDayStamp
+		UpdatePackageVersion = False
+		AssemblyInfoVersionType = SettingsVersion
+		InheritWinAppVersionFrom = None
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

@@ -35,7 +35,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Nuclex.Fonts.Content.TrueTypeImporter">
-      <HintPath>D:\NuclexBuild\nuclex-framework-r1404-sources\framework\Nuclex.Fonts.Content.TrueTypeImporter\bin\xna-4.0-x86\Debug\Nuclex.Fonts.Content.TrueTypeImporter.dll</HintPath>
+      <HintPath>.\Nuclex.Fonts.Content.TrueTypeImporter.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -94,7 +94,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Priority Queue, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OptimizedPriorityQueue.4.1.1\lib\net45\Priority Queue.dll</HintPath>
+      <HintPath>..\packages\OptimizedPriorityQueue.4.1.1\lib\net45\Priority Queue.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -114,7 +114,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="TiledSharp, Version=0.15.5889.20321, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\TiledSharp.0.15\lib\TiledSharp.dll</HintPath>
+      <HintPath>..\packages\TiledSharp.0.15\lib\TiledSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +122,7 @@
     <Compile Include="AI\BaseAI.cs" />
     <Compile Include="AI\DoNothingAI.cs" />
     <Compile Include="Animation\SpriteCache.cs" />
+    <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Core\Activities\Activity.cs" />
     <Compile Include="Core\Activities\Physics.cs" />
     <Compile Include="Core\Activities\Strategy.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="HUD\BottomBar.cs" />
     <Compile Include="HUD\Minimap.cs" />
     <Compile Include="Core\Selection.cs" />
+    <Compile Include="Internet\Eqatec.cs" />
     <Compile Include="Pathfinding\MovementRules.cs" />
     <Compile Include="Debug\Cheats.cs" />
     <Compile Include="Other threads\OtherThreads.cs" />
@@ -198,15 +200,15 @@
     <Compile Include="World\Waterflow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Auxiliary\Auxiliary.csproj">
+    <ProjectReference Include="..\Auxiliary\Auxiliary.csproj">
       <Project>{EC031C5F-CAFA-499C-8B8E-948132A3C4E6}</Project>
       <Name>Auxiliary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Cother\Cother.csproj">
+    <ProjectReference Include="..\Cother\Cother.csproj">
       <Project>{501E8363-3A27-49F3-83B9-0111C1DDC740}</Project>
       <Name>Cother</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ImprovedXnaGameContent\PrimaryContent.contentproj">
+    <ProjectReference Include="..\PrimaryContent\PrimaryContent.contentproj">
       <Name>PrimaryContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
       <Project>{1A620733-890A-4F3C-A445-81C9F432224C}</Project>

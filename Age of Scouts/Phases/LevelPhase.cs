@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Age.Core;
 using Age.HUD;
+using Age.Internet;
 using Age.Music;
 using Age.World;
 using Auxiliary;
@@ -39,6 +40,7 @@ namespace Age.Phases
         protected override void Initialize(Game game)
         {
             BackgroundMusicPlayer.Play(BackgroundMusicPlayer.LevelMusic);
+            Eqatec.ScheduleSendMessage("LEVEL START", Session.Map.Width + "x" + Session.Map.Height);
             SFX.PlaySound(SoundEffectName.QuestSound);
             OtherThreads.StartWorking(this.Session);
         }

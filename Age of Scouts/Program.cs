@@ -12,7 +12,7 @@ namespace Age
         {
            
 #if DEBUG
-                using (ImprovedGame game = new ImprovedGame())
+                using (ImprovedGame game = new ImprovedGame(args))
                 {
                     game.Run();
                 }

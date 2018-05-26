@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using Age.Core;
 using Age.Animation;
+using Age.Internet;
 
 namespace Age
 {
@@ -19,10 +20,14 @@ namespace Age
     {
         readonly GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        CommandLineArguments commandLineArguments;
 
-        public ImprovedGame()
+
+        public ImprovedGame(String[] args)
         {
             graphics = new GraphicsDeviceManager(this);
+            commandLineArguments = new CommandLineArguments(args);
+            Eqatec.Start(commandLineArguments.DoNotTrack);
             Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
             IntPtr hWnd = this.Window.Handle;          
@@ -37,9 +42,20 @@ namespace Age
             this.Window.Title = "Age of Scouts";
 
             // Visuals
-            Root.Init(this, spriteBatch, graphics, new Resolution(1920, 1080));
-            //Root.IsFullscreen = true;
-            Root.GoToBorderlessWindow(new Resolution(1920,1080));
+            Root.Init(this, spriteBatch, graphics, commandLineArguments.Resolution);
+            switch (commandLineArguments.DisplayMode)
+            {
+                case DisplayModus.BorderlessWindow:
+                    Root.GoToBorderlessWindow(commandLineArguments.Resolution);
+                    break;
+                case DisplayModus.Fullscreen:
+                    Root.GoToFullscreen(commandLineArguments.Resolution);
+                    break;
+                case DisplayModus.Windowed:
+                    Root.GoToNormalWindow(commandLineArguments.Resolution);
+                    break;
+            }
+            Settings.Instance.DisplayMode = commandLineArguments.DisplayMode;
             Root.SynchronizeWithVerticalRetrace = Settings.Instance.VSync;
 
             // Load assets
@@ -63,6 +79,7 @@ namespace Age
 
             // Go to main menu
             Root.PushPhase(new Phases.AgeMainMenu());
+            Eqatec.ScheduleSendMessage("GAME START", "");
         }
 
         private SoundEffect SfxKid(string path)

@@ -1,4 +1,5 @@
 ﻿using Age.HUD;
+using Age.Internet;
 using Auxiliary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,12 @@ namespace Age.Phases
             
             UI.DrawButton(new Rectangle(Root.ScreenWidth /2- 150, Root.ScreenHeight - 80, 300, 40), topmost, "Zpět do hlavního menu", () => TransitionIntoExit());
             base.Draw(sb, game, elapsedSeconds, topmost);
+        }
+
+        protected override void Initialize(Game game)
+        {
+            base.Initialize(game);
+            Eqatec.ScheduleSendMessage("VIEW CREDITS", "");
         }
 
         protected override void Update(Game game, float elapsedSeconds)
