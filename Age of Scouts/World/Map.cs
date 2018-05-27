@@ -311,6 +311,7 @@ namespace Age.World
 
         public void Update(float elapsedSeconds)
         {
+            /*
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -319,6 +320,7 @@ namespace Age.World
                     tile.SecondsUntilFogStatusCanChange -= elapsedSeconds;
                 }
             };
+            */
         }
     }
 }

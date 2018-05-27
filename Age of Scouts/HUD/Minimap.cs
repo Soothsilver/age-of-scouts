@@ -131,6 +131,7 @@ namespace Age.HUD
             }
             minimapTexture.SetData(minimapData);
             this.initialized = true;
+
         }
 
         private static Color GetMinimapColor(Tile tile)
@@ -140,7 +141,7 @@ namespace Age.HUD
                 return Color.Black;
             }
           
-            if (tile.Occupants.Count > 0)
+            if (tile.Occupants.Count > 0 && (!Settings.Instance.EnableFogOfWar || tile.Fog == FogOfWarStatus.Clear))
             {
                 return tile.Occupants[0].Controller.StrongColor;
             }

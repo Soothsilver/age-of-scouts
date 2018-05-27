@@ -28,7 +28,7 @@ namespace Age.Phases
         public void StartWorking(Session session)
         {
             sessionUsedInOtherThreads.CopyValuesFrom(session);
-            SafeCopyInRealtime(session);
+            SafeCopyInRealtime(session, 0);
             Process process = Process.GetCurrentProcess();
             int tcountBefore = process.Threads.Count;
           //  var memory = RememberAllThreads(process);
@@ -102,9 +102,18 @@ namespace Age.Phases
             terminateSelf = true;
         }
 
+        float elapsedSecondsSinceLastCycle = 0;
+        object elapsedSecondsLock = new object();
+
         public void OtherThreadCycle()
         {
             PerformanceCounter.OtherCycleBegins();
+            float elapsedSeconds = 0;
+            lock (elapsedSecondsLock)
+            {
+                elapsedSeconds = elapsedSecondsSinceLastCycle;
+                elapsedSecondsSinceLastCycle = 0;
+            }
             lock (sessionModificationLock)
             {
                 Session swap = sessionUsedInOtherThreads;
@@ -112,22 +121,26 @@ namespace Age.Phases
                 sessionModifiedFromRealtime = swap;
             }
 
-            FogOfWarMechanics.PerformFogOfWarReveal(sessionUsedInOtherThreads);
+            FogOfWarMechanics.PerformFogOfWarReveal(sessionUsedInOtherThreads, elapsedSeconds);
             levelPhase.Minimap.UpdateTexture(sessionUsedInOtherThreads.Map);
             
         }
 
         public static volatile int counter = 0;
 
-        public void UpdateCycleBegins(Session session)
+        public void UpdateCycleBegins(Session session, float elapsedSeconds)
         {
             PerformanceCounter.StartMeasurement(PerformanceGroup.CopySession);
-            SafeCopyInRealtime(session);
+            SafeCopyInRealtime(session, elapsedSeconds);
             PerformanceCounter.EndMeasurement(PerformanceGroup.CopySession);
         }
 
-        private void SafeCopyInRealtime(Session session)
+        private void SafeCopyInRealtime(Session session, float elapsedSeconds)
         {
+            lock (elapsedSecondsLock)
+            {
+                elapsedSecondsSinceLastCycle += elapsedSeconds;
+            }
             lock (sessionModificationLock)
             {
                 sessionModifiedFromRealtime.CopyValuesFrom(session);

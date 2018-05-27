@@ -72,8 +72,12 @@ namespace Age
             ConstructionOption.InitializeAllConstructionOptions();
 
             // Load unit sounds
+            /*
             UnitTemplate.Hadrakostrelec.LoadSounds(SfxKid("Ack1"), SfxKid("Ack2"), SfxKid("AckMove"), SfxKid("Fail"), SfxKid("Joke2"), SfxKid("Joke3"), SfxKid("KidJoke1"), SfxKid("Selection1"), SfxKid("Selection2"), SfxKid("Selection3"), SfxKid("Selection4"), SfxKid("Naverbovan1"));
             UnitTemplate.Hadrakostrelec.LoadAttackSounds(SfxKid("AckAttack"), SfxKid("AckAttack2"));
+            */
+            UnitTemplate.Hadrakostrelec.LoadSounds(SfxHH("Ack"), SfxHH("Ack2"), SfxHH("AckMove"), SfxHH("Error"), SfxHH("Vtip1"), SfxHH("Vtip2"), SfxHH("Vtip3"), SfxHH("Ano"), SfxHH("Ano2"), SfxHH("Ano3"), SfxHH("Ano4"), SfxHH("Recruit"));
+            UnitTemplate.Hadrakostrelec.LoadAttackSounds(SfxHH("AckAttack"), SfxHH("AckAttack2"));
             UnitTemplate.Pracant.LoadSounds(SfxPrc("Ack1"), SfxPrc("Ack2"), SfxPrc("AckMove"), SfxKid("Fail"), SfxPrc("Joke1"), SfxPrc("Joke2"), SfxPrc("Joke3"),  SfxPrc("Selection1"), SfxPrc("Selection2"), SfxPrc("Selection3"), SfxPrc("Selection4"), SfxPrc("Naverbovan"));
             UnitTemplate.Pracant.LoadPracantSounds(SfxPrc("AckBuild"), SfxPrc("Corn"), SfxPrc("Mud"), SfxPrc("Bobule"), SfxPrc("Wood"));
 
@@ -85,6 +89,10 @@ namespace Age
         private SoundEffect SfxKid(string path)
         {
             return Content.Load<SoundEffect>("Voice\\Kid\\" + path);
+        }
+        private SoundEffect SfxHH(string path)
+        {
+            return Content.Load<SoundEffect>("Voice\\HH\\HH" + path);
         }
         private SoundEffect SfxPrc(string path)
         {

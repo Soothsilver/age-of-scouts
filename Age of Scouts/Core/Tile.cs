@@ -19,7 +19,6 @@ namespace Age.Core
         public TextureName Icon;
         public TileType Type;
         public FogOfWarStatus Fog;
-        public float SecondsUntilFogStatusCanChange = 0;
         public List<Unit> Occupants = new List<Unit>();
         public List<Corpse> BrokenOccupants = new List<Corpse>();
         public NaturalObject NaturalObjectOccupant = null;
@@ -68,14 +67,14 @@ namespace Age.Core
             return X + ":" + Y;
         }
 
-        internal void SetClearFogStatus(float cleartime)
+        internal void SetClearFogStatus(float cleartime, float[,] revealMap)
         {
-            if (this.Fog == FogOfWarStatus.Clear && this.SecondsUntilFogStatusCanChange > cleartime)
+            if (this.Fog == FogOfWarStatus.Clear && revealMap[this.X, this.Y] > cleartime)
             {
                 return;
             }
             this.Fog = FogOfWarStatus.Clear;
-            this.SecondsUntilFogStatusCanChange = cleartime;
+            revealMap[this.X, this.Y] = cleartime;
         }
 
         internal Tooltip GetTooltip()
@@ -92,7 +91,6 @@ namespace Age.Core
             this.Fog = realMapTile.Fog;
             this.Icon = realMapTile.Icon;
             this.Type = realMapTile.Type;
-            this.SecondsUntilFogStatusCanChange = realMapTile.SecondsUntilFogStatusCanChange;
             this.NaturalObjectOccupant = realMapTile.NaturalObjectOccupant; // TODO not thread safe
             this.BuildingOccupant = realMapTile.BuildingOccupant; // TODO not thread safe
             this.Occupants.Clear();

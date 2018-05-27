@@ -55,7 +55,7 @@ namespace Age.Core
         internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, float cleartime = 2, bool fromAir = false)
         {
             Tile tile = map.GetTileFromStandardCoordinates(source);
-            tile.SetClearFogStatus(cleartime);
+            tile.SetClearFogStatus(cleartime, revealSecondsLeftMap);
             for (float angle = 0; angle <= 2 * Math.PI; angle += MathHelper.Pi / 40)
             {
                 float dx = (float)Math.Cos(angle) * 10;
@@ -75,7 +75,7 @@ namespace Age.Core
                     {
                         break;
                     }
-                    tl.SetClearFogStatus(cleartime);
+                    tl.SetClearFogStatus(cleartime, revealSecondsLeftMap);
                     if (tl.NaturalObjectOccupant?.EntityKind == EntityKind.UntraversableTree && !fromAir)
                     {
                         break;
@@ -87,13 +87,17 @@ namespace Age.Core
 
         private static object lockRevealChangesSwap = new object();
         private static FogOfWarStatus[,] revealChangesMap;
+        private static float[,] revealSecondsLeftMap;
         private static int mapWidth;
         private static int mapHeight;
 
-        public static void PerformFogOfWarReveal(Session sessionUsedInOtherThreads)
+        public static void PerformFogOfWarReveal(Session sessionUsedInOtherThreads, float elapsedSeconds)
         {
             // Reveal.
-
+            if (revealSecondsLeftMap == null || mapWidth != sessionUsedInOtherThreads.Map.Width)
+            {
+                revealSecondsLeftMap = new float[sessionUsedInOtherThreads.Map.Width, sessionUsedInOtherThreads.Map.Height];
+            }
             PerformanceCounter.StartMeasurement(PerformanceGroup.FogOfWarReveal);
             if (Settings.Instance.EnableFogOfWar)
             {
@@ -102,7 +106,8 @@ namespace Age.Core
                     for (int x = 0; x < sessionUsedInOtherThreads.Map.Width; x++)
                     {
                         Tile tile = sessionUsedInOtherThreads.Map.Tiles[x, y];
-                        if (tile.Fog == FogOfWarStatus.Clear && tile.SecondsUntilFogStatusCanChange <= 0)
+                        revealSecondsLeftMap[x, y] -= elapsedSeconds;
+                        if (tile.Fog == FogOfWarStatus.Clear && revealSecondsLeftMap[x, y] <= 0)
                         {
                             tile.Fog = FogOfWarStatus.Grey;
                         }

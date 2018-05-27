@@ -57,7 +57,7 @@ namespace Age.Phases
 
         protected override void Update(Game game, float elapsedSeconds)
         {
-            OtherThreads.UpdateCycleBegins(this.Session);
+            OtherThreads.UpdateCycleBegins(this.Session, elapsedSeconds);
             elapsedSeconds *= Settings.Instance.TimeFactor;
             base.Update(game, elapsedSeconds);
 
