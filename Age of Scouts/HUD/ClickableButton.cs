@@ -53,7 +53,7 @@ namespace Age.HUD
             {
                 Vector2 center = new Vector2(rectBox.X + rectBox.Width / 2, rectBox.Y + rectBox.Height / 2);
                 Primitives.FillCircle(center, rectBox.Width / 2, backgroundColor);
-                Primitives.DrawCircle(center, rectBox.Width / 2, Color.Black);
+                Primitives.DrawCircle(center, rectBox.Width / 2, Color.Black, 2);
                 if (isChecked())
                 {
                     Primitives.FillCircle(center, rectBox.Width / 2 - 4, Color.Black);

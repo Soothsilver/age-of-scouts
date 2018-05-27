@@ -27,6 +27,7 @@ namespace Age.Core
         public Gender Gender => Gender.Boy;
         public List<LeaderPowerInstance> LeaderPowers = new List<LeaderPowerInstance>();
         internal bool Convertible;
+        public List<Troop> Allies = new List<Troop>();
 
         public int Food { get; set; } = 1000;
         public int Wood { get; set; } = 1000;
@@ -69,6 +70,11 @@ namespace Age.Core
             {
                 Session.AchieveEnding(Ending.Defeat);
             }
+        }
+
+        internal bool IsAlliedWith(Troop anotherPlayer)
+        {
+            return Allies.Contains(anotherPlayer);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Age.Phases
                 Title = split[0];
                 Description = split[1];
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 Title = entity.Name;
                 Description = "";
@@ -45,7 +45,7 @@ namespace Age.Phases
         {
             Primitives.DrawAndFillRectangle(rectMenu, ColorScheme.Background, ColorScheme.Foreground);
 
-            Primitives.DrawMultiLineText("{b}" + Title + "{/b}\n\n" + Description, rectMenu.Extend(-4, -4), Color.Black, FontFamily.Mid);
+            Primitives.DrawMultiLineText("{b}" + Title + "{/b}\n\n" + Description, rectMenu.Extend(-4, -4), Color.Black, FontFamily.Normal);
 
             UI.DrawButton(new Rectangle(rectMenu.Right - 310, rectMenu.Bottom - 50, 300, 40), topmost,
                 "Zavřít", () => Root.PopFromPhase());

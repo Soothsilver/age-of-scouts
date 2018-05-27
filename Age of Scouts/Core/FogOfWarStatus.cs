@@ -152,7 +152,7 @@ namespace Age.Core
         {
             lock (lockRevealChangesSwap)
             {
-                if (revealChangesMap == null)
+                if (revealChangesMap == null || session.Map.Width != mapWidth || session.Map.Height != mapHeight)
                 {
                     return;
                 }

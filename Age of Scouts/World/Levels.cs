@@ -212,6 +212,8 @@ namespace Age.World
             s.Troops.Add(new Troop("11. skautský oddíl Medvědi", s, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255)));
             s.Troops[1].AI = new AggressiveAI(s.Troops[1]);
             s.Troops[2].AI = new AggressiveAI(s.Troops[2]);
+            s.Troops[1].Allies.Add(s.Troops[2]);
+            s.Troops[2].Allies.Add(s.Troops[1]);
             LoadMapIntoSession(s, "Levels\\BlackCastle.tmx");
             s.Objectives.Add(new Objective("Znič všechny kuchyně obou nepřátelských oddílů.")
             {

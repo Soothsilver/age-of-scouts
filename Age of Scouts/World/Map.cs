@@ -97,17 +97,13 @@ namespace Age.World
                 }
                 if (!Settings.Instance.EnableFogOfWar || unit.Occupies.Fog == FogOfWarStatus.Clear)
                 {
-                    if (unit.Activity.AttackingInProgress)
-                    {
-                        Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Red.Alpha(200));
-                    }
                     if (unit.Activity.BuildingWhat != null)
                     {
-                        Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Blue.Alpha(200));
+                        Primitives.DrawCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Blue.Alpha(200));
                     }
                     if (unit.Activity.GatheringFrom != null)
                     {
-                        Primitives.FillCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Lime.Alpha(200));
+                        Primitives.DrawCircleQuick(Isomath.StandardToScreen(unit.FeetStdPosition, session), (int)(R.Flicker * 15) + 5, Color.Lime.Alpha(200));
                     }
                 }
                 if (unit.Tactics.PathingCoordinates != null && selection.SelectedUnits.Contains(unit))
@@ -122,16 +118,8 @@ namespace Age.World
                     }
                 }
             }
-
-            // Layer 2: Units and structures
-            // TODO Change the rhythm here so that tiles are drawn in this order:
-            // 149
-            // 238
-            // 567
-            // instead of
-            // 123
-            // 456
-            // 789
+            
+            // Layer 2: Units and structures     
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -156,7 +144,18 @@ namespace Age.World
                             Texture2D icon = unit.AnimationTick(elapsedSeconds);
                             Rectangle rectUnit = Isomath.StandardPersonToScreen(unit.FeetStdPosition,
                                 unit.Sprite.Sprite.Width, unit.Sprite.Sprite.Height, session);
-                            Primitives.DrawImage(icon, rectUnit);
+                            if (unit.Occupies.Type == TileType.Mud)
+                            {
+                                int downshift = 7;
+                                Primitives.SpriteBatch.Draw(icon,
+                                    new Rectangle(rectUnit.X, rectUnit.Y + downshift, rectUnit.Width, rectUnit.Height - downshift),
+                                    new Rectangle(0, 0, icon.Width, icon.Height - downshift),
+                                    Color.White);
+                            }
+                            else
+                            {
+                                Primitives.DrawImage(icon, rectUnit);
+                            }
                             Rectangle rewHitbox = Isomath.StandardToScreen(unit.Hitbox, session);
                             if (selection.SelectedUnits.Contains(unit))
                             {

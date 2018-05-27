@@ -46,7 +46,7 @@ namespace Age.Core
             {
                 if (NaturalObjectOccupant != null)
                 {
-                    return NaturalObjectOccupant.SpeedMultiplier;
+                    return NaturalObjectOccupant.SpeedMultiplier * (this.Type == TileType.Mud ? 0.5f : 1);
                 }
                 if (this.Type == TileType.Road)
                 {

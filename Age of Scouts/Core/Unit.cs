@@ -78,9 +78,6 @@ namespace Age.Core
             if (this.HP <= 0 && !this.Broken)
             {
                 this.Broken = true;
-                this.Occupies.BrokenOccupants.Add(new Corpse(this));
-                this.Occupies.Occupants.Remove(this);
-                this.Occupies = null;
             }
 
             // Aggressive

@@ -177,7 +177,9 @@ namespace Age.Core
 
         public bool AreEnemies(Entity unit, Entity target)
         {
-            return unit.Controller != target.Controller && !unit.Controller.Convertible &&
+            return unit.Controller != target.Controller &&
+                   !unit.Controller.IsAlliedWith(target.Controller) &&
+                   !unit.Controller.Convertible &&
                    !target.Controller.Convertible;
         }
 
@@ -196,6 +198,7 @@ namespace Age.Core
 
         internal Building SpawnBuilding(BuildingTemplate kitchen, Troop controller, Tile tile)
         {
+    
             var b = new Building(kitchen, controller, Isomath.TileToStandard(tile.X + 1, tile.Y + 1), tile);
             b.HP = b.MaxHP = kitchen.MaxHP;
             for (int y = 0; y < kitchen.TileHeight; y++)
@@ -205,6 +208,10 @@ namespace Age.Core
                     int tileX = tile.X - x;
                     int tileY = tile.Y - y;
                     Tile tl = Map.Tiles[tileX, tileY];
+                    if (tl.BuildingOccupant != null)
+                    {
+
+                    }
                     tl.BuildingOccupant = b;
                 }
             }
@@ -254,6 +261,7 @@ namespace Age.Core
             for (int ui = AllUnits.Count - 1; ui >= 0; ui--)
             {
                 Unit unit = AllUnits[ui];
+                if (unit.Broken) continue;
                 unit.Activity.AttackingInProgress = false;
                 unit.Autoaction(this, elapsedSeconds);
                 unit.DoAssignedActivity(this, elapsedSeconds);
@@ -285,6 +293,9 @@ namespace Age.Core
                 Unit unit = AllUnits[ui];
                 if (unit.Broken)
                 {
+                    unit.Occupies.BrokenOccupants.Add(new Corpse(unit));
+                    unit.Occupies.Occupants.Remove(unit);
+                    unit.Occupies = null;
                     AllUnits.RemoveAt(ui);
                 }
             }

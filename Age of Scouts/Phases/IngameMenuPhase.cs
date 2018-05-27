@@ -29,11 +29,7 @@ namespace Age.Phases
             int width = 300;
             int height = 40;
             UI.DrawButton(new Rectangle(x, y, width, height), topmost, "Zobrazit úkoly", () => Root.PushPhase(new ViewObjectivesPhase(levelPhase.Session)));
-            UI.DrawButton(new Rectangle(x, y + 60, width, height), topmost, "Vzdát úroveň!", () =>
-            {
-                levelPhase.Session.AchieveEnding(Ending.Defeat);
-                Root.PopFromPhase();
-            });
+            UI.DrawButton(new Rectangle(x, y + 60, width, height), topmost, "Poslat zpětnou vazbu", () => Root.PushPhase(new FeedbackPhase()));
             UI.DrawButton(new Rectangle(x, y + 120, width, height), topmost, "Nastavení", () =>
             {
                 Root.PopFromPhase();

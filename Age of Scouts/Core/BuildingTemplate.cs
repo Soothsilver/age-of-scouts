@@ -57,7 +57,7 @@ namespace Age.Core
             SelectionSfx = SoundEffectName.MunitionTent,
             MaxHP = 250
         };
-        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 80, 150, 100)
+        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 20, 150, 100)
         {
             SecondsToBuild = 30,
             SelectionSfx = SoundEffectName.LadderClimb,
@@ -105,6 +105,7 @@ namespace Age.Core
                 {
                     Tile alsoOn = session.Map.GetTileFromTileCoordinates(tile.X - x, tile.Y - y);
                     if (alsoOn == null || alsoOn.NaturalObjectOccupant != null
+                        || alsoOn.BuildingOccupant != null
                         || alsoOn.PreventsMovement)
                     {
                         return false;
