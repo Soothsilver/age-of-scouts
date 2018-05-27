@@ -117,8 +117,8 @@ namespace Age.AI
             // Order soldiers to fight:
             if (idleSoldiers >=  10)
             {
-                var targets = session.AllUnits.Where(unt => unt.Controller != Self).Cast<AttackableEntity>()
-                    .Concat(session.AllBuildings.Where(bld => bld.Controller != Self)).ToList();
+                var targets = session.AllUnits.Where(unt => session.AreEnemies(myKitchen, unt)).Cast<AttackableEntity>()
+                    .Concat(session.AllBuildings.Where(bld => session.AreEnemies(myKitchen, bld))).ToList();
                 if (targets.Count > 0)
                 {
                     var target = targets[R.Next(targets.Count)];

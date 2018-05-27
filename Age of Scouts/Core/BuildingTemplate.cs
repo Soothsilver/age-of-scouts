@@ -42,7 +42,8 @@ namespace Age.Core
         {
             SecondsToBuild = 180,
             MaxHP = 500,
-            SelectionSfx = SoundEffectName.Chord
+            SelectionSfx = SoundEffectName.Chord,
+            EncyclopediaFilename = "Kuchyne"
         };
         public static BuildingTemplate Tent = new BuildingTemplate(BuildingId.Tent, "Obytný stan", "Zvyšuje tvůj populační limit o 2. Pokud máš například 7 stanů, tak můžeš mít až 14 skautů.", TextureName.TentStandard, 1, 1, 20, 50, 0)
         {

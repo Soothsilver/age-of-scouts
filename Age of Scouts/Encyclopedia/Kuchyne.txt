@@ -1,0 +1,4 @@
+﻿Kuchyně
+Kuchyně je hlavní budova ve hře {b}Age of Scouts{/b}. V kuchyni můžeš nabírat nové {b}pracanty{/b} a do kuchyně mohou pracanti přinášet nasbírané suroviny. 
+
+Kuchyně a stany tvoří základ skautského tábora. Kuchyní nazýváme jak místo, kde se jídlo připravuje, tak místo, kde se jí. Kuchyně je tak středem táborového života, kam se všichni účastníci schází na snídani, oběd a večeři. Kuchyně je krytá před deštěm a tedy v ní hrajeme hry v nepříznivém počasí nebo když potřebujeme stoly. 
