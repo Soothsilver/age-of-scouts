@@ -34,7 +34,7 @@ namespace Age.Core
                 this.Lost = true;
             }
             Rectangle rectCorpse = Isomath.StandardPersonToScreen(this.WhatItWas.FeetStdPosition, WhatItWas.Sprite.Sprite.Width, WhatItWas.Sprite.Sprite.Height, screen);
-            Primitives.DrawImage(SpriteCache.GetColoredTexture(WhatItWas.UnitTemplate.DeadIcon, WhatItWas.Sprite.Color),
+            Primitives.DrawImage(SpriteCache.GetColoredTexture(WhatItWas.UnitTemplate.DeadIcon, false, WhatItWas.Sprite.Color),
                 rectCorpse, Color.White.Alpha((int)(Alpha * 255)));
         }
     }

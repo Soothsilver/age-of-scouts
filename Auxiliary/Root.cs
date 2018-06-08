@@ -334,12 +334,19 @@ namespace Auxiliary
 
         public static bool SynchronizeWithVerticalRetrace
         {
+            get { return inGraphics.SynchronizeWithVerticalRetrace; }
+            set
+            {
+                inGraphics.SynchronizeWithVerticalRetrace = value;
+                inGraphics.ApplyChanges();
+            }
+        }
+        public static bool FixTimeStep
+        {
             get { return inGame.IsFixedTimeStep; }
             set
             {
                 inGame.IsFixedTimeStep = value;
-                inGraphics.SynchronizeWithVerticalRetrace = value;
-                inGraphics.ApplyChanges();
             }
         }
 

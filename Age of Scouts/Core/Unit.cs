@@ -64,7 +64,7 @@ namespace Age.Core
         }
 
         public string DebugActivityDescription => "Strategy: " + Strategy + "\nTactics: " + Tactics + "\nActivity: " + Activity;
-        public override Texture2D BottomBarTexture => SpriteCache.GetColoredTexture(UnitTemplate.Icon, Controller.LightColor);
+        public override Texture2D BottomBarTexture => SpriteCache.GetColoredTexture(UnitTemplate.Icon, false, Controller.LightColor);
 
         public Rectangle GetHitboxFromFeet(Vector2 feet)
         {
@@ -154,25 +154,11 @@ namespace Age.Core
                 bool facingRight = (target.FeetStdPosition.X - this.FeetStdPosition.X) > 0;
                 if (this.Activity.SecondsUntilRecharge < 2)
                 {
-                    if (facingRight)
-                    {
-                        this.Sprite.CurrentAnimation = AnimationListKey.ReadyToAttackRight;
-                    }
-                    else
-                    {
-                        this.Sprite.CurrentAnimation = AnimationListKey.ReadyToAttackLeft;
-                    }
+                    this.Sprite.SetCurrentAnimation(AnimationListKey.ReadyToAttackRight, !facingRight);
                 }
                 else
                 {
-                    if (facingRight)
-                    {
-                        this.Sprite.CurrentAnimation = AnimationListKey.AfterAttackRight;
-                    }
-                    else
-                    {
-                        this.Sprite.CurrentAnimation = AnimationListKey.AfterAttackLeft;
-                    }
+                    this.Sprite.SetCurrentAnimation(AnimationListKey.AfterAttackRight, !facingRight);
                 }
             }
         }

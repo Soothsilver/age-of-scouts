@@ -66,7 +66,7 @@ namespace Age.Core.Activities
             this.AttackTarget = null;
             this.BuildingWhat = null;
             this.GatheringFrom = null;
-            owner.Sprite.CurrentAnimation = AnimationListKey.Idle;
+            owner.Sprite.SetCurrentAnimation(AnimationListKey.Idle, false);
             this.Speed = Vector2.Zero;
         }
         public void Invalidate()
@@ -87,6 +87,7 @@ namespace Age.Core.Activities
                 if (BuildingWhat.SelfConstructionInProgress && BuildingWhat.NoUnitsOnThisBuilding)
                 {
                     BuildingWhat.SelfConstructionProgress += elapsedSeconds / BuildingWhat.Template.SecondsToBuild;
+                    owner.Sprite.SetCurrentAnimation(AnimationListKey.BuildRight, owner.Sprite.ShouldFlip(owner.FeetStdPosition, BuildingWhat.FeetStdPosition));
                     if (Settings.Instance.Aegis)
                     {
                         BuildingWhat.SelfConstructionProgress = 1;
@@ -104,6 +105,8 @@ namespace Age.Core.Activities
             }
             if (GatheringFrom != null)
             {
+                var tuple = owner.Sprite.DetermineAnimationKeyFromGathering(GatheringFrom.FeetStdPosition, owner.FeetStdPosition, GatheringFrom);
+                owner.Sprite.SetCurrentAnimation(tuple.Item1, tuple.Item2);
                 if (SecondsUntilGatherRecharge <= 0)
                 {
                     GatheringFrom.TransferOneResourceTo(owner);
@@ -123,7 +126,8 @@ namespace Age.Core.Activities
                 MoveLegality moveLegality = MovementRules.IsMoveLegal(owner, owner.FeetStdPosition, newPosition, targetTile, session);
                 if (moveLegality.IsLegal)
                 {
-                    owner.Sprite.CurrentAnimation = owner.Sprite.DetermineAnimationKeyFromMovement(newPosition, owner.FeetStdPosition);
+                    var tuple = owner.Sprite.DetermineAnimationKeyFromMovement(newPosition, owner.FeetStdPosition);
+                    owner.Sprite.SetCurrentAnimation(tuple.Item1, tuple.Item2);
                     owner.UpdatePositionTo(targetTile, newPosition);
                 }
                 else
@@ -152,7 +156,7 @@ namespace Age.Core.Activities
         {
             this.ResetActions();
             this.SecondsUntilNextRecalculation = Single.MaxValue;
-            owner.Sprite.CurrentAnimation = AnimationListKey.Idle;
+            owner.Sprite.SetCurrentAnimation(AnimationListKey.Idle, false);
         }
 
         internal void QuicklyWalkTo(Vector2 whereToStandard)

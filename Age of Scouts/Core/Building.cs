@@ -48,7 +48,7 @@ namespace Age.Core
             return Name;
         }
 
-        public override Texture2D BottomBarTexture => SpriteCache.GetColoredTexture(Template.Icon, Controller.LightColor);
+        public override Texture2D BottomBarTexture => SpriteCache.GetColoredTexture(Template.Icon, false, Controller.LightColor);
 
         public override List<ConstructionOption> ConstructionOptions
         {
@@ -132,7 +132,7 @@ namespace Age.Core
             Rectangle rectWhere = Isomath.StandardPersonToScreen(this.FeetStdPosition, this.PixelWidth, this.PixelHeight, screen);
             if (SelfConstructionInProgress)
             {
-                Texture2D what = SpriteCache.GetColoredTexture(this.Template.Icon, this.Controller.LightColor);
+                Texture2D what = SpriteCache.GetColoredTexture(this.Template.Icon, false, this.Controller.LightColor);
                 int screenHeight = (int)(rectWhere.Height * SelfConstructionProgress);
                 Rectangle destinationRectangle = new Rectangle(rectWhere.X, rectWhere.Bottom - screenHeight, rectWhere.Width, screenHeight);
                 int textureHeight = (int)(what.Height * SelfConstructionProgress);
@@ -144,7 +144,7 @@ namespace Age.Core
             }
             else
             {
-                Primitives.DrawImage(SpriteCache.GetColoredTexture(this.Template.Icon, this.Controller.LightColor), rectWhere);
+                Primitives.DrawImage(SpriteCache.GetColoredTexture(this.Template.Icon, false, this.Controller.LightColor), rectWhere);
                 if (selection.SelectedBuilding == this)
                 {
                     Primitives.DrawRectangle(rectWhere.Extend(1, 1), this.Controller.StrongColor);

@@ -374,6 +374,14 @@ namespace Auxiliary
         RoadTile,
         MudTile,
         MudMine,
-        Statue
+        Statue,
+        PracantWood2,
+        PracantMine2,
+        PracantGather2,
+        PracantBuilder2,
+        PracantBuilder,
+        PracantGather1,
+        PracantMine1,
+        PracantWood1
     }
 }

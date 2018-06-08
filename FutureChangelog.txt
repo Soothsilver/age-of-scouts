@@ -1,21 +1,22 @@
+Gather AI to switch to another resource when no path
+CHECK: VSync three options
+Performance test
+repair
+fog of map clearer reveal without flickering
 Build skript
+- Autobuild ZIP file
+- Prettier installer 
+- installer name
+after end game display note that game is ended
+projectiles pass through trees
+dont fire unless line of effect
+stronger towers
 
-YES: Null Reference na konci
-YES: Pracant zaseklý na stanu
+katapult
+
 IN PROGRESS: Mise 2 radenín
 IN PROGRESS: Mise 3 Temný hrad
+YES: icons make them work
+
 
 DELAYED: tile rhythm would require that buildings be split into tiles...
-
-DELAYED: Pøihlášky pro skauty na dabing
-YES: Feedback button
-
-YES: Build number in game
-YES: O autorech na pravou míru
-YES: Spouštìè
-YES: Instalátor
-YES: Eqatec
-YES: Rozlišení
-YES: Nastavení rozlišení
-YES: Nastavení hlasitosti
-YES: - Klik z jednotky

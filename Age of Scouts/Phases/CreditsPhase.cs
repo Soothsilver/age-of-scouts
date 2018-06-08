@@ -14,7 +14,13 @@ namespace Age.Phases
     {
         protected override void Draw(SpriteBatch sb, Game game, float elapsedSeconds, bool topmost)
         {
-            string creditsString = "Verze " + Debug.Version.AsString + "\n\nVedoucí projektu: Petr Hudeček (Profesor), 7. oddíl Karibu Tábor\n\nPoděkování: Petr Milichovský (Hedík), 7. oddíl Karibu Tábor";
+            string creditsString = @"Verze " + Debug.Version.AsString + @"
+
+Vedoucí projektu: Petr Hudeček (Profesor), 7. oddíl Karibu Tábor
+
+Hlasy: 
+Pracant: Profesor, 7. oddíl Karibu Tábor
+Hadrákostřelec: Hedík, 7. oddíl Karibu Tábor";
             Primitives.FillRectangle(Root.Screen, Color.FromNonPremultiplied(144, 237, 192, 255));
             Primitives.DrawImage(Library.Get(TextureName.AgeOfScoutsLogo), new Rectangle(Root.ScreenWidth / 2 - 300 , 100, 600, 200));
             Primitives.DrawSingleLineText(creditsString, new Vector2(Root.ScreenWidth / 2 - 250, 400), Color.Black, Library.FontNormal);

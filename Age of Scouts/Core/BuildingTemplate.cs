@@ -122,7 +122,7 @@ namespace Age.Core
 
         internal void DrawShadow(Session session, IScreenInformation screen, Tile tile, Color color)
         {
-            Texture2D what = SpriteCache.GetColoredTexture(this.Icon, color);
+            Texture2D what = SpriteCache.GetColoredTexture(this.Icon, false, color);
             Vector2 whereTo = Isomath.TileToStandard(tile.X + 1, tile.Y + 1);
             Rectangle rectWhere = Isomath.StandardPersonToScreen(whereTo, what.Width, what.Height, screen);
             Color clrTint = Color.White.Alpha(150);

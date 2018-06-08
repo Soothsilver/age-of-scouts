@@ -19,9 +19,9 @@ namespace Age.Animation
             return new SpriteInstance(this, color, AnimationListKey.Idle);
         }
 
-        internal Texture2D GetTexture(AnimationListKey currentAnimation, int frameIndex, Color color)
+        internal Texture2D GetTexture(AnimationListKey currentAnimation, bool horizontalFlip, int frameIndex, Color color)
         {
-            return SpriteCache.GetColoredTexture(this.AnimationLists[currentAnimation].Frames[frameIndex % this.AnimationLists[currentAnimation].Frames.Count], color);
+            return SpriteCache.GetColoredTexture(this.AnimationLists[currentAnimation].Frames[frameIndex % this.AnimationLists[currentAnimation].Frames.Count], horizontalFlip, color);
         }
         
 
@@ -48,6 +48,10 @@ namespace Age.Animation
             };
             Pracant.AnimationLists.Add(AnimationListKey.Idle, new AnimationList(TextureName.LaborerIdle, TextureName.LaborerIdle, TextureName.LaborerIdle2, TextureName.LaborerIdle2));
             Pracant.AnimationLists.Add(AnimationListKey.MoveRight, new AnimationList(TextureName.PracantMoveRight, TextureName.PracantMoveRight2));
+            Pracant.AnimationLists.Add(AnimationListKey.BuildRight, new AnimationList(TextureName.PracantBuilder, TextureName.PracantBuilder2));
+            Pracant.AnimationLists.Add(AnimationListKey.GatherBerriesRight, new AnimationList(TextureName.PracantGather1, TextureName.PracantGather1, TextureName.PracantGather2, TextureName.PracantGather2));
+            Pracant.AnimationLists.Add(AnimationListKey.GatherClayRight, new AnimationList(TextureName.PracantMine1, TextureName.PracantMine1, TextureName.PracantMine2,TextureName.PracantMine2));
+            Pracant.AnimationLists.Add(AnimationListKey.GatherWoodRight, new AnimationList(TextureName.PracantWood1, TextureName.PracantWood1, TextureName.PracantWood2,TextureName.PracantWood2));
             Pracant.AnimationLists.Add(AnimationListKey.MoveLeft, new AnimationList(TextureName.PracantMoveLeft, TextureName.PracantMoveLeft2));
             Pracant.AnimationLists.Add(AnimationListKey.MoveDown, new AnimationList(TextureName.PracantMoveDown, TextureName.PracantMoveDown2, TextureName.PracantMoveDown, TextureName.PracantMoveDown3));
             Pracant.AnimationLists.Add(AnimationListKey.MoveUp, new AnimationList(TextureName.PracantMoveUp, TextureName.PracantMoveUp2, TextureName.PracantMoveUp, TextureName.PracantMoveUp3));
@@ -71,6 +75,10 @@ namespace Age.Animation
         ReadyToAttackRight,
         ReadyToAttackLeft,
         AfterAttackRight,
-        AfterAttackLeft
+        AfterAttackLeft,
+        BuildRight,
+        GatherBerriesRight,
+        GatherClayRight,
+        GatherWoodRight
     }
 }

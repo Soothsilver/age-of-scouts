@@ -15,7 +15,7 @@ namespace Age
     {
         public static Texture2D Color(this TextureName textureName, Troop controller)
         {
-            return SpriteCache.GetColoredTexture(textureName, controller.LightColor);
+            return SpriteCache.GetColoredTexture(textureName, false, controller.LightColor);
         }
 
         public static Color OverlayOnto(this Color color, Color overlayOntoWhat)

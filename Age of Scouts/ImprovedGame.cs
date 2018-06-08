@@ -57,6 +57,7 @@ namespace Age
             }
             Settings.Instance.DisplayMode = commandLineArguments.DisplayMode;
             Root.SynchronizeWithVerticalRetrace = Settings.Instance.VSync;
+            Root.FixTimeStep = Settings.Instance.FixTimeStep;
 
             // Load assets
             Library.LoadTexturesIntoTextureCacheFromDirectories(Content, "Interface", "GodPowers", "Tiles", "Units\\Kid", "Buildings", "Units\\Pracant");

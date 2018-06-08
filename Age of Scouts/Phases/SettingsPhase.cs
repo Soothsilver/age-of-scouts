@@ -37,14 +37,19 @@ namespace Age.Phases
             UI.DrawCheckbox(new Rectangle(rectMenu.X + 10, rectMenu.Y + 190, 300, 40), topmost, "VSync", () =>
             {
                 Root.SynchronizeWithVerticalRetrace = !Root.SynchronizeWithVerticalRetrace;
-            }, () => game.IsFixedTimeStep, "Když zašrktneš {b}VSync{/b}, bude hra sladěna s obnovovací frekvencí tvého monitoru. Sníží se tak \"trhání\" obrazu, který může tak být plynulejší, ale výkon se může snížit.");
+            }, () => Root.SynchronizeWithVerticalRetrace, "Když zašrktneš {b}VSync{/b}, bude hra sladěna s obnovovací frekvencí tvého monitoru. Sníží se tak \"trhání\" obrazu, který může tak být plynulejší, ale výkon se může snížit.");
 
-            UI.DrawSlider(new Rectangle(rectMenu.X + 10, rectMenu.Y + 240, 300, 40), topmost, "Hlasitost hudby", (value) =>
+            UI.DrawCheckbox(new Rectangle(rectMenu.X + 10, rectMenu.Y + 240, 300, 40), topmost, "Striktní časování rámečků", () =>
+            {
+                Root.FixTimeStep = !Root.FixTimeStep;
+            }, () => Root.FixTimeStep, "Když zašrktneš {b}striktní časování rámečku{/b}, hra může být plynulejší, ale výkon se může snížit.");
+
+            UI.DrawSlider(new Rectangle(rectMenu.X + 10, rectMenu.Y + 290, 300, 40), topmost, "Hlasitost hudby", (value) =>
             {
                 Settings.Instance.MusicVolume = value;
                 BackgroundMusicPlayer.SetVolume(value);
             }, () => Settings.Instance.MusicVolume, null);
-            UI.DrawSlider(new Rectangle(rectMenu.X + 10, rectMenu.Y + 290, 300, 40), topmost, "Hlasitost zvuků", (value) =>
+            UI.DrawSlider(new Rectangle(rectMenu.X + 10, rectMenu.Y + 340, 300, 40), topmost, "Hlasitost zvuků", (value) =>
             {
                 Settings.Instance.SfxVolume = value;
             }, () => Settings.Instance.SfxVolume, null);

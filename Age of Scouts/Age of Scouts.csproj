@@ -122,6 +122,7 @@
     <Compile Include="AI\BaseAI.cs" />
     <Compile Include="AI\DoNothingAI.cs" />
     <Compile Include="Animation\SpriteCache.cs" />
+    <Compile Include="Animation\TextureKey.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Core\Activities\Activity.cs" />
     <Compile Include="Core\Activities\Physics.cs" />
