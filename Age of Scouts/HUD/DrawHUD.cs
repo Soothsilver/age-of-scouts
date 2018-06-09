@@ -148,7 +148,7 @@ namespace Age.HUD
                     {
                         Primitives.DrawImage(Library.Get(TextureName.GodPowerUsed), rectGodPower);
                     }
-                    if (!mopower)
+                    if (!mopower || leaderPowerInstance.Used)
                     {
                         Primitives.FillRectangle(rectGodPower, Color.Black.Alpha(15));
                     }

@@ -28,6 +28,9 @@ namespace Age
         {
             return rgen.Next(min, maxExclusive);
         }
+        /// <summary>
+        /// A random number between -1 and 1.
+        /// </summary>
         public static float FloatAroundZero()
         {
             return (float)(2 * (rgen.NextDouble() - 0.5f));

@@ -22,14 +22,14 @@ namespace Age.Core
         public abstract List<ConstructionOption> ConstructionOptions { get; }
         public virtual bool CanAttack => false;
 
-        public bool CanRangeAttack(AttackableEntity attackTarget)
+        public bool CanRangeAttack(AttackableEntity attackTarget, int tileRange)
         {
             return
                 this.CanAttack &&
                 attackTarget != null && this.Session.AreEnemies(this, attackTarget)
                 && !attackTarget.Broken 
-                && this.FeetStdPosition.WithinDistance(attackTarget.FeetStdPosition, 5 * Tile.HEIGHT);
-            // && line of effect
+                && this.FeetStdPosition.WithinDistance(attackTarget.FeetStdPosition, tileRange * Tile.HEIGHT)
+                && Session.Map.HasLineOfEffect(this.FeetStdPosition, attackTarget.FeetStdPosition);
         }
 
         protected Entity(TextureName icon, Vector2 feetPosition)

@@ -58,6 +58,10 @@ namespace Age.Core
         internal int WoodCost;
 
         public bool CanGatherStuff;
+        /// <summary>
+        /// In tiles, how far can this unit attack.
+        /// </summary>
+        internal int AttackRange = 5;
 
         public static void InitUnitTemplates()
         {

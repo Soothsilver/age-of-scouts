@@ -149,6 +149,7 @@
     <Compile Include="Core\Objective.cs" />
     <Compile Include="Core\Projectile.cs" />
     <Compile Include="Core\Resource.cs" />
+    <Compile Include="Core\SessionFlags.cs" />
     <Compile Include="Core\Stance.cs" />
     <Compile Include="Core\TileType.cs" />
     <Compile Include="Core\Trigger.cs" />
@@ -261,6 +262,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Encyclopedia\Pracant.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\Skladiste.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\Sklipek.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Levels\AgeOfScouts.tsx">

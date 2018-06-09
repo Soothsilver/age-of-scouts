@@ -166,7 +166,7 @@ namespace Age.World
                             {
                                 Primitives.DrawHealthBar(
                                     new Rectangle(rewHitbox.X, rewHitbox.Y - 5, rewHitbox.Width, 5),
-                                    unit.Controller.StrongColor, unit.HP, unit.MaxHP);
+                                    unit.Controller.StrongColor, (int)unit.HP, unit.MaxHP);
                             }
 
                             if (Root.IsMouseOver(rewHitbox))
@@ -246,6 +246,22 @@ namespace Age.World
                 }
                 Debug.DebugPoints.Coordinates.Clear();
             }
+        }
+
+        internal bool HasLineOfEffect(Vector2 start, Vector2 end)
+        {
+            Vector2 direction = end - start;
+            Vector2 increment = direction / 5;
+            for (int i = 1; i < 5; i++)
+            {
+                Vector2 where = start + increment * i;
+                Tile tile = GetTileFromStandardCoordinates(where);
+                if (tile == null || tile.PreventsProjectiles)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         internal Tile GetTileFromTileCoordinates(int x, int y)

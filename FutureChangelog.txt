@@ -1,18 +1,29 @@
-Gather AI to switch to another resource when no path
-CHECK: VSync three options
+YES: VSync three options
+YES: repair
+YES: fog of map clearer reveal without flickering
+YES: after end game display note that game is ended
+YES:projectiles pass through trees
+YES: dont fire unless line of effect
+YES: stronger towers
+YES: ctrl+f10 on another line
+YES: do not highlight a used up hero power
+YES: direct attack does not work
+YES: remove broken units from selection
+YES: building destruction sound
+YES: aegis on units as well
+YES: repairers go to adjacent building when done
+YES: in radenin, limit buildings to just tent and tower
+YES: no mud at start for each unit
+level 2 voicework and quests
+katapult
+YES: dropoff point buildings
 Performance test
-repair
-fog of map clearer reveal without flickering
+Gather AI to switch to another resource when no path
 Build skript
 - Autobuild ZIP file
 - Prettier installer 
 - installer name
-after end game display note that game is ended
-projectiles pass through trees
-dont fire unless line of effect
-stronger towers
 
-katapult
 
 IN PROGRESS: Mise 2 radenín
 IN PROGRESS: Mise 3 Temný hrad
@@ -20,3 +31,17 @@ YES: icons make them work
 
 
 DELAYED: tile rhythm would require that buildings be split into tiles...
+
+Changelog:
+--------------------------
+Animace pro kácení, tìžbu, sbírání a stavìní.
+Nové budovy: Skladištì, sklípek
+Nová vùdcovská schopnost: Papírová dìla
+Další možnost nastavení výkonu.
+Oprava chyb.
+Hadráky se nezastavují o stromy, ale støelci se stromy nepokouší pøehodit.
+Budovy se dají opravovat.
+Hra funguje i na starších Windows.
+Menší grafická, zvuková a herní vylepšení.
+Mlha války už nebliká.
+Vùdcovská schopnost "Tišíkùv prùzkum" opìt funguje

@@ -38,11 +38,6 @@ namespace Age.Core
             Strategy = new Strategy(this);
             Tactics = new Tactics(this);
             Activity = new Activity(this);
-            if (UnitTemplate.CanGatherStuff)
-            {
-                CarryingResource = Resource.Clay;
-                CarryingHowMuchResource = 3;
-            }
         }
 
         /// <summary>
@@ -51,7 +46,8 @@ namespace Age.Core
         /// <param name="construction">The building that needs to be constructed or repaired.</param>
         internal bool CanContributeToBuilding(Building construction)
         {
-            return this.UnitTemplate.CanBuildStuff && construction.SelfConstructionInProgress
+            return this.UnitTemplate.CanBuildStuff &&
+                (construction.SelfConstructionInProgress || construction.HP < construction.MaxHP)
                 && construction.Controller == this.Controller;
         }
 
@@ -93,7 +89,27 @@ namespace Age.Core
             }
         }
 
-        public override List<ConstructionOption> ConstructionOptions => this.UnitTemplate.CanBuildStuff ? ConstructionOption.PracantOptions : ConstructionOption.None;
+        public override List<ConstructionOption> ConstructionOptions
+        {
+            get
+            {
+                if (this.UnitTemplate.CanBuildStuff)
+                {
+                    if (this.Session.Flags.RadeninConstructionOnly)
+                    {
+                        return ConstructionOption.RadeninOptions;
+                    }
+                    else
+                    {
+                        return ConstructionOption.PracantOptions;
+                    }
+                }
+                else
+                {
+                    return ConstructionOption.None;
+                }
+            }
+        }
 
         public Texture2D AnimationTick(float elapsedSeconds)
         {
@@ -113,7 +129,7 @@ namespace Age.Core
             {
                 foreach (var unit in session.AllUnits)
                 {
-                    if (this.CanRangeAttack(unit))
+                    if (this.CanRangeAttack(unit, this.UnitTemplate.AttackRange))
                     {
                         if (unit.Occupies.NaturalObjectOccupant?.EntityKind == EntityKind.TallGrass)
                         {

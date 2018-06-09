@@ -32,6 +32,8 @@ namespace Age.Core
         public ChatLine CurrentVoiceLine;
         public Map Map;
         internal bool ObjectivesChanged;
+        internal SessionFlags Flags = new SessionFlags();
+
         /// <summary>
         /// Greater zoom level means more close-up. Lesser zoom level means looking from a distance. A zoom-level of 1 is basic 1:1 display. A zoom-level of 2 is
         /// where each tile is twice as big as normal.
@@ -78,6 +80,7 @@ namespace Age.Core
                     }
                 }
             }
+            SFX.PlaySound(SoundEffectName.BLAST10);
             AllBuildings.Remove(bld);   
         }
 
@@ -138,6 +141,7 @@ namespace Age.Core
                 {
                     selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
                     selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttack(tile.BuildingOccupant); });
+                    return;
                 }
                 else if (tile.NaturalObjectOccupant != null && selection.SelectedUnits[0].CanBeOrderedToGatherFrom(tile.NaturalObjectOccupant))
                 {

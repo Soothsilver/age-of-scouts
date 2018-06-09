@@ -35,7 +35,7 @@ namespace Age.Core
         public int PopulationUsed => Session.AllUnits.Count(unt => unt.Controller == this);
         public int PopulationLimit => Session.AllBuildings.Count(bld => bld.Template.Id == BuildingId.Tent && !bld.SelfConstructionInProgress && bld.Controller == this) * 2;
 
-        public static Troop Gaia { get; internal set; }
+        public static Troop Pseudotroop { get; internal set; } = new Troop("Gaia", null, Era.EraNacelniku, Color.Black, Color.Black);
         public BaseAI AI;
         internal bool Omniscience;
 
@@ -54,7 +54,7 @@ namespace Age.Core
         {
             foreach(var unit in Session.AllUnits.Where(unt => unt.Controller == this))
             {
-                unit.TakeDamage(unit.HP, unit);
+                unit.TakeDamage((int)unit.HP, unit);
             }
             Session.AllBuildings.Where(bld => bld.Controller == this).ToList().ForEach(
                 bld => Session.DestroyBuilding(bld));

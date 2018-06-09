@@ -94,7 +94,7 @@ namespace Age.Core.Activities
                     RecalculateAndDetermineActivity();
                     return;
                 }
-                if (owner.CanRangeAttack(AttackTarget))
+                if (owner.CanRangeAttack(AttackTarget, owner.UnitTemplate.AttackRange))
                 {
                     owner.Activity.Speed = Vector2.Zero;
                     owner.Activity.SecondsUntilNextRecalculation = 1;
@@ -105,7 +105,7 @@ namespace Age.Core.Activities
             HashSet<Vector2> targetTiles = null;
             if (BuildTarget != null)
             {
-                if (!BuildTarget.SelfConstructionInProgress && !BuildTarget.CanAcceptResourcesFrom(owner))
+                if (!owner.CanContributeToBuilding(BuildTarget) && !BuildTarget.CanAcceptResourcesFrom(owner))
                 {
                     BuildTarget = null;
                 }
@@ -156,7 +156,7 @@ namespace Age.Core.Activities
             {
                 AttackableEntity enemy = owner.Session.AllUnits.Cast<AttackableEntity>()
                     .Concat(owner.Session.AllBuildings)
-                    .FirstOrDefault(entity => owner.CanRangeAttack(entity));
+                    .FirstOrDefault(entity => owner.CanRangeAttack(entity, owner.UnitTemplate.AttackRange));
                 if (enemy != null)
                 {
                     ResetTo(enemy, true);

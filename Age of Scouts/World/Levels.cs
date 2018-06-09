@@ -227,6 +227,7 @@ namespace Age.World
         {
             Session s = CreateBasic1v1();
             s.LevelName = "Radenin";
+            s.Flags.RadeninConstructionOnly = true;
             LoadMapIntoSession(s, "Levels\\Radenin.tmx");
             s.Troops.ForEach(trp =>
             {

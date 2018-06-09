@@ -20,13 +20,13 @@ namespace Age.Core
         public bool OnceOnly;
         public float ClearTime;
         public bool UsedUp;
-        public FogRevealer(Vector2 coordinates, float range, float cleartime = 2, bool fromAir = false, bool onceOnly = false)
+        public FogRevealer(Vector2 coordinates, float tileRange, float cleartime = 2, bool fromAir = false, bool onceOnly = false)
         {
             OnceOnly = onceOnly;
             ClearTime = cleartime;
             FromAir = fromAir;
             StandardCoordinates = coordinates;
-            TileRange = range;
+            TileRange = tileRange;
         }
         public void Update(Map map)
         {
@@ -55,7 +55,7 @@ namespace Age.Core
         internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, float cleartime = 2, bool fromAir = false)
         {
             Tile tile = map.GetTileFromStandardCoordinates(source);
-            tile.SetClearFogStatus(cleartime, revealSecondsLeftMap);
+            SetClearFogStatus(tile, cleartime, revealSecondsLeftMap);
             for (float angle = 0; angle <= 2 * Math.PI; angle += MathHelper.Pi / 40)
             {
                 float dx = (float)Math.Cos(angle) * 10;
@@ -75,7 +75,7 @@ namespace Age.Core
                     {
                         break;
                     }
-                    tl.SetClearFogStatus(cleartime, revealSecondsLeftMap);
+                    SetClearFogStatus(tl, cleartime, revealSecondsLeftMap);
                     if (tl.NaturalObjectOccupant?.EntityKind == EntityKind.UntraversableTree && !fromAir)
                     {
                         break;
@@ -86,17 +86,38 @@ namespace Age.Core
         }
 
         private static object lockRevealChangesSwap = new object();
+        private static FogOfWarStatus[,] trueBehindFogOfWarStatus;
         private static FogOfWarStatus[,] revealChangesMap;
         private static float[,] revealSecondsLeftMap;
         private static int mapWidth;
         private static int mapHeight;
 
-        public static void PerformFogOfWarReveal(Session sessionUsedInOtherThreads, float elapsedSeconds)
+
+
+        private static void SetClearFogStatus(Tile tile, float cleartime, float[,] revealMap)
+        {
+            if (trueBehindFogOfWarStatus[tile.X, tile.Y] == FogOfWarStatus.Clear && revealSecondsLeftMap[tile.X, tile.Y] > cleartime)
+            {
+                return;
+            }
+            trueBehindFogOfWarStatus[tile.X, tile.Y] = FogOfWarStatus.Clear;
+            revealSecondsLeftMap[tile.X, tile.Y] = cleartime;
+        }
+
+        public static void PerformFogOfWarReveal(Session sessionUsedInOtherThreads, float elapsedSeconds, bool firstTimeInMap)
         {
             // Reveal.
-            if (revealSecondsLeftMap == null || mapWidth != sessionUsedInOtherThreads.Map.Width)
+            if (firstTimeInMap)
             {
+                trueBehindFogOfWarStatus = new FogOfWarStatus[sessionUsedInOtherThreads.Map.Width, sessionUsedInOtherThreads.Map.Height];
                 revealSecondsLeftMap = new float[sessionUsedInOtherThreads.Map.Width, sessionUsedInOtherThreads.Map.Height];
+                for (int x = 0; x < sessionUsedInOtherThreads.Map.Width; x++)
+                {
+                    for (int y = 0; y < sessionUsedInOtherThreads.Map.Height; y++)
+                    {
+                        trueBehindFogOfWarStatus[x, y] = FogOfWarStatus.Black;
+                    }
+                }                
             }
             PerformanceCounter.StartMeasurement(PerformanceGroup.FogOfWarReveal);
             if (Settings.Instance.EnableFogOfWar)
@@ -105,11 +126,10 @@ namespace Age.Core
                 {
                     for (int x = 0; x < sessionUsedInOtherThreads.Map.Width; x++)
                     {
-                        Tile tile = sessionUsedInOtherThreads.Map.Tiles[x, y];
                         revealSecondsLeftMap[x, y] -= elapsedSeconds;
-                        if (tile.Fog == FogOfWarStatus.Clear && revealSecondsLeftMap[x, y] <= 0)
+                        if (trueBehindFogOfWarStatus[x, y] == FogOfWarStatus.Clear && revealSecondsLeftMap[x, y] <= 0)
                         {
-                            tile.Fog = FogOfWarStatus.Grey;
+                            trueBehindFogOfWarStatus[x, y] = FogOfWarStatus.Grey;
                         }
                     }
                 };
@@ -147,7 +167,7 @@ namespace Age.Core
                 {
                     for (int y = 0; y < mapHeight; y++)
                     {
-                        revealChangesMap[x, y] = sessionUsedInOtherThreads.Map.Tiles[x, y].Fog;
+                        revealChangesMap[x, y] = trueBehindFogOfWarStatus[x, y];
                     }
                 }
             }

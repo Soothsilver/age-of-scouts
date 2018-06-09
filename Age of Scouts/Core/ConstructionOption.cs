@@ -11,17 +11,23 @@ namespace Age.Core
         public static List<ConstructionOption> MunitionTentOptions { get; internal set; } = new List<ConstructionOption>();
         public static List<ConstructionOption> KitchenOptions { get; internal set; } = new List<ConstructionOption>();
         public static List<ConstructionOption> PracantOptions { get; internal set; } = new List<ConstructionOption>();
+        public static List<ConstructionOption> RadeninOptions { get; internal set; } = new List<ConstructionOption>();
 
         public static void InitializeAllConstructionOptions()
         {
-            foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent, BuildingTemplate.MunitionTent, BuildingTemplate.HadrakoVez,
+            foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent, BuildingTemplate.Skladiste, BuildingTemplate.Sklipek , BuildingTemplate.MunitionTent, BuildingTemplate.HadrakoVez,
             BuildingTemplate.MajestatniSocha})
             {
-                PracantOptions.Add(new ConstructionOption("Postavit budovu " + buildingTemplate.Name, buildingTemplate.Description,
+                ConstructionOption option = new ConstructionOption("Postavit budovu " + buildingTemplate.Name, buildingTemplate.Description,
                     (b, s) =>
                     {
                         s.SelectedBuildingToPlace = buildingTemplate;
-                    }, buildingTemplate.FoodCost, buildingTemplate.WoodCost, buildingTemplate.ClayCost, 0, buildingTemplate.Icon));
+                    }, buildingTemplate.FoodCost, buildingTemplate.WoodCost, buildingTemplate.ClayCost, 0, buildingTemplate.Icon);
+                PracantOptions.Add(option);
+                if (buildingTemplate.Id == BuildingId.Tent || buildingTemplate.Id == BuildingId.Hadrakovez)
+                {
+                    RadeninOptions.Add(option);
+                }
             }
             foreach(UnitTemplate unitTemplate in new[] {  UnitTemplate.Pracant, UnitTemplate.Hadrakostrelec })
             {

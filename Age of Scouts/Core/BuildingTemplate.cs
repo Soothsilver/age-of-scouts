@@ -58,7 +58,7 @@ namespace Age.Core
             SelectionSfx = SoundEffectName.MunitionTent,
             MaxHP = 250
         };
-        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.HadrkoVez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 20, 150, 100)
+        public static BuildingTemplate HadrakoVez = new BuildingTemplate(BuildingId.Hadrakovez, "Hadráková věž", "Střílí shora velké množství hadráků po nepřátelích.", TextureName.Tower, 1, 1, 20, 150, 100)
         {
             SecondsToBuild = 30,
             SelectionSfx = SoundEffectName.LadderClimb,
@@ -70,6 +70,20 @@ namespace Age.Core
             SecondsToBuild = 500,
             SelectionSfx = SoundEffectName.SmallFanfare,
             MaxHP = 1500
+        };
+        public static BuildingTemplate Skladiste = new BuildingTemplate(BuildingId.Skladiste, "Skladiště", "Do skladiště mohou tvoji Pracanti odnášet dřevo a turbojíl, aby je nemuseli nosit až do kuchyně.", TextureName.Skladiste, 1, 1, 0, 100, 0)
+        {
+            SecondsToBuild = 20,
+            SelectionSfx = SoundEffectName.MovingBoxes,
+            MaxHP = 100,
+            EncyclopediaFilename = "Skladiste"
+        };
+        public static BuildingTemplate Sklipek = new BuildingTemplate(BuildingId.Sklipek, "Sklípek", "Do sklípku mohou tvoji Pracanti odnášet jídlo, aby ho nemuseli nosit až do kuchyně.", TextureName.Sklipek, 1, 1, 0, 100, 0)
+        {
+            SecondsToBuild = 20,
+            SelectionSfx = SoundEffectName.StandardTent,
+            MaxHP = 100,
+            EncyclopediaFilename = "Sklipek"
         };
         internal int LineOfSightInTiles = 3;
         public int MaxHP;
@@ -138,8 +152,10 @@ namespace Age.Core
     {
         Kitchen,
         Tent,
-        HadrkoVez,
+        Hadrakovez,
         MunitionTent,
-        MajestatniSocha
+        MajestatniSocha,
+        Skladiste,
+        Sklipek
     }
 }

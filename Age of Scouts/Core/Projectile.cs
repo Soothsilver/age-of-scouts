@@ -32,7 +32,7 @@ namespace Age.Core
             if (this.Height > 0)
             {
                 Primitives.FillCircle(
-                    Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 200), screen),
+                    Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 300), screen),
                     (int) (4 * screen.ZoomLevel), Color.White);
             }
         }
@@ -54,27 +54,28 @@ namespace Age.Core
             if (!this.Lost)
             {
                 Tile whereAmI = session.Map.GetTileFromStandardCoordinates(this.Position);
-                if (whereAmI == null)
+                if (this.Height < -2f)
                 {
                     this.Lost = true;
+                    // Hit the ground.
+                }
+                else if (whereAmI == null)
+                {
+                    // Do nothing
                 }
                 else if (whereAmI.BuildingOccupant != null && session.AreEnemies(Source, whereAmI.BuildingOccupant))
                 {
                     whereAmI.BuildingOccupant.TakeDamage(10, Source);
                     this.Lost = true;
                 }
-                else if (whereAmI.PreventsProjectiles)
-                {
-                    this.Lost = true;
-                }
+             // It is too harsh to prevent projectiles this way because it results in bad gameplay.
+             //   else if (whereAmI.PreventsProjectiles)
+             //   {
+             //       this.Lost = true;
+             //   }
                 else if (this.Height >= 1)
                 {
                     // Do nothing.
-                }
-                else if (this.Height < -2f)
-                {
-                    this.Lost = true;
-                    // Hit the ground.
                 }
                 else
                 {

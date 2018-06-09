@@ -17,6 +17,7 @@ namespace Age.Phases
         private Session sessionModifiedFromRealtime;
         private volatile bool terminateSelf = false;
         private Session sessionUsedInOtherThreads;
+        bool firstTimeLaunch;
 
         public OtherThreads(LevelPhase levelPhase)
         {
@@ -27,11 +28,12 @@ namespace Age.Phases
         
         public void StartWorking(Session session)
         {
+            firstTimeLaunch = true;
             sessionUsedInOtherThreads.CopyValuesFrom(session);
             SafeCopyInRealtime(session, 0);
             Process process = Process.GetCurrentProcess();
             int tcountBefore = process.Threads.Count;
-          //  var memory = RememberAllThreads(process);
+            var memory = RememberAllThreads(process);
 
             Thread anotherThread = new Thread(FullOuterThread);
             anotherThread.IsBackground = true;
@@ -40,31 +42,25 @@ namespace Age.Phases
             process = Process.GetCurrentProcess();
             int tcount = process.Threads.Count;
             System.Diagnostics.Debug.Print("TCOUNT: " + tcount + " > " + tcountBefore);
-            ProcessThread newThread = null;
-            var field = typeof(Thread).GetField("DONT_USE_InternalThread",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            Object value = field.GetValue(anotherThread);
-            IntPtr pointer = (IntPtr) value;
-            var nativeId = System.Runtime.InteropServices.Marshal.ReadInt32(pointer, 0x0160);
+            int processorCount = Environment.ProcessorCount;
+            int targetProcessor = 2;
+
             for (int ti = 0; ti < tcount; ti++)
             {
                 var t = process.Threads[ti];
-                if (t.Id == (int) nativeId)
+                if (memory.Contains(t.Id))
                 {
-                    newThread = process.Threads[ti];
+                    memory.Remove(t.Id);
+                }
+                else
+                {
+                    t.IdealProcessor = targetProcessor;
+                    if (targetProcessor < processorCount)
+                    {
+                        t.ProcessorAffinity = (IntPtr)(1 << (targetProcessor - 1));
+                    }
                     break;
                 }
-            }
-            int processorCount = Environment.ProcessorCount;
-            int targetProcessor = 2;
-            if (newThread != null)
-            {
-                newThread.IdealProcessor = targetProcessor;
-                //newThread.ProcessorAffinity = (IntPtr)(1 << (targetProcessor -1));
-            }
-            else
-            {
-                throw new Exception("Did not find created thread.");
             }
         }
 
@@ -121,7 +117,8 @@ namespace Age.Phases
                 sessionModifiedFromRealtime = swap;
             }
 
-            FogOfWarMechanics.PerformFogOfWarReveal(sessionUsedInOtherThreads, elapsedSeconds);
+            FogOfWarMechanics.PerformFogOfWarReveal(sessionUsedInOtherThreads, elapsedSeconds, firstTimeLaunch);
+            firstTimeLaunch = false;
             levelPhase.Minimap.UpdateTexture(sessionUsedInOtherThreads.Map);
             
         }

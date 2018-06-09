@@ -14,5 +14,9 @@ namespace Age
         public static Stance[] AllStances = new[] { Stance.Aggressive, Stance.StandYourGround, Stance.Stealthy };
         internal static int CarryingCapacity = 10;
         public static float WonderTimeLimitInSeconds = 60 * 5;
+        /// <summary>
+        /// How much HP of a building does a single Pracant repair per second.
+        /// </summary>
+        internal static float RepairSpeed = 2;
     }
 }

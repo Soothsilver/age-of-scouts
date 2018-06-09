@@ -31,6 +31,7 @@ namespace Age.Phases
             Tile mouseOverTile = levelPhase.Session.Map.GetTileFromStandardCoordinates(
                     Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session)
                 );
+            SelectedUnits.RemoveAll(unt => unt.Broken);
             if (UI.MouseOverOnClickAction != null)
             {
                 // Buttons always have priority.

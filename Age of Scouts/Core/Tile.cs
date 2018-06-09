@@ -67,16 +67,6 @@ namespace Age.Core
             return X + ":" + Y;
         }
 
-        internal void SetClearFogStatus(float cleartime, float[,] revealMap)
-        {
-            if (this.Fog == FogOfWarStatus.Clear && revealMap[this.X, this.Y] > cleartime)
-            {
-                return;
-            }
-            this.Fog = FogOfWarStatus.Clear;
-            revealMap[this.X, this.Y] = cleartime;
-        }
-
         internal Tooltip GetTooltip()
         {
             if (NaturalObjectOccupant != null)

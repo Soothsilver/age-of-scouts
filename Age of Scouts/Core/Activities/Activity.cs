@@ -78,7 +78,7 @@ namespace Age.Core.Activities
         {
             Session session = owner.Session;
             SecondsUntilNextRecalculation -= elapsedSeconds;
-            if (AttackTarget != null && owner.CanRangeAttack(AttackTarget))
+            if (AttackTarget != null && owner.CanRangeAttack(AttackTarget, owner.UnitTemplate.AttackRange))
             {
                 owner.AttackIfAble(session, AttackTarget, elapsedSeconds);
             }
@@ -95,12 +95,24 @@ namespace Age.Core.Activities
                 }
                 if (!BuildingWhat.SelfConstructionInProgress)
                 {
-                    if (BuildingWhat.CanAcceptResourcesFrom(owner))
+                    if (BuildingWhat.HP < BuildingWhat.MaxHP)
                     {
-                        BuildingWhat.TakeResourcesFrom(owner);
+                        BuildingWhat.HP += StaticData.RepairSpeed * elapsedSeconds;
+                        owner.Sprite.SetCurrentAnimation(AnimationListKey.BuildRight, owner.Sprite.ShouldFlip(owner.FeetStdPosition, BuildingWhat.FeetStdPosition));
+                        if (BuildingWhat.HP >= BuildingWhat.MaxHP)
+                        {
+                            BuildingWhat.HP = BuildingWhat.MaxHP;
+                        }
                     }
-                    BuildingWhat = null;
-                    SecondsUntilNextRecalculation = 0;
+                    else
+                    {
+                        if (BuildingWhat.CanAcceptResourcesFrom(owner))
+                        {
+                            BuildingWhat.TakeResourcesFrom(owner);
+                        }
+                        BuildingWhat = null;
+                        SecondsUntilNextRecalculation = 0;
+                    }
                 }
             }
             if (GatheringFrom != null)

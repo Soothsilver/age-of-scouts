@@ -282,7 +282,9 @@ namespace Auxiliary
         NotEnoughWood,
         NotEnoughPopulationLimit,
         SoftFanfare,
-        Error
+        Error,
+        BLAST10,
+        MovingBoxes
     }
 
     public enum TextureName
@@ -382,6 +384,9 @@ namespace Auxiliary
         PracantBuilder,
         PracantGather1,
         PracantMine1,
-        PracantWood1
+        PracantWood1,
+        ArtilleryGodPower,
+        Skladiste,
+        Sklipek
     }
 }

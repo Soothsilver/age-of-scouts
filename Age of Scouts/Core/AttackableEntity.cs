@@ -10,7 +10,7 @@ namespace Age.Core
     abstract class AttackableEntity : Entity
     {
         public bool Broken;
-        public int HP = 50;
+        public float HP = 50;
         public int MaxHP = 50;
 
         protected AttackableEntity(TextureName icon, Vector2 feetPosition) : base(icon, feetPosition)

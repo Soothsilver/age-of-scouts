@@ -108,7 +108,13 @@ namespace Age.Core
 
         internal bool CanAcceptResourcesFrom(Unit owner)
         {
-            return this.Template.Id == BuildingId.Kitchen && this.Controller == owner.Controller && owner.CarryingHowMuchResource > 0;
+            return this.Controller == owner.Controller && owner.CarryingHowMuchResource > 0
+                &&
+                (
+                    this.Template.Id == BuildingId.Kitchen ||
+                    (this.Template.Id == BuildingId.Sklipek && owner.CarryingResource == Resource.Food) ||
+                    (this.Template.Id == BuildingId.Skladiste && owner.CarryingResource != Resource.Food)
+                );
         }
 
         internal bool EnqueueConstruction(UnitTemplate unitTemplate)
@@ -154,7 +160,7 @@ namespace Age.Core
             if (this.HP < this.MaxHP)
             {
                 Rectangle rectHealthBar = new Rectangle(rectWhere.X, rectWhere.Y + 2, rectWhere.Width, 8);
-                Primitives.DrawHealthBar(rectHealthBar, this.Controller.StrongColor, this.HP, this.MaxHP);
+                Primitives.DrawHealthBar(rectHealthBar, this.Controller.StrongColor, (int)this.HP, this.MaxHP);
             }
             
         }
@@ -243,7 +249,7 @@ namespace Age.Core
             this.Controller = controller;
         }
 
-        public override bool CanAttack => Template.Id == BuildingId.Kitchen || Template.Id == BuildingId.HadrkoVez;
+        public override bool CanAttack => Template.Id == BuildingId.Kitchen || Template.Id == BuildingId.Hadrakovez;
 
         public void Update(float elapsedSeconds)
         {
@@ -291,13 +297,13 @@ namespace Age.Core
                         for (int ui = 0; ui < Session.AllUnits.Count; ui++)
                         {
                             Unit unit = Session.AllUnits[ui];
-                            if (this.CanRangeAttack(unit))
+                            if (this.CanRangeAttack(unit, 8))
                             {
                                 Session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -200), unit.FeetStdPosition + new Vector2(0, -20), this));
                                 break;
                             }
                         }
-                        SecondsUntilRecharge = 4;
+                        SecondsUntilRecharge = 2;
                     }
                 }
 
@@ -318,6 +324,10 @@ namespace Age.Core
                 if (ConstructionInProgress != null)
                 {
                     ConstructionInProgress.WorkDoneInSeconds += elapsedSeconds;
+                    if (Settings.Instance.Aegis)
+                    {
+                        ConstructionInProgress.WorkDoneInSeconds = ConstructionInProgress.TotalWorkNeeded;
+                    }
                     if (ConstructionInProgress.WorkDoneInSeconds >= ConstructionInProgress.TotalWorkNeeded)
                     {
                         ConstructionInProgress.WorkDoneInSeconds = ConstructionInProgress.TotalWorkNeeded;

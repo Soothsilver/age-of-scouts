@@ -131,6 +131,11 @@ namespace Age.HUD
                                 }
                             });
                             x += 64;
+                            if (x + 64 >= rectOptions.Width)
+                            {
+                                x = 0;
+                                y += 64;
+                            }
                         }
                     }
                     if (primaryUnit != null)
@@ -177,7 +182,7 @@ namespace Age.HUD
                 }
                 Primitives.DrawImage(Library.Get(unit.UnitTemplate.Icon), rectOneIcon);
                 Primitives.DrawRectangle(rectOneIcon, Color.Black);
-                Primitives.DrawHealthBar(new Rectangle(rectOneIcon.X, rectOneIcon.Bottom - 5, rectOneIcon.Width, 5), unit.Controller.StrongColor, unit.HP, unit.MaxHP);
+                Primitives.DrawHealthBar(new Rectangle(rectOneIcon.X, rectOneIcon.Bottom - 5, rectOneIcon.Width, 5), unit.Controller.StrongColor, (int)unit.HP, unit.MaxHP);
 
 
                 if ((i + 1) % 6 == 0)

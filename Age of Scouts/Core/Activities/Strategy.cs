@@ -80,8 +80,8 @@ namespace Age.Core.Activities
         {
             if (BuildingStuff)
             {
-                var buildables = owner.Session.AllBuildings.Where(bld => bld.Controller == owner.Controller
-                                                                            && bld.SelfConstructionInProgress &&
+                var buildables = owner.Session.AllBuildings.Where(bld => 
+                                                                            owner.CanContributeToBuilding(bld) &&
                                                                             bld.FeetStdPosition.WithinDistance(
                                                                                 owner.FeetStdPosition, Tile.WIDTH * 8));
                 Building buildableNext = null;

@@ -856,7 +856,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SFX\KinglyFanfare.mp3">
+    <Compile Include="SFX\Buildings\KinglyFanfare.mp3">
       <Name>KinglyFanfare</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
@@ -877,14 +877,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SFX\MunitionTent.mp3">
+    <Compile Include="SFX\Buildings\MunitionTent.mp3">
       <Name>MunitionTent</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SFX\LadderClimb.mp3">
+    <Compile Include="SFX\Buildings\LadderClimb.mp3">
       <Name>LadderClimb</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
@@ -1038,6 +1038,39 @@
       <Name>PracantWood2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GodPowers\ArtilleryGodPower.png">
+      <Name>ArtilleryGodPower</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SFX\BLAST10.WAV">
+      <Name>BLAST10</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Buildings\Skladiste.png">
+      <Name>Skladiste</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Buildings\Sklipek.png">
+      <Name>Sklipek</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SFX\Buildings\MovingBoxes.mp3">
+      <Name>MovingBoxes</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
