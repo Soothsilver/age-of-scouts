@@ -191,6 +191,10 @@ namespace Age.Core
         {
             this.VoiceQueue.Add(chatLine);
         }
+        public void EnqueueVoice(string line, SoundEffectName sfx)
+        {
+            this.VoiceQueue.Add(new ChatLine(line, sfx));
+        }
 
         public void SpawnUnit(Unit unit)
         {

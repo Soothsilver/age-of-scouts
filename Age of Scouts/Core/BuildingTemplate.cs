@@ -85,6 +85,19 @@ namespace Age.Core
             MaxHP = 100,
             EncyclopediaFilename = "Sklipek"
         };
+        public static BuildingTemplate DrevarskyKout = new BuildingTemplate(BuildingId.DrevarskyKout, "Dřevařský kout", "V dřevařském koutě můžeš stavět katapulty, a pracanti tam mohou odnášet dřevo.", TextureName.DrevarskyKout, 2, 2, 0, 300, 0)
+        {
+            SecondsToBuild = 70,
+            SelectionSfx = SoundEffectName.Saw,
+            MaxHP = 250,
+            EncyclopediaFilename = "DrevarskyKout"
+        };
+        public static BuildingTemplate Wall = new BuildingTemplate(BuildingId.Wall, "Val", "Zeď chrání váš tábor před nepřítelem.", TextureName.WallStandalone, 1, 1, 0, 0, 10)
+        {
+            SecondsToBuild = 10,
+            SelectionSfx = SoundEffectName.MovingBoxes,
+            MaxHP = 250
+        };
         internal int LineOfSightInTiles = 3;
         public int MaxHP;
 
@@ -156,6 +169,8 @@ namespace Age.Core
         MunitionTent,
         MajestatniSocha,
         Skladiste,
-        Sklipek
+        Sklipek,
+        DrevarskyKout,
+        Wall
     }
 }

@@ -126,6 +126,22 @@ namespace Age.Phases
             DontStartSelectionBoxThisFrame = false;
         }
 
+        /// <summary>
+        /// The user press "Delete" when this was selected.
+        /// </summary>
+        /// <param name="session"></param>
+        internal void PressDelete(Session session)
+        {
+            if (SelectedUnits.Count > 0 && SelectedUnits[0].Controller == session.PlayerTroop)
+            {
+                SelectedUnits[0].TakeDamage(SelectedUnits[0].MaxHP, SelectedUnits[0]);
+            }
+            else if (SelectedBuilding != null && SelectedBuilding.Controller == session.PlayerTroop)
+            {
+                SelectedBuilding.TakeDamage(SelectedBuilding.MaxHP, SelectedBuilding);
+            }
+        }
+
         internal Entity GetPrimaryEntity()
         {
             if (SelectedUnits.Count > 0)

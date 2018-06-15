@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="AgeOfScouts" tilewidth="384" tileheight="250" tilecount="17" columns="0">
+<tileset name="AgeOfScouts" tilewidth="384" tileheight="250" tilecount="18" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="Grass">
   <properties>
@@ -102,5 +102,11 @@
    <property name="A" value="MunitionTent"/>
   </properties>
   <image width="256" height="220" source="../../PrimaryContent/Tiles/MunitionTent.png"/>
+ </tile>
+ <tile id="17">
+  <properties>
+   <property name="A" value="Katapult"/>
+  </properties>
+  <image width="64" height="64" source="../../PrimaryContent/Units/Katapult/KatapultRight1.png"/>
  </tile>
 </tileset>

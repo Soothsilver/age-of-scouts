@@ -48,7 +48,7 @@ namespace Age.Core
         {
             controller.Food += ConstructingWhat.FoodCost;
             controller.Wood += ConstructingWhat.WoodCost;
-            controller.Clay += 0; // TODO clay units
+            controller.Clay += ConstructingWhat.MudCost;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Age.Core
         public Tactics Tactics;
         public Activity Activity;
         public Tile Occupies;
-        public float Speed = Tile.WIDTH;
+        public float Speed => UnitTemplate.Speed;
         public Stance Stance = Stance.Aggressive;
         public Resource CarryingResource;
         public int CarryingHowMuchResource;
@@ -64,8 +64,14 @@ namespace Age.Core
 
         public Rectangle GetHitboxFromFeet(Vector2 feet)
         {
-            return new Rectangle((int)feet.X - 10, (int)feet.Y - 40, 20, 40);
-
+            if (this.UnitTemplate.Id == UnitId.Katapult)
+            {
+                return new Rectangle((int)feet.X - 27, (int)feet.Y - 55, 54, 55);
+            }
+            else
+            {
+                return new Rectangle((int)feet.X - 10, (int)feet.Y - 40, 20, 40);
+            }
         }
 
         public override void TakeDamage(int dmg, Entity source)
@@ -160,7 +166,23 @@ namespace Age.Core
             if (this.Activity.SecondsUntilRecharge <= 0)
             {
                 // Fire
-                session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -20), target.FeetStdPosition + new Vector2(0, -20), this));
+                if (this.UnitTemplate.Id == UnitId.Katapult)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -20), target.FeetStdPosition + new Vector2(0, -20)
+                            + R.RandomUnitVector() * R.Float() * 50
+                            , this)
+                        {
+                            ProjectileKind = ProjectileKind.HeavyMud,
+                            TimeDilation = 0.4f
+                        });
+                    }
+                }
+                else
+                {
+                    session.SpawnProjectile(new Projectile(this.FeetStdPosition + new Vector2(0, -20), target.FeetStdPosition + new Vector2(0, -20), this));
+                }
                 // Recharge
                 this.Activity.SecondsUntilRecharge = 4; // recharge in four seconds
             }

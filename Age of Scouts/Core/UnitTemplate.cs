@@ -39,42 +39,57 @@ namespace Age.Core
        
 
         private SoundEffect GatherCorn;
+        public UnitId Id;
 
-        private UnitTemplate(string name, string description, TextureName icon, TextureName deadIcon, Sprite sprite,
-            int foodcost, int woodcost)
+        private UnitTemplate(UnitId id, string name, string description, TextureName icon, TextureName deadIcon, Sprite sprite,
+            int foodcost, int woodcost, int mudcost)
         {
+            Id = id;
             Name = name;
             Description = description;
             FoodCost = foodcost;
             WoodCost = woodcost;
+            MudCost = mudcost;
             Icon = icon;
             DeadIcon = deadIcon;
             Sprite = sprite;
         }
 
+        public static UnitTemplate Katapult;
         public static UnitTemplate Hadrakostrelec;
         public static UnitTemplate Pracant;
         internal int FoodCost;
         internal int WoodCost;
+        internal int MudCost;
 
         public bool CanGatherStuff;
         /// <summary>
         /// In tiles, how far can this unit attack.
         /// </summary>
         internal int AttackRange = 5;
+        /// <summary>
+        /// In standard pixels, how much distance can this unit cross per second.
+        /// </summary>
+        internal float Speed = Tile.WIDTH;
 
         public static void InitUnitTemplates()
         {
-            Pracant = new UnitTemplate("Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Pracant, 50, 0)
+            Pracant = new UnitTemplate(UnitId.Pracant, "Pracant", "Pracant je nejdůležitější jednotka. Může sbírat suroviny a stavět a opravovat budovy. Pracanty nabíráš z {b}kuchyně{/b}.", TextureName.PracantLogo, TextureName.KidBroken, Sprite.Pracant, 50, 0, 0)
             {
                 CanBuildStuff = true,
                 CanGatherStuff = true,
                 CanAttack = false,
                 EncyclopediaFilename = "Pracant"
             };
-            Hadrakostrelec = new UnitTemplate("Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20)
+            Hadrakostrelec = new UnitTemplate(UnitId.Hadrakostrelec, "Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20, 0)
             {
                 EncyclopediaFilename = "Hadrakostrelec"
+            };
+            Katapult = new UnitTemplate(UnitId.Katapult, "Katapult", "Katapult je zvláště silný proti stavbám. Střílí turbojílové koule z obrovské dálky. Dá se vyrobit v {b}dřevařském koutě{/b}.", TextureName.KatapultRight1, TextureName.KatapultCorpse, Sprite.Katapult, 0, 150, 50)
+            {
+                EncyclopediaFilename = "Katapult",
+                Speed = Tile.WIDTH / 3,
+                AttackRange = 10
             };
         }
 
@@ -177,5 +192,12 @@ namespace Age.Core
             SFX.LastUnitSelectedXTimes = 0;
             SFX.PlayRandom(AckAttack, AckAttack2, Ack1, Ack2);
         }
+    }
+
+    internal enum UnitId
+    {
+        Pracant,
+        Hadrakostrelec,
+        Katapult
     }
 }

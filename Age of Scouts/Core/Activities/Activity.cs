@@ -66,7 +66,7 @@ namespace Age.Core.Activities
             this.AttackTarget = null;
             this.BuildingWhat = null;
             this.GatheringFrom = null;
-            owner.Sprite.SetCurrentAnimation(AnimationListKey.Idle, false);
+            owner.Sprite.SetCurrentAnimation(AnimationListKey.Idle, owner.Sprite.CurrentAnimationIsFlipped);
             this.Speed = Vector2.Zero;
         }
         public void Invalidate()
@@ -168,7 +168,7 @@ namespace Age.Core.Activities
         {
             this.ResetActions();
             this.SecondsUntilNextRecalculation = Single.MaxValue;
-            owner.Sprite.SetCurrentAnimation(AnimationListKey.Idle, false);
+            owner.Sprite.SetCurrentAnimation(AnimationListKey.Idle, owner.Sprite.CurrentAnimationIsFlipped);
         }
 
         internal void QuicklyWalkTo(Vector2 whereToStandard)

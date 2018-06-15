@@ -60,11 +60,11 @@ namespace Age
             Root.FixTimeStep = Settings.Instance.FixTimeStep;
 
             // Load assets
-            Library.LoadTexturesIntoTextureCacheFromDirectories(Content, "Interface", "GodPowers", "Tiles", "Units\\Kid", "Buildings", "Units\\Pracant");
+            Library.LoadTexturesIntoTextureCacheFromDirectories(Content, "Interface", "GodPowers", "Tiles", "Units\\Kid", "Buildings", "Units\\Pracant", "Units\\Katapult");
             Primitives.Fonts[FontFamily.Tiny] = new FontGroup(Library.FontTiny, Library.FontTinyItalics, Library.FontTinyBold, Library.FontTinyItalics);
             Primitives.Fonts[FontFamily.Mid] = new FontGroup(Library.FontMid, Library.FontMidItalics, Library.FontMidBold, Library.FontMidItalics);
             Primitives.Fonts[FontFamily.Normal] = new FontGroup(Library.FontNormal, Library.FontNormalItalics, Library.FontNormalBold, Library.FontNormalItalics);
-            Library.LoadVoicesIntoTextureCacheFromDirectories(Content, "Voice", "SFX", "Voice\\Tutorial", "SFX\\Buildings");
+            Library.LoadVoicesIntoTextureCacheFromDirectories(Content, "Voice", "SFX", "Voice\\Tutorial", "SFX\\Buildings", "Voice\\Radenin");
             BackgroundMusicPlayer.Load(Content);
             
             // Initialize
@@ -81,10 +81,17 @@ namespace Age
             UnitTemplate.Hadrakostrelec.LoadAttackSounds(SfxHH("AckAttack"), SfxHH("AckAttack2"));
             UnitTemplate.Pracant.LoadSounds(SfxPrc("Ack1"), SfxPrc("Ack2"), SfxPrc("AckMove"), SfxKid("Fail"), SfxPrc("Joke1"), SfxPrc("Joke2"), SfxPrc("Joke3"),  SfxPrc("Selection1"), SfxPrc("Selection2"), SfxPrc("Selection3"), SfxPrc("Selection4"), SfxPrc("Naverbovan"));
             UnitTemplate.Pracant.LoadPracantSounds(SfxPrc("AckBuild"), SfxPrc("Corn"), SfxPrc("Mud"), SfxPrc("Bobule"), SfxPrc("Wood"));
+            UnitTemplate.Katapult.LoadSounds(SfxPK("Ack1"), SfxPK("Ack2"), SfxPK("AckMove"), SfxPK("Error"), SfxPK("Vtip1"), SfxPK("Vtip2"), SfxPK("Vtip3"), SfxPK("Ano"), SfxPK("Ano2"), SfxPK("Ano3"), SfxPK("Ano4"), SfxPK("Recruit"));
+            UnitTemplate.Katapult.LoadAttackSounds(SfxPK("AckAttack1"), SfxPK("AckAttack2"));
 
             // Go to main menu
             Root.PushPhase(new Phases.AgeMainMenu());
             Eqatec.ScheduleSendMessage("GAME START", "");
+        }
+
+        private SoundEffect SfxPK(string path)
+        {
+            return Content.Load<SoundEffect>("Voice\\PK\\PK" + path);
         }
 
         private SoundEffect SfxKid(string path)

@@ -29,8 +29,8 @@ namespace Age
             catch (Exception ex)
             {
                 string msg =
-"An exception has occured.\n\nPlease forward this information to the application programmer.\n\n" +
-                ex.ToString() + Environment.NewLine + Environment.NewLine + ex.StackTrace.ToString();
+"Hra spadla kvùli chybì.\r\n\r\nProsím pøepošli tento text vývojáøi na adresu petrhudecek2010@gmail.com.\r\n\r\n" +
+                ex.ToString();
                 string tempfile = System.IO.Path.GetTempFileName();
                 System.IO.File.WriteAllText(tempfile, msg);
                 System.Diagnostics.Process.Start("notepad", tempfile);

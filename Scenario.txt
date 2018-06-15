@@ -1,0 +1,12 @@
+Jsme na zelené louce v Radenínì, hráèi, a zde se nauèíme postavit vlastní tábor.
+Pracant je tvoje nejdùležitìjší jednotka. Tìží suroviny a staví stavby. Vyber všechny své Pracanty a klikni pravým tlaèítkem na keø s lesními plody.
+Výbornì. Budeš ale potøebovat i døevo. Vyber dva své Pracanty a klikni pravým tlaèítkem na nìjaký strom.
+Tvoji Pracanti teï sbírají suroviny. Kolik máš jídla a døeva vidíš v levém horním rohu obrazovky.
+Až budeš mít dost døeva, vyber jednoho Pracanta a v dolní lištì klikni na Obytný stan. 
+Nyní klikni levým tlaèítkem kamkoliv na louku, a Pracant tam postaví stan. 
+V levém horním rohu obrazovky vidíš také svùj populaèní limit. Nemùžeš mít více skautù, než kolik dokážeš ubytovat ve stanech.
+Nyní mùžeš nabrat další Pracanty. Vyber Kuchyni a klikni v dolní lištì dvakrát na 'Pracant'.
+Nové Pracanty mùžeš poslat sbírat jídlo, døevo nebo stavìt další obytné stany.
+Tvým dalším úkolem je nabrat pìt hadrákostøelcù. K tomu budeš muset postavit i další obytné stany.
+Nìkde na této louce se skrývá nepøátelská vìž. Tvým posledním úkolem zde je tuto vìž najít a znièit.
+----------

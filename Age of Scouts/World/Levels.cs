@@ -205,8 +205,10 @@ namespace Age.World
         }
         internal static Session BlackCastle()
         {
-            Session s = new Session();
-            s.LevelName = "Raseliniste";
+            Session s = new Session
+            {
+                LevelName = "Raseliniste"
+            };
             s.Troops.Add(new Troop("7. skautský oddíl Karibu", s, Era.EraRadcu, Color.FromNonPremultiplied(4, 44, 204, 255), Color.FromNonPremultiplied(153, 173, 255, 255)));
             s.Troops.Add(new Troop("4. skautský oddíl Jaguáři", s, Era.EraRadcu, Color.FromNonPremultiplied(0, 33, 86, 255), Color.FromNonPremultiplied(178,178,178, 255)));
             s.Troops.Add(new Troop("11. skautský oddíl Medvědi", s, Era.EraRadcu, Color.FromNonPremultiplied(221, 0, 0, 255), Color.FromNonPremultiplied(247, 12, 12, 255)));
@@ -235,11 +237,76 @@ namespace Age.World
                 trp.Clay = 0;
                 trp.Wood = 0;
             });
-            s.Objectives.Add(new Objective("Finální úkol: Znič nepřátelskou věž.")
+            Objective oTarget = new Objective("Finální úkol: Znič nepřátelskou věž.")
             {
                 OnComplete = (ss) => ss.AchieveEnding(Ending.Victory),
-                StateTrigger = (ss)=> ss.Session.AllBuildings.Count(bld => bld.Controller != ss.Session.PlayerTroop) == 0
+                StateTrigger = (ss)=> ss.Session.AllBuildings.Count(bld => bld.Controller != ss.Session.PlayerTroop) == 0,
+                Visible = true
+            };
+            Objective oDalsiHadrakostrelci = new Objective("Naber 5 hadrákostřelců.")
+            {
+                Visible = false,
+                StateTrigger = (ss)=>ss.Session.AllUnits.Count(unt => unt.UnitTemplate.CanAttack) >= 5,
+                OnComplete = (ss) =>
+                {
+                    s.EnqueueVoice("Někde na této louce se skrývá nepřátelská věž. Tvým posledním úkolem zde je tuto věž najít a zničit.", SoundEffectName.Rad11);
+                }
+            };
+            Objective oDalsiPracanti = new Objective("Naber dva další pracanty.")
+            {
+                Visible = false,
+                StateTrigger = (ss) => ss.Session.AllUnits.Count(unt => unt.UnitTemplate.CanBuildStuff) >= 6,
+                OnComplete = (ss) =>
+                {
+                    s.EnqueueVoice("Nové Pracanty můžeš poslat sbírat jídlo, dřevo nebo stavět další obytné stany.", SoundEffectName.Rad9);
+                    s.EnqueueVoice("Tvým dalším úkolem je nabrat pět hadrákostřelců. K tomu budeš muset postavit i další obytné stany.", SoundEffectName.Rad10);
+                    oDalsiHadrakostrelci.Visible = true;
+                }
+            };
+            Objective oStan2 = new Objective("Postav obytný stan.")
+            {
+                Visible = false,
+                StateTrigger = (ss)=>ss.Session.PlayerTroop.PopulationLimit > 4,
+                OnComplete = (ss) =>
+                {
+                    s.EnqueueVoice("Nyní můžeš nabrat další Pracanty. Vyber Kuchyni a klikni v dolní liště dvakrát na 'Pracant'.", SoundEffectName.Rad8);
+                    oDalsiPracanti.Visible = true;
+                }
+            };
+            Objective oStan1 = new Objective("Vyber pracanta, pak vyber, aby postavil obytný stan.")
+            {
+                Visible = false,
+                StateTrigger = (ss)=> ss.Selection.SelectedBuildingToPlace?.Id == BuildingId.Tent,
+                OnComplete = (ss) =>
+                {
+                    s.EnqueueVoice("Nyní klikni levým tlačítkem kamkoliv na louku, a Pracant tam postaví stan.", SoundEffectName.Rad6);
+                    s.EnqueueVoice("V levém horním rohu obrazovky vidíš také svůj populační limit. Nemůžeš mít více skautů, než kolik dokážeš ubytovat ve stanech.", SoundEffectName.Rad7);
+                    oStan2.Visible = true;
+                }
+            };
+            Objective oStrom = new Objective("Pošli pracanta těžit strom.")
+            {
+                Visible = false,
+                StateTrigger = (ss)=>ss.Session.AllUnits.Any(unt => unt.Tactics.GatherTarget?.ProvidesResource == Resource.Wood),
+                OnComplete = (ss) =>
+                {
+                    s.EnqueueVoice("Tvoji Pracanti teď sbírají suroviny. Kolik máš jídla a dřeva vidíš v levém horním rohu obrazovky.", SoundEffectName.Rad4);
+                    s.EnqueueVoice("Až budeš mít dost dřeva, vyber jednoho Pracanta a v dolní liště klikni na Obytný stan.", SoundEffectName.Rad5);
+                    oStan1.Visible = true;
+                }
+            };
+            s.Objectives.Add(new Objective("Pošli všechny své pracanty sbírat lesní plody.")
+            {
+                StateTrigger = (ss)=>ss.Session.AllUnits.Any(unt => unt.Tactics.GatherTarget?.ProvidesResource == Resource.Food),
+                OnComplete = (ss)=>
+                {
+                    s.EnqueueVoice("Výborně. Budeš ale potřebovat i dřevo. Vyber dva své Pracanty a klikni pravým tlačítkem na nějaký strom.", SoundEffectName.Rad3);
+                    oStrom.Visible = true;
+                }
             });
+            s.Objectives.AddRange(new[] { oStrom, oStan1, oStan2, oDalsiPracanti, oDalsiHadrakostrelci, oTarget });
+            s.EnqueueVoice(new ChatLine("Jsme na zelené louce v Radeníně, hráči, a zde se naučíme postavit vlastní tábor.", SoundEffectName.Rad1));
+            s.EnqueueVoice(new ChatLine("Pracant je tvoje nejdůležitější jednotka. Těží suroviny a staví stavby. Vyber všechny své Pracanty a klikni pravým tlačítkem na keř s lesními plody..", SoundEffectName.Rad2));
             return s;
         }
 

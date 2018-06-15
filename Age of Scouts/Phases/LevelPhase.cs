@@ -116,6 +116,10 @@ namespace Age.Phases
             {
                 Root.PushPhase(new IngameMenuPhase(this));
             }
+            if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Delete))
+            {
+                Selection.PressDelete(this.Session);
+            }
 
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F12))
             {

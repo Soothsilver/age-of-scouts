@@ -14,6 +14,8 @@ namespace Age.Core
         public bool Lost;
         public float Height;
         public Entity Source;
+        public float TimeDilation = 1;
+        public ProjectileKind ProjectileKind = ProjectileKind.Hadrak;
 
         public Projectile(Vector2 startingPosition, Vector2 target, Entity source)
         {
@@ -33,7 +35,7 @@ namespace Age.Core
             {
                 Primitives.FillCircle(
                     Isomath.StandardToScreen(new Vector2(Position.X, Position.Y - Height * 300), screen),
-                    (int) (4 * screen.ZoomLevel), Color.White);
+                    (int) (4 * screen.ZoomLevel), ProjectileKind == ProjectileKind.HeavyMud ? Color.Brown : Color.White);
             }
         }
 
@@ -48,6 +50,7 @@ namespace Age.Core
 
         public void Update(Session session, float elapsedSeconds)
         {
+            elapsedSeconds = elapsedSeconds * TimeDilation;
             this.YSpeed -= GRAVITY * elapsedSeconds;
             this.Height += this.YSpeed * elapsedSeconds;
             this.Position += this.Speed * elapsedSeconds;
@@ -65,7 +68,12 @@ namespace Age.Core
                 }
                 else if (whereAmI.BuildingOccupant != null && session.AreEnemies(Source, whereAmI.BuildingOccupant))
                 {
-                    whereAmI.BuildingOccupant.TakeDamage(10, Source);
+                    int modifiedDamage = 10;
+                    if (ProjectileKind == ProjectileKind.HeavyMud)
+                    {
+                        modifiedDamage *= 3;
+                    }
+                    whereAmI.BuildingOccupant.TakeDamage(modifiedDamage, Source);
                     this.Lost = true;
                 }
              // It is too harsh to prevent projectiles this way because it results in bad gameplay.
@@ -93,5 +101,17 @@ namespace Age.Core
             }
         }
 
+    }
+
+    enum ProjectileKind
+    {
+        /// <summary>
+        /// Deals standard damage, with no special bonuses.
+        /// </summary>
+        Hadrak,
+        /// <summary>
+        /// Deals crushing damage, effective against buildings.
+        /// </summary>
+        HeavyMud
     }
 }

@@ -284,7 +284,19 @@ namespace Auxiliary
         SoftFanfare,
         Error,
         BLAST10,
-        MovingBoxes
+        MovingBoxes,
+        Saw,
+        Rad1,
+        Rad4,
+        Rad2,
+        Rad3,
+        Rad5,
+        Rad6,
+        Rad7,
+        Rad8,
+        Rad9,
+        Rad10,
+        Rad11
     }
 
     public enum TextureName
@@ -387,6 +399,17 @@ namespace Auxiliary
         PracantWood1,
         ArtilleryGodPower,
         Skladiste,
-        Sklipek
+        Sklipek,
+        KatapultRight1,
+        KatapultRight2,
+        KatapultUp1,
+        KatapultUp2,
+        DrevarskyKout,
+        KatapultDown1,
+        KatapultDown2,
+        KatapultRightAfterAttack,
+        KatapultCorpse,
+        WallStandalone,
+        WallFlat
     }
 }

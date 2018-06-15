@@ -106,8 +106,8 @@ namespace Age.HUD
                         }
                         if (primaryUnit.CarryingHowMuchResource != 0)
                         {
-                            Primitives.DrawImage(Library.Get(primaryUnit.CarryingResource.ToTextureName()), new Rectangle(rectOptions.X + 10, rectOptions.Bottom - 42, 32, 32));
-                            Primitives.DrawSingleLineText(primaryUnit.CarryingHowMuchResource.ToString(), new Vector2(rectOptions.X + 50, rectOptions.Bottom - 38),
+                            Primitives.DrawImage(Library.Get(primaryUnit.CarryingResource.ToTextureName()), new Rectangle(rectAllSelectedUnits.X + 10, rectAllSelectedUnits.Bottom - 42, 32, 32));
+                            Primitives.DrawSingleLineText(primaryUnit.CarryingHowMuchResource.ToString(), new Vector2(rectAllSelectedUnits.X + 50, rectAllSelectedUnits.Bottom - 38),
                                 Color.Black, Library.FontTinyBold);
                         }
                     }

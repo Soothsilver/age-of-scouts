@@ -170,6 +170,10 @@ namespace Age.World
 
                     session.SpawnUnit(new Unit(NameGenerator.GenerateBoyName(), controller, UnitTemplate.Hadrakostrelec, Isomath.TileToStandard(tile.X + 0.5f, tile.Y + 0.5f)));
                     break;
+                case "Katapult":
+
+                    session.SpawnUnit(new Unit(NameGenerator.GenerateKatapultName(), controller, UnitTemplate.Katapult, Isomath.TileToStandard(tile.X + 0.5f, tile.Y + 0.5f)));
+                    break;
                 default:
                     throw new Exception("The tiletype '" + tiletype + "' does not have anything assigned in the project.");
             }

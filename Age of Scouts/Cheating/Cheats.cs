@@ -50,16 +50,22 @@ namespace Age.Phases
             }
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F10, ModifierKey.Ctrl))
             {
-                levelPhase.Session.PlayerTroop.LeaderPowers = new System.Collections.Generic.List<LeaderPowerInstance>();
-                levelPhase.Session.PlayerTroop.LeaderPowers.Add(new LeaderPowerInstance(LeaderPower.CreateSpy(), false));
-                levelPhase.Session.PlayerTroop.LeaderPowers.Add(new LeaderPowerInstance(LeaderPower.CreateSpy(), false));
-                levelPhase.Session.PlayerTroop.LeaderPowers.Add(new LeaderPowerInstance(LeaderPower.CreateArtillery(), false));
-                levelPhase.Session.PlayerTroop.LeaderPowers.Add(new LeaderPowerInstance(LeaderPower.CreateArtillery(), false));
+                levelPhase.Session.PlayerTroop.LeaderPowers = new System.Collections.Generic.List<LeaderPowerInstance>
+                {
+                    new LeaderPowerInstance(LeaderPower.CreateSpy(), false),
+                    new LeaderPowerInstance(LeaderPower.CreateSpy(), false),
+                    new LeaderPowerInstance(LeaderPower.CreateArtillery(), false),
+                    new LeaderPowerInstance(LeaderPower.CreateArtillery(), false)
+                };
                 SFX.PlaySoundUnlessPlaying(SoundEffectName.SoftFanfare);
             }
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F2, ModifierKey.Ctrl))
             {
                 Settings.Instance.ShowPerformanceIndicators = !Settings.Instance.ShowPerformanceIndicators;
+            }
+            if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F5, ModifierKey.Ctrl, ModifierKey.Alt, ModifierKey.Shift))
+            {
+                throw new System.Exception("Game crashed because you pressed Ctrl+Alt+Shift+F5.");
             }
         }
         public static void Draw(LevelPhase levelPhase)
@@ -68,7 +74,7 @@ namespace Age.Phases
             if (Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F1))
             {
                 string strCheats =
-                    "Držet [F1]: Zobrazovat obrazovku s cheaty\n[Ctrl+Q]: Aktivovat/deaktivovat válečnou mlhu\n[Ctrl+V]: Vyhrát level\n[Ctrl+R]: Zobrazit debugovací body\n[Ctrl+U]: Zpomalit čas\n[Ctrl+I]: Zrychlit čas\n[Ctrl+F2]: Zobrazit/skrýt indikátory výkonu\n[Ctrl+E] Zobrazit/skrýt odhalení válečné mlhy cizími jednotkami\n[Ctrl+F7] Přidat sobě +1000 od každé suroviny.\n[Ctrl+F8] Zapnout/vypnout rychlé stavění (aegis)\n[Ctrl+F9] Zapnout/vypnout vidění skrze nepřátele\n[Ctrl+F10] Získat další vůdcovské schopnosti";
+                    "Držet [F1]: Zobrazovat obrazovku s cheaty\n[Ctrl+Q]: Aktivovat/deaktivovat válečnou mlhu\n[Ctrl+V]: Vyhrát level\n[Ctrl+R]: Zobrazit debugovací body\n[Ctrl+U]: Zpomalit čas\n[Ctrl+I]: Zrychlit čas\n[Ctrl+F2]: Zobrazit/skrýt indikátory výkonu\n[Ctrl+E] Zobrazit/skrýt odhalení válečné mlhy cizími jednotkami\n[Ctrl+F7] Přidat sobě +1000 od každé suroviny.\n[Ctrl+F8] Zapnout/vypnout rychlé stavění (aegis)\n[Ctrl+F9] Zapnout/vypnout vidění skrze nepřátele\n[Ctrl+F10] Získat další vůdcovské schopnosti\n[Ctrl+Alt+Shift+F5] Shodit hru (!!)";
                 Rectangle rectCheats = new Rectangle(0, 200, 400, 600);
                 Primitives.FillRectangle(rectCheats, Color.Brown.Alpha(240));
                 BasicStringDrawer.DrawMultiLineText(strCheats, rectCheats.Extend(-3, -3), Color.White, Library.FontTiny);

@@ -55,9 +55,27 @@ namespace Age.Core
             "Vojta",
             "Zdeněk"
         };
+
         internal static string GenerateBoyName()
         {
             return boyNames[R.Next(boyNames.Length)];
+        }
+        private static string[] katapultNames = new[]
+        {
+            "Ničitel světů",
+            "Zhouba stanů",
+            "Povoz zkázy",
+            "Turboň valivý",
+            "Dřevěný tank",
+            "Megavůz",
+            "Marshmallow",
+            "Bahnonos",
+            "Ronny X120",
+            "Pety PT450"
+        };
+        internal static string GenerateKatapultName()
+        {
+            return katapultNames[R.Next(katapultNames.Length)];
         }
     }
 }

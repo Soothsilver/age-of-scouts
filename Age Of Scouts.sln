@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B19329A-A1BD-4B87-BAC8-8404EEC1F41D}"
 	ProjectSection(SolutionItems) = preProject
 		FutureChangelog.txt = FutureChangelog.txt
+		Scenario.txt = Scenario.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Age of Scouts Launcher", "Age of Scouts Launcher\Age of Scouts Launcher.csproj", "{3A95E77C-23C8-4C8B-AC5D-76E34D989D0F}"
@@ -92,16 +93,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5A56F1F-C7D7-45E8-BB89-57D7AF5DCD4D}
-	EndGlobalSection
-	GlobalSection(AutomaticVersions) = postSolution
-		UpdateAssemblyVersion = True
-		UpdateAssemblyFileVersion = False
-		UpdateAssemblyInfoVersion = True
-		AssemblyVersionSettings = None.IncrementOnDemand.IncrementWithResetOnIncrease.DeltaDayStamp
-		AssemblyInfoVersionSettings = None.IncrementOnDemand.IncrementWithResetOnIncrease.DeltaDayStamp
-		UpdatePackageVersion = False
-		AssemblyInfoVersionType = SettingsVersion
-		InheritWinAppVersionFrom = None
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

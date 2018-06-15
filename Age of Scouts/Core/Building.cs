@@ -66,6 +66,10 @@ namespace Age.Core
                 {
                     return ConstructionOption.MunitionTentOptions;
                 }
+                else if (this.Template.Id == BuildingId.DrevarskyKout)
+                {
+                    return ConstructionOption.DrevarskyKoutOptions;
+                }
                 else
                 {
                     return ConstructionOption.None;
@@ -113,17 +117,20 @@ namespace Age.Core
                 (
                     this.Template.Id == BuildingId.Kitchen ||
                     (this.Template.Id == BuildingId.Sklipek && owner.CarryingResource == Resource.Food) ||
-                    (this.Template.Id == BuildingId.Skladiste && owner.CarryingResource != Resource.Food)
+                    (this.Template.Id == BuildingId.Skladiste && owner.CarryingResource != Resource.Food) ||
+                    (this.Template.Id == BuildingId.DrevarskyKout && owner.CarryingResource == Resource.Wood)
                 );
         }
 
         internal bool EnqueueConstruction(UnitTemplate unitTemplate)
         {
-            if (this.Controller.Wood > unitTemplate.WoodCost &&
-                this.Controller.Food > unitTemplate.FoodCost)
+            if (this.Controller.Wood >= unitTemplate.WoodCost &&
+                this.Controller.Food >= unitTemplate.FoodCost &&
+                this.Controller.Clay >= unitTemplate.MudCost )
             {
                 this.Controller.Food -= unitTemplate.FoodCost;
                 this.Controller.Wood -= unitTemplate.WoodCost;
+                this.Controller.Clay -= unitTemplate.MudCost;
                 ConstructionQueue.AddLast(new Construction(unitTemplate));
                 return true;
             }
@@ -136,9 +143,26 @@ namespace Age.Core
         public void Draw(IScreenInformation screen, Selection selection)
         {
             Rectangle rectWhere = Isomath.StandardPersonToScreen(this.FeetStdPosition, this.PixelWidth, this.PixelHeight, screen);
+
+            TextureName ico = this.Template.Icon;
+            if (this.Template.Id == BuildingId.Wall)
+            {
+                bool topleft = this.PrimaryTile.Neighbours.TopLeft?.BuildingOccupant?.Template.Id == BuildingId.Wall;
+                bool topright = this.PrimaryTile.Neighbours.TopRight?.BuildingOccupant?.Template.Id == BuildingId.Wall;
+                bool bottomleft = this.PrimaryTile.Neighbours.BottomLeft?.BuildingOccupant?.Template.Id == BuildingId.Wall;
+                bool bottomright = this.PrimaryTile.Neighbours.BottomRight?.BuildingOccupant?.Template.Id == BuildingId.Wall;
+                int total = (topleft ? 1 : 0) + (topright ? 1 : 0) + (bottomleft ? 1 : 0) + (bottomright ? 1 : 0);
+                if (total == 2)
+                {
+                    if ((topleft && bottomright) || (topright && bottomleft))
+                    {
+                        ico = TextureName.WallFlat;
+                    }
+                }
+            }
             if (SelfConstructionInProgress)
             {
-                Texture2D what = SpriteCache.GetColoredTexture(this.Template.Icon, false, this.Controller.LightColor);
+                Texture2D what = SpriteCache.GetColoredTexture(ico, false, this.Controller.LightColor);
                 int screenHeight = (int)(rectWhere.Height * SelfConstructionProgress);
                 Rectangle destinationRectangle = new Rectangle(rectWhere.X, rectWhere.Bottom - screenHeight, rectWhere.Width, screenHeight);
                 int textureHeight = (int)(what.Height * SelfConstructionProgress);
@@ -150,7 +174,7 @@ namespace Age.Core
             }
             else
             {
-                Primitives.DrawImage(SpriteCache.GetColoredTexture(this.Template.Icon, false, this.Controller.LightColor), rectWhere);
+                Primitives.DrawImage(SpriteCache.GetColoredTexture(ico, false, this.Controller.LightColor), rectWhere);
                 if (selection.SelectedBuilding == this)
                 {
                     Primitives.DrawRectangle(rectWhere.Extend(1, 1), this.Controller.StrongColor);
