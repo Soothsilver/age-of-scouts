@@ -123,6 +123,7 @@
     <Compile Include="AI\DoNothingAI.cs" />
     <Compile Include="Animation\SpriteCache.cs" />
     <Compile Include="Animation\TextureKey.cs" />
+    <Compile Include="Cheating\Cheat.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Core\Activities\Activity.cs" />
     <Compile Include="Core\Activities\Physics.cs" />
@@ -158,18 +159,20 @@
     <Compile Include="Core\UnitTemplate.cs" />
     <Compile Include="Cheating\DebugPoints.cs" />
     <Compile Include="Cheating\Version.cs" />
+    <Compile Include="Core\WallPlacement.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HUD\BottomBar.cs" />
     <Compile Include="HUD\Minimap.cs" />
     <Compile Include="Core\Selection.cs" />
     <Compile Include="Internet\Eqatec.cs" />
     <Compile Include="Pathfinding\MovementRules.cs" />
-    <Compile Include="Cheating\Cheats.cs" />
+    <Compile Include="Cheating\DebugCommands.cs" />
     <Compile Include="Other threads\OtherThreads.cs" />
+    <Compile Include="Phases\CheatPhase.cs" />
     <Compile Include="Phases\EncyclopediaPhase.cs" />
     <Compile Include="Phases\FeedbackPhase.cs" />
     <Compile Include="Phases\SettingsPhase.cs" />
-    <Compile Include="Phases\SFX.cs" />
+    <Compile Include="Voice\SFX.cs" />
     <Compile Include="Phases\ViewObjectivesPhase.cs" />
     <Compile Include="Pathfinding\Pathfinding.cs" />
     <Compile Include="Phases\IngameMenuPhase.cs" />
@@ -250,10 +253,19 @@
   <ItemGroup>
     <Content Include="AgeOfScoutsLogo.ico" />
     <Content Include="AgeOfScoutsLogo.png" />
+    <Content Include="Encyclopedia\KeyboardShortcuts.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Encyclopedia\Hadrakostrelec.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Encyclopedia\Kuchyne.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\BahenniPole.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encyclopedia\Val.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Encyclopedia\Kukurice.txt">

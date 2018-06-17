@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Age.Phases
 {
-    internal class Cheats
+    internal class DebugCommands
     {
         public static void Update(LevelPhase levelPhase)
         {

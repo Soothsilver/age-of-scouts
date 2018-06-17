@@ -206,8 +206,9 @@ namespace Age.Core.Activities
             }
             else if (GatherTarget != null)
             {
+                NaturalObject oldTarget = GatherTarget;
                 Reset();
-                owner.Strategy.GatherTarget = null;
+                owner.Strategy.GatherTarget = owner.Strategy.FindSpotWhichYouCanGatherIfAble(oldTarget);
                 owner.Activity.Invalidate();
             }
             else if (BuildTarget != null)

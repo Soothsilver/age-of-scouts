@@ -153,7 +153,7 @@ namespace Age.Core
                 {
                     selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
                 }
-                int maxRangeExpected = ((selection.SelectedUnits.Count / 6) + 1) * 30;
+                int maxRangeExpected = ((selection.SelectedUnits.Count / 6) + 1) * Tile.HALF_WIDTH;
                 bool scatter = false;
                 selection.SelectedUnits.ForEach((unit) =>
                 {

@@ -80,6 +80,7 @@ namespace Age.Core
                 case EntityKind.MudMine:
                     name = "Bahenní pole";
                     desc = "Zde mohou tvoji {b}Pracanti{/b} těžit {blue}turbojíl{/blue}.";
+                    encyc = "BahenniPole";
                     break;
                 case EntityKind.BerryBush:
                     name = "Lesní plody";

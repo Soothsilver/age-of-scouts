@@ -13,12 +13,13 @@ namespace Age.HUD
     {
         private const int Width = 1440;
         private const int Height = 200;
+        public static Rectangle rectBottomBar = new Rectangle(0, 0, 0, 0);
 
         internal void Draw(Session session, LevelPhase levelPhase, Selection selection, bool topmost)
         {
 
             // Bottom bar
-            Rectangle rectBottomBar = new Rectangle(Root.ScreenWidth / 2 - Width / 2, Root.ScreenHeight - Height, Width, Height);
+            rectBottomBar = new Rectangle(Root.ScreenWidth / 2 - Width / 2, Root.ScreenHeight - Height, Width, Height);
             Primitives.DrawAndFillRectangle(rectBottomBar, ColorScheme.Background, ColorScheme.Foreground);
 
             // Selection   

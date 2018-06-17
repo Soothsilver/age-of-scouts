@@ -142,14 +142,14 @@ namespace Age.Core
                         Tile tile = sessionUsedInOtherThreads.Map.Tiles[x, y];
                         if (tile.BuildingOccupant != null && (tile.BuildingOccupant.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
                         {
-                            RevealFogOfWarSimple(tile, tile.BuildingOccupant.SelfConstructionInProgress ? 1 : tile.BuildingOccupant.Template.LineOfSightInTiles);
+                            RevealFogOfWarSimple(tile, tile.BuildingOccupant.SelfConstructionInProgress ? 0 : tile.BuildingOccupant.Template.LineOfSightInTiles);
                         }
                     }
                 };
 
                 foreach (var unit in sessionUsedInOtherThreads.AllUnits.Where(unt => unt.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
                 {
-                    FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, sessionUsedInOtherThreads.Map);
+                    RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, sessionUsedInOtherThreads.Map);
                 }
             }
 

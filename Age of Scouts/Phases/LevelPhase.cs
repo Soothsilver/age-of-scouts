@@ -51,7 +51,7 @@ namespace Age.Phases
             Session.Map.Draw(Session, elapsedSeconds, Selection);
             Selection.Draw(this, elapsedSeconds);
             DrawHUD.Draw(this, Session, topmost, elapsedSeconds);
-            Cheats.Draw(this);
+            DebugCommands.Draw(this);
             base.Draw(sb, game, elapsedSeconds, topmost);
         }
 
@@ -111,7 +111,7 @@ namespace Age.Phases
                 troop.AI.Update(Session);
             }
             PerformanceCounter.EndMeasurement(PerformanceGroup.AI);
-            Cheats.Update(this);
+            DebugCommands.Update(this);
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape))
             {
                 Root.PushPhase(new IngameMenuPhase(this));
@@ -120,7 +120,18 @@ namespace Age.Phases
             {
                 Selection.PressDelete(this.Session);
             }
-
+            if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Home))
+            {
+                Building yourKitchen = Session.AllBuildings.FirstOrDefault(bld => bld.Template.Id == BuildingId.Kitchen && bld.Controller == Session.PlayerTroop);
+                if (yourKitchen != null)
+                {
+                    Session.SmartCenterTo(yourKitchen.FeetStdPosition);
+                }
+            }
+            if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
+            {
+                Root.PushPhase(new CheatPhase(this));
+            }
             if (Root.WasKeyPressed(Microsoft.Xna.Framework.Input.Keys.F12))
             {
                 Root.PushPhase(new SettingsPhase());

@@ -208,8 +208,18 @@ namespace Age.World
 
             if (selection.SelectedBuildingToPlace != null && mouseOverTile != null)
             {
-                selection.SelectedBuildingToPlace?.DrawShadow(session, session, mouseOverTile,
-                    session.PlayerTroop.LightColor);
+                if (selection.WhereToPlaceWalls != null)
+                {
+                    foreach(Tile tl in selection.WhereToPlaceWalls)
+                    {
+                        selection.SelectedBuildingToPlace.DrawShadow(session, session, tl, session.PlayerTroop.LightColor);
+                    }
+                }
+                else
+                {
+                    selection.SelectedBuildingToPlace.DrawShadow(session, session, mouseOverTile,
+                        session.PlayerTroop.LightColor);
+                }
             }
 
             // Layer 3: Projectiles

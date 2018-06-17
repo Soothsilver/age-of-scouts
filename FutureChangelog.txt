@@ -18,13 +18,20 @@ YES: level 2 voicework and quests
 YES: katapult
 YES: dropoff point buildings
 Performance test
-Gather AI to switch to another resource when no path
+YES: Gather AI to switch to another resource when no path
 Build skript
 - Autobuild ZIP file
 - Prettier installer 
 - installer name
-zobrazovat viewport v minimapce
-simpler line of sight algorithm for buildings
+YES: zobrazovat viewport v minimapce
+YES: simpler line of sight algorithm for buildings
+YES: cheat screen
+test attack move into enclosed inaccessible space
+YES: encyklopedie: val
+YES: encyklopedie: klávesové zkratky
+YES: klávesová zkratka: home
+YES: udelat, aby nepratele nemohli utocit na fiktivniho "Spojence"
+lepsi time dilation
 
 
 IN PROGRESS: Mise 2 radenín
@@ -34,8 +41,8 @@ YES: icons make them work
 ---- Feedback z vıpravy ----
 Informace o útoku nepøátel "Pøepad"
 Déš a vzducholoï, postup na vyšší úroveò
-Ménì agresivní, slabší nepøítel
-Lepší pohyb skupiny jednotek
+YES: Ménì agresivní, slabší nepøítel
+YES: Lepší pohyb skupiny jednotek
 
 
 

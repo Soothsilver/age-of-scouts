@@ -14,6 +14,8 @@ namespace Age.Phases
         // Things to do with primacy
         public LeaderPowerInstance SelectedGodPower;
         public BuildingTemplate SelectedBuildingToPlace;
+        public List<Tile> WhereToPlaceWalls = null;
+        public Tile StartedBuildingOnThisTile;
 
         // Actual selection
         public List<Unit> SelectedUnits = new List<Unit>();
@@ -28,10 +30,15 @@ namespace Age.Phases
 
         internal void Update(LevelPhase levelPhase, float elapsedSeconds)
         {
+            WhereToPlaceWalls = null;
             Tile mouseOverTile = levelPhase.Session.Map.GetTileFromStandardCoordinates(
                     Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, levelPhase.Session)
                 );
             SelectedUnits.RemoveAll(unt => unt.Broken);
+            if (SelectedBuildingToPlace?.Id == BuildingId.Wall && StartedBuildingOnThisTile != null && mouseOverTile != null)
+            {
+                WhereToPlaceWalls = WallPlacement.DetermineWhereToPlaceWalls(StartedBuildingOnThisTile, mouseOverTile, levelPhase.Session);
+            }
             if (UI.MouseOverOnClickAction != null)
             {
                 // Buttons always have priority.
@@ -42,28 +49,49 @@ namespace Age.Phases
                 {
                     if (SelectedBuildingToPlace.PlaceableOn(levelPhase.Session, mouseOverTile, !Settings.Instance.EnableFogOfWar))
                     {
-                        if (SelectedBuildingToPlace.ApplyCost(levelPhase.Session.PlayerTroop))
+                        List<Tile> whereToPlace = (WhereToPlaceWalls == null ? new List<Tile> { mouseOverTile } : WhereToPlaceWalls);
+                        bool first = true;
+                        BuildingTemplate placingWhat = SelectedBuildingToPlace;
+                        foreach (var whereTo in whereToPlace)
                         {
-                            Building construction = levelPhase.Session.SpawnBuildingAsConstruction(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop, mouseOverTile);
-                            SelectedUnits[0].UnitTemplate.PlayBuildSound();
-                            SelectedUnits.ForEach(unit => unit.Strategy.ResetTo(construction));
-                            if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
-                                && !Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
+
+                            if (placingWhat.ApplyCost(levelPhase.Session.PlayerTroop))
                             {
-                                SelectedBuildingToPlace = null;
+                                Building construction = levelPhase.Session.SpawnBuildingAsConstruction(placingWhat, levelPhase.Session.PlayerTroop, whereTo);
+                                if (first)
+                                {
+                                    SelectedUnits[0].UnitTemplate.PlayBuildSound();
+                                    SelectedUnits.ForEach(unit => unit.Strategy.ResetTo(construction));
+
+                                    if (!Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
+                                        && !Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
+                                    {
+                                        SelectedBuildingToPlace = null;
+                                    }
+                                    StartedBuildingOnThisTile = null;
+                                    first = false;
+                                }
+                            }
+                            else
+                            {
+                                levelPhase.EmitInsufficientResourcesFor(placingWhat, levelPhase.Session.PlayerTroop);
+                                break;
                             }
                         }
-                        else
-                        {
-                            levelPhase.EmitInsufficientResourcesFor(SelectedBuildingToPlace, levelPhase.Session.PlayerTroop);
-                        }
                     }
+
                     else
                     {
                         levelPhase.EmitWarningMessage("Sem budovu nemůžeš postavit.");
+                        StartedBuildingOnThisTile = null;
                         SFX.PlaySoundUnlessPlaying(SoundEffectName.Error);
                     }
                     Root.WasMouseLeftClick = false;
+                }
+                if (Root.Mouse_NewState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && StartedBuildingOnThisTile == null
+                    && mouseOverTile != null)
+                {
+                    StartedBuildingOnThisTile = mouseOverTile;
                 }
                 if (Root.WasMouseRightClick)
                 {
@@ -98,7 +126,7 @@ namespace Age.Phases
                 {
                     if (Root.Mouse_OldState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
                     {
-                        if (!DontStartSelectionBoxThisFrame)
+                        if (!DontStartSelectionBoxThisFrame && !Root.IsMouseOver(BottomBar.rectBottomBar))
                         {
                             SelectionInProgress = true;
                             StandardCoordinatesSelectionStart = Isomath.ScreenToStandard(Root.Mouse_NewState.X,

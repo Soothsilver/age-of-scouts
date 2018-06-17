@@ -76,6 +76,10 @@ namespace Age.Core
 
         public override void TakeDamage(int dmg, Entity source)
         {
+            if (this.Controller.Invincible)
+            {
+                return;
+            }
             this.HP -= dmg;
             this.Controller.YourEntityIsUnderAttack(this, source);
             if (this.HP <= 0 && !this.Broken)
@@ -90,7 +94,10 @@ namespace Age.Core
                 {
                     if (source is Unit sourceUnit)
                     {
-                        Tactics.ResetTo(sourceUnit, false);
+                        if (Session.AllUnits.Contains(sourceUnit))
+                        {
+                            Tactics.ResetTo(sourceUnit, false);
+                        }
                     }
                 }
             }
@@ -159,7 +166,7 @@ namespace Age.Core
             
         }
 
-        public bool FullyIdle => Tactics.Idle && Activity.Idle;
+        public bool FullyIdle => Tactics.Idle && Activity.Idle && Strategy.HasNoStrategy;
 
         public void AttackIfAble(Session session, AttackableEntity target, float elapsedSeconds)
         {

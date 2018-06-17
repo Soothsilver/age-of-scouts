@@ -17,18 +17,12 @@ namespace Age.Phases
         string Title;
         string Description;
         Texture2D Photo;
-        Entity entity;
         public EncyclopediaPhase(Entity entity)
-        {
-            this.entity = entity;
-        }
-
-        protected override void Initialize(Game game)
         {
             try
             {
-                string txt = System.IO.File.ReadAllText("Encyclopedia\\" + entity.EncyclopediaFilename  + ".txt");
-                string[] split = txt.Split(new char[] { '\n' } , 2);
+                string txt = System.IO.File.ReadAllText("Encyclopedia\\" + entity.EncyclopediaFilename + ".txt");
+                string[] split = txt.Split(new char[] { '\n' }, 2);
                 Title = split[0];
                 Description = split[1];
             }
@@ -38,6 +32,28 @@ namespace Age.Phases
                 Description = "";
             }
             Photo = Library.Get(entity.Icon);
+        }
+        public EncyclopediaPhase(string filename)
+        {
+            try
+            {
+                string txt = System.IO.File.ReadAllText("Encyclopedia\\" + filename + ".txt");
+                string[] split = txt.Split(new char[] { '\n' }, 2);
+                Title = split[0];
+                Description = split[1];
+            }
+            catch (Exception)
+            {
+                Title = "???";
+                Description = "Soubor nebyl nalezen.";
+            }
+            Photo = Library.Pixel;
+        }
+
+
+        protected override void Initialize(Game game)
+        {
+         
             base.Initialize(game);
         }
 

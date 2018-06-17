@@ -44,7 +44,7 @@ namespace Age.Phases
 
         internal static float VolumeFromDistance(Vector2 soundSource, Vector2 listenerPoint)
         {
-            float distanceInScreens = (soundSource - listenerPoint).LengthSquared() / Root.ScreenWidth;
+            float distanceInScreens = (soundSource - listenerPoint).Length() / (Root.ScreenWidth);
             float minDistanceToFade = 1;
             float maxDistance = 5;
             float fade = MathHelper.Clamp(1 - (distanceInScreens - minDistanceToFade)/(maxDistance - minDistanceToFade), 0.1f, 1f);

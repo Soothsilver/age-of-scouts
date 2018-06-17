@@ -23,6 +23,7 @@ namespace Age.Core
                     (b, s) =>
                     {
                         s.SelectedBuildingToPlace = buildingTemplate;
+                        s.StartedBuildingOnThisTile = null;
                     }, buildingTemplate.FoodCost, buildingTemplate.WoodCost, buildingTemplate.ClayCost, 0, buildingTemplate.Icon);
                 PracantOptions.Add(option);
                 if (buildingTemplate.Id == BuildingId.Tent || buildingTemplate.Id == BuildingId.Hadrakovez)

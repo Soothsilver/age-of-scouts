@@ -107,8 +107,8 @@ namespace Age.HUD
                         int y = warning.TileY;
                         int screenX = (x - y) * tileWidth / 2 + rectangle.Width / 2 + rectangle.X;
                         int screenY = (x + y) * tileHeight / 2 + rectangle.Y;
-                        int radius = (int)R.Flicker * 30;
-                        Primitives.DrawRectangle(new Rectangle(screenX - radius, screenY - radius, radius * 2, radius * 2), Color.Red, 1);
+                        int radius = (int)(R.Flicker * 16) + 10;
+                        Primitives.DrawRectangle(new Rectangle(screenX - radius, screenY - radius, radius * 2, radius * 2), Color.Red, 2);
                     }
                     else if (warning.StopPreventingWarningsAt < DateTime.Now)
                     {

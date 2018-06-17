@@ -22,6 +22,10 @@ namespace Age.Pathfinding
             pathfindingSearchId++;
             Tile start = who.Occupies;
             Tile target = map.GetTileFromStandardCoordinates(targetPrecise);
+            if (target == null)
+            {
+                return null;
+            }
             Tile closestToTargetSoFar = start;
             openSet.Clear();
             int initH = Pathfinding.Heuristic(start, target);

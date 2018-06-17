@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -57,6 +58,16 @@ namespace Age
                 case Stance.Stealthy: return new Tooltip("Plížení", "Tato jednotka se nebude bez příkazů pohybovat ani nebude na nikoho útočit.");
             }
             return new Tooltip("?", "!");
+        }
+        public static string RemoveDiacritics(this string text)
+        {
+            string s = text.Normalize(NormalizationForm.FormD);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(s[i]) != UnicodeCategory.NonSpacingMark) sb.Append(s[i]);
+            }
+            return sb.ToString();
         }
     }
 }

@@ -39,6 +39,7 @@ namespace Age.Core
         public static Troop Pseudotroop { get; internal set; } = new Troop("Gaia", null, Era.EraNacelniku, Color.Black, Color.Black);
         public BaseAI AI;
         internal bool Omniscience;
+        internal bool Invincible;
 
         public int GetResourceStore(Resource resource)
         {

@@ -19,15 +19,26 @@ namespace Age.Core
 
         internal void Emit(AttackableEntity yourEntity)
         {
+            float TIME_UNTIL_STOP_WARNING = 7f;
             Tile tile = Session.Map.GetTileFromStandardCoordinates(yourEntity.FeetStdPosition);
             foreach(var w in Warnings)
             {
                 if (TooClose(w, tile))
                 {
+                    w.StopPreventingWarningsAt = DateTime.Now.AddSeconds(TIME_UNTIL_STOP_WARNING);
+                    w.StopWarningAt = DateTime.Now.AddSeconds(TIME_UNTIL_STOP_WARNING);
                     return;
                 }
             }
-            Warnings.Add(new MinimapWarning(DateTime.Now.AddSeconds(7), DateTime.Now.AddSeconds(30), tile.X, tile.Y));
+            if (yourEntity is Building)
+            {
+                SFX.PlaySoundUnlessPlaying(Auxiliary.SoundEffectName.PrepadajiNasTabor);
+            }
+            else if (yourEntity is Unit)
+            {
+                SFX.PlaySoundUnlessPlaying(Auxiliary.SoundEffectName.NeprateleUtoci);
+            }
+            Warnings.Add(new MinimapWarning(DateTime.Now.AddSeconds(TIME_UNTIL_STOP_WARNING), DateTime.Now.AddSeconds(TIME_UNTIL_STOP_WARNING), tile.X, tile.Y));
         }
 
         private bool TooClose(MinimapWarning w, Tile tile)

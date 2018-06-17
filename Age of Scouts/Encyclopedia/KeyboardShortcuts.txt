@@ -1,0 +1,9 @@
+﻿Klávesové zkratky
+[Ctrl+pravé tlačítko myši] {b}Útočný pohyb:{/b} Přesuň vybrané jednotky co nejblíže k cíli a přitom zaútoč na všechno nepřátelské po cestě.
+[Shift+levé tlačítko myši] Při stavění: postav tuto budovu a ponech ji vybranou, abys ji mohl postavit vícekrát za sebou.
+[Home] Kamera se přesune k tvojí první Kuchyni.
+[Del] Smaž vybranou jednotku nebo budovu
+[Esc] Zobrazit menu
+[F12] Zobrazit nastavení
+[F1] Zobrazit ladící příkazy
+[Enter] Zobrazit okno na cheatování

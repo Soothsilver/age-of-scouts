@@ -21,6 +21,8 @@ namespace Age.Core.Activities
 
         public bool DoesStrategyExist => BuildingStuff || GatherTarget != null || AttackMoveTarget != IntVector.Zero;
 
+        public bool HasNoStrategy => AttackMoveTarget == IntVector.Zero && GatherTarget == null && !BuildingStuff;
+
         public Strategy(Unit owner)
         {
             this.owner = owner;
@@ -190,6 +192,47 @@ namespace Age.Core.Activities
         {
             FullStop();
             AttackMoveTarget = standardTarget;
+        }
+
+        /// <summary>
+        /// Returns a natural resource with the same resource as the blocked resource and as close as possible that has an empty gatherer spot and is reachable by this unit.
+        /// If none exists, this returns null.
+        /// </summary>
+        /// <param name="blockedResource">A gathering spot that this unit cannot access because the path is blocked, probably by other units.</param>
+        internal NaturalObject FindSpotWhichYouCanGatherIfAble(NaturalObject blockedResource)
+        {
+            var allOptions = new HashSet<Vector2>();
+            owner.Session.Map.ForEachTile((x, y, tile) =>
+            {
+                // PERFORMANCE!
+                if (tile.NaturalObjectOccupant != null && tile.NaturalObjectOccupant.ProvidesResource == blockedResource.ProvidesResource &&
+                tile.NaturalObjectOccupant.ResourcesLeft > 0)
+                {
+                    foreach (var neighbour in tile.Neighbours.All)
+                    {
+                        if (neighbour.Occupants.Count == 0)
+                        {
+                            allOptions.Add(Isomath.TileToStandard(neighbour.X + 0.5f, neighbour.Y + 0.5f));
+                        }
+                    }
+                }
+            });
+            var bestPath = Pathfinding.Pathfinding.DijkstraMultiple(this.owner, allOptions, owner.Session.Map);
+            if (bestPath == null)
+            {
+                return null;
+            }
+            Vector2 bestSpot = bestPath.Last.Value;
+            Tile bestSpotTile = owner.Session.Map.GetTileFromStandardCoordinates(bestSpot);
+            foreach(var tile in bestSpotTile.Neighbours.All)
+            {
+                if (tile.NaturalObjectOccupant?.ProvidesResource == blockedResource.ProvidesResource)
+                {
+                    return tile.NaturalObjectOccupant;
+                }
+            }
+            return null; // This should not happen....
+
         }
     }
 }

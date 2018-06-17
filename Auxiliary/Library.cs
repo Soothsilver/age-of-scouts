@@ -296,7 +296,9 @@ namespace Auxiliary
         Rad8,
         Rad9,
         Rad10,
-        Rad11
+        Rad11,
+        NeprateleUtoci,
+        PrepadajiNasTabor
     }
 
     public enum TextureName
