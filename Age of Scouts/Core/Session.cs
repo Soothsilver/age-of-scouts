@@ -174,7 +174,7 @@ namespace Age.Core
                         if (scatter)
                         {
                             Vector2 actualTarget = standardTarget + R.RandomUnitVector() * maxRangeExpected * R.Float();
-                            standardTarget = actualTarget;
+                            unit.Strategy.ResetTo(actualTarget);
                         }
                         else
                         {
