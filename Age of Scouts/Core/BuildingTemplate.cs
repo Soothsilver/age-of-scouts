@@ -62,7 +62,7 @@ namespace Age.Core
         {
             SecondsToBuild = 30,
             SelectionSfx = SoundEffectName.LadderClimb,
-            LineOfSightInTiles = 7,
+            LineOfSightInTiles = 8,
             MaxHP = 250
         };
         public static BuildingTemplate MajestatniSocha = new BuildingTemplate(BuildingId.MajestatniSocha, "Majestátní socha", "Obrovské umělecké dílo, které je důkazem schopností, vytrvalosti a oddanosti skautů ve tvém oddíle. Jakmile postavíš Majestatní sochu, začne odpočet, na jehož konci automaticky vyhraješ úroveň, pokud do té doby nikdo tvoji sochu nezboří.", TextureName.Statue, 4, 4, 200, 500, 1500)
@@ -96,9 +96,10 @@ namespace Age.Core
         {
             SecondsToBuild = 10,
             SelectionSfx = SoundEffectName.MovingBoxes,
-            MaxHP = 250
+            MaxHP = 250,
+            LineOfSightInTiles = 2
         };
-        internal int LineOfSightInTiles = 3;
+        public int LineOfSightInTiles = 3;
         public int MaxHP;
 
         internal bool ApplyCost(Troop troop)

@@ -142,6 +142,7 @@
     <Compile Include="Core\IScreenInformation.cs" />
     <Compile Include="Core\LeaderPowerInstance.cs" />
     <Compile Include="Core\LeaderPower.cs" />
+    <Compile Include="Core\MinimapWarnings.cs" />
     <Compile Include="Core\NameGenerator.cs" />
     <Compile Include="Core\NaturalObject.cs" />
     <Compile Include="Animation\Sprite.cs" />

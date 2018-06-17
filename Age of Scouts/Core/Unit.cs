@@ -77,6 +77,7 @@ namespace Age.Core
         public override void TakeDamage(int dmg, Entity source)
         {
             this.HP -= dmg;
+            this.Controller.YourEntityIsUnderAttack(this, source);
             if (this.HP <= 0 && !this.Broken)
             {
                 this.Broken = true;

@@ -9,6 +9,7 @@ namespace Age.AI
 {
     class AggressiveAI : BaseAI
     {
+        internal bool Weak;
         int skippedUpdates = 0;
 
         public AggressiveAI(Troop self) : base(self)
@@ -84,7 +85,7 @@ namespace Age.AI
             // Order Kitchen:
             if (myKitchen.ConstructionInProgress == null && myKitchen.ConstructionQueue.Count == 0)
             {
-                if (villagers < soldiers)
+                if (villagers < (Weak ? 3 * soldiers : soldiers))
                 {
                     myKitchen.EnqueueConstruction(UnitTemplate.Pracant);
                 }
@@ -115,7 +116,7 @@ namespace Age.AI
             }
 
             // Order soldiers to fight:
-            if (idleSoldiers >=  10)
+            if (idleSoldiers >= 10 && !Weak)
             {
                 var targets = session.AllUnits.Where(unt => session.AreEnemies(myKitchen, unt)).Cast<AttackableEntity>()
                     .Concat(session.AllBuildings.Where(bld => session.AreEnemies(myKitchen, bld))).ToList();

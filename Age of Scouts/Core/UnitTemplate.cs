@@ -16,6 +16,7 @@ namespace Age.Core
         public bool CanBuildStuff;
         public bool CanAttack = true;
         public string EncyclopediaFilename;
+        public float VoiceBasicVolume = 1;
 
         private SoundEffect Ack1;
         private SoundEffect Ack2;
@@ -83,7 +84,8 @@ namespace Age.Core
             };
             Hadrakostrelec = new UnitTemplate(UnitId.Hadrakostrelec, "Hadrákostřelec", "Hadrákostřelec je základní bojová jednotka. Hází po nepřátelích přesné papírové míčky z dálky. Dá se nabrat z {b}muničního stanu{/b}.", TextureName.HadrakometLogo, TextureName.KidBroken, Sprite.Kid, 80, 20, 0)
             {
-                EncyclopediaFilename = "Hadrakostrelec"
+                EncyclopediaFilename = "Hadrakostrelec",
+                VoiceBasicVolume = 0.6f
             };
             Katapult = new UnitTemplate(UnitId.Katapult, "Katapult", "Katapult je zvláště silný proti stavbám. Střílí turbojílové koule z obrovské dálky. Dá se vyrobit v {b}dřevařském koutě{/b}.", TextureName.KatapultRight1, TextureName.KatapultCorpse, Sprite.Katapult, 0, 150, 50)
             {
@@ -97,7 +99,7 @@ namespace Age.Core
         {
             if (this.CanBuildStuff)
             {
-                SFX.Play(Build);
+                SFX.Play(Build, VoiceBasicVolume);
             }
             else
             {
@@ -137,7 +139,7 @@ namespace Age.Core
         internal void PlayMovementSound()
         {
             SFX.LastUnitSelectedXTimes = 0;
-            SFX.PlayRandom(Ack1, Ack2, AckMove);
+            SFX.PlayRandom(VoiceBasicVolume, Ack1, Ack2, AckMove);
         }
 
         internal void PlaySelectionSound(Unit unit)
@@ -153,13 +155,13 @@ namespace Age.Core
             }
             if (SFX.LastUnitSelectedXTimes % 8 >= 5)
             {
-                if (SFX.LastUnitSelectedXTimes % 8 == 5) SFX.Play(Joke1);
-                if (SFX.LastUnitSelectedXTimes % 8 == 6) SFX.Play(Joke2);
-                if (SFX.LastUnitSelectedXTimes % 8 == 7) SFX.Play(Joke3);
+                if (SFX.LastUnitSelectedXTimes % 8 == 5) SFX.Play(Joke1, VoiceBasicVolume);
+                if (SFX.LastUnitSelectedXTimes % 8 == 6) SFX.Play(Joke2, VoiceBasicVolume);
+                if (SFX.LastUnitSelectedXTimes % 8 == 7) SFX.Play(Joke3, VoiceBasicVolume);
             }
             else
             {
-                SFX.PlayRandom(Selection1, Selection2, Selection3, Selection4);
+                SFX.PlayRandom(VoiceBasicVolume, Selection1, Selection2, Selection3, Selection4);
             }
         }
 
@@ -169,28 +171,28 @@ namespace Age.Core
             switch (kind)
             {
                 case EntityKind.BerryBush:
-                    SFX.Play(GatherBerries);
+                    SFX.Play(GatherBerries, VoiceBasicVolume);
                     break;
                 case EntityKind.Corn:
-                    SFX.Play(GatherCorn);
+                    SFX.Play(GatherCorn, VoiceBasicVolume);
                     break;
                 case EntityKind.UntraversableTree:
-                    SFX.Play(GatherWood);
+                    SFX.Play(GatherWood, VoiceBasicVolume);
                     break;
                 case EntityKind.MudMine:
-                    SFX.Play(GatherMud);
+                    SFX.Play(GatherMud, VoiceBasicVolume);
                     break;
             }
         }
 
-        internal void PlayUnitCreatedSound()
+        internal void PlayUnitCreatedSound(float volumeModifier)
         {
-            SFX.Play(UnitCreated);
+            SFX.Play(UnitCreated, VoiceBasicVolume * volumeModifier);
         }
         internal void PlayAttackSound()
         {
             SFX.LastUnitSelectedXTimes = 0;
-            SFX.PlayRandom(AckAttack, AckAttack2, Ack1, Ack2);
+            SFX.PlayRandom(VoiceBasicVolume, AckAttack, AckAttack2, Ack1, Ack2);
         }
     }
 

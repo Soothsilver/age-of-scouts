@@ -1,4 +1,5 @@
 ﻿using Age.AI;
+using Age.HUD;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -75,6 +76,23 @@ namespace Age.Core
         internal bool IsAlliedWith(Troop anotherPlayer)
         {
             return Allies.Contains(anotherPlayer);
+        }
+
+        /// <summary>
+        /// Triggers whenever this a unit or building controlled by this troop takes damage.
+        /// </summary>
+        /// <param name="yourEntity">The damaged unit or building</param>
+        /// <param name="source">What caused the damage</param>
+        internal void YourEntityIsUnderAttack(AttackableEntity yourEntity, Entity source)
+        {
+            if (yourEntity.Controller != source.Controller)
+            {
+                if (this == Session.PlayerTroop)
+                {
+                    // TODO minimap warning
+                    Session.MinimapWarnings.Emit(yourEntity);
+                }
+            }
         }
     }
 }

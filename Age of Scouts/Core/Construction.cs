@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Age.Phases;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Age.Core
             building.Session.SpawnUnit(trainee);
             if (trainee.Controller == building.Session.PlayerTroop)
             {
-                trainee.UnitTemplate.PlayUnitCreatedSound();
+                trainee.UnitTemplate.PlayUnitCreatedSound(SFX.VolumeFromDistance(building.FeetStdPosition, building.Session.CenterOfScreenInStandardPixels));
             }
             if (building.RallyPointInStandardCoordinates != Vector2.Zero)
             {

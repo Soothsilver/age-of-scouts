@@ -55,7 +55,7 @@ namespace Age.Core
         internal static void RevealFogOfWar(Vector2 source, int pixelRange, Map map, float cleartime = 2, bool fromAir = false)
         {
             Tile tile = map.GetTileFromStandardCoordinates(source);
-            SetClearFogStatus(tile, cleartime, revealSecondsLeftMap);
+            SetClearFogStatus(tile, cleartime);
             for (float angle = 0; angle <= 2 * Math.PI; angle += MathHelper.Pi / 40)
             {
                 float dx = (float)Math.Cos(angle) * 10;
@@ -75,7 +75,7 @@ namespace Age.Core
                     {
                         break;
                     }
-                    SetClearFogStatus(tl, cleartime, revealSecondsLeftMap);
+                    SetClearFogStatus(tl, cleartime);
                     if (tl.NaturalObjectOccupant?.EntityKind == EntityKind.UntraversableTree && !fromAir)
                     {
                         break;
@@ -94,14 +94,22 @@ namespace Age.Core
 
 
 
-        private static void SetClearFogStatus(Tile tile, float cleartime, float[,] revealMap)
+        private static void SetClearFogStatus(Tile tile, float cleartime)
         {
-            if (trueBehindFogOfWarStatus[tile.X, tile.Y] == FogOfWarStatus.Clear && revealSecondsLeftMap[tile.X, tile.Y] > cleartime)
+            SetClearFogStatus(tile.X, tile.Y, cleartime);
+        }
+        private static void SetClearFogStatus(int x, int y, float cleartime)
+        { 
+            if (x < 0 || y < 0 || x >= mapWidth || y >= mapHeight)
             {
                 return;
             }
-            trueBehindFogOfWarStatus[tile.X, tile.Y] = FogOfWarStatus.Clear;
-            revealSecondsLeftMap[tile.X, tile.Y] = cleartime;
+            if (trueBehindFogOfWarStatus[x, y] == FogOfWarStatus.Clear && revealSecondsLeftMap[x, y] > cleartime)
+            {
+                return;
+            }
+            trueBehindFogOfWarStatus[x, y] = FogOfWarStatus.Clear;
+            revealSecondsLeftMap[x, y] = cleartime;
         }
 
         public static void PerformFogOfWarReveal(Session sessionUsedInOtherThreads, float elapsedSeconds, bool firstTimeInMap)
@@ -131,19 +139,17 @@ namespace Age.Core
                         {
                             trueBehindFogOfWarStatus[x, y] = FogOfWarStatus.Grey;
                         }
+                        Tile tile = sessionUsedInOtherThreads.Map.Tiles[x, y];
+                        if (tile.BuildingOccupant != null && (tile.BuildingOccupant.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
+                        {
+                            RevealFogOfWarSimple(tile, tile.BuildingOccupant.SelfConstructionInProgress ? 1 : tile.BuildingOccupant.Template.LineOfSightInTiles);
+                        }
                     }
                 };
 
                 foreach (var unit in sessionUsedInOtherThreads.AllUnits.Where(unt => unt.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
                 {
                     FogOfWarMechanics.RevealFogOfWar(unit.FeetStdPosition, Tile.HEIGHT * 5, sessionUsedInOtherThreads.Map);
-                }
-                foreach (var building in sessionUsedInOtherThreads.AllBuildings.Where(unt => unt.Controller == sessionUsedInOtherThreads.PlayerTroop || Settings.Instance.EnemyUnitsRevealFogOfWar || sessionUsedInOtherThreads.PlayerTroop.Omniscience))
-                {
-                    if (!building.SelfConstructionInProgress)
-                    {
-                        FogOfWarMechanics.RevealFogOfWar(building.FeetStdPosition, Tile.HEIGHT * building.Template.LineOfSightInTiles, sessionUsedInOtherThreads.Map, fromAir: true);
-                    }
                 }
             }
 
@@ -171,6 +177,26 @@ namespace Age.Core
                     }
                 }
             }
+        }
+
+        private static void RevealFogOfWarSimple(Tile tile, int lineOfSightInTiles)
+        {
+            for (int x = -lineOfSightInTiles; x <= lineOfSightInTiles; x++)
+            {
+                for (int y = -lineOfSightInTiles; y <= lineOfSightInTiles; y++)
+                {
+                    int manhattan = Math.Abs(x) + Math.Abs(y);
+                    if (manhattan <= lineOfSightInTiles)
+                    {
+                        SetClearFogStatus(tile.X + x, tile.Y + y, 2);
+                    }
+                }
+            }
+            /*
+            for (int cycle = 1; cycle <= lineOfSightInTiles; cycle++)
+            {
+              
+            }*/
         }
 
         public static void AcceptRevealChanges(Session session)

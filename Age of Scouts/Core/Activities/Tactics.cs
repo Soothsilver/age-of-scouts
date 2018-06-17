@@ -28,7 +28,6 @@ namespace Age.Core.Activities
         /// The unit will try to move as close as possible to this building, and then, if possible: construct it, repair it and drop off resources at it.
         /// </summary>
         public Building BuildTarget;
-        private int FinalPointMovements = 0;
         /// <summary>
         /// The unit will try to gather resources from this until the unit is full or the resource object is exhausted.
         /// </summary>
@@ -57,7 +56,6 @@ namespace Age.Core.Activities
             GatherTarget = null;
             standMyGround = false;
             PathingCoordinates = null;
-            FinalPointMovements = 0;
         }
 
         private void ResetBoth()

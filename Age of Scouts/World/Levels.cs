@@ -324,6 +324,29 @@ namespace Age.World
             });
             s.ObjectivesChanged = false;
             s.LevelName = "Volná hra";
+
+            return s;
+        }
+        internal static Session FreeGameWeakAI()
+        {
+            Session s = CreateBasic1v1();
+            LoadMapIntoSession(s, "Levels\\BlankMap.tmx");
+            var enemy = s.Troops[1];
+            enemy.AI = new AggressiveAI(enemy)
+            {
+                Weak = true
+            };
+            s.Objectives.Add(new Objective("Vyřaď všechny nepřátelské jednotky.")
+            {
+                Visible = true,
+                StateTrigger = (levelPhase) => s.AllUnits.Count(unt => unt.Controller == enemy) == 0,
+                OnComplete = (session) => session.AchieveEnding(Ending.Victory)
+            });
+            enemy.Food = 0;
+            enemy.Clay = 0;
+            enemy.Wood = 0;
+            s.ObjectivesChanged = false;
+            s.LevelName = "Volná hra (slabá AI)";
             return s;
         }
 

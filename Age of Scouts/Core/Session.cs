@@ -33,6 +33,7 @@ namespace Age.Core
         public Map Map;
         internal bool ObjectivesChanged;
         internal SessionFlags Flags = new SessionFlags();
+        internal MinimapWarnings MinimapWarnings;
 
         /// <summary>
         /// Greater zoom level means more close-up. Lesser zoom level means looking from a distance. A zoom-level of 1 is basic 1:1 display. A zoom-level of 2 is
@@ -92,6 +93,7 @@ namespace Age.Core
 
         public Session()
         {
+            this.MinimapWarnings = new MinimapWarnings(this);
             GaiaTroop = new Troop("Příroda", this, Era.EraNacelniku, Color.DarkGreen, Color.LightGreen);
             // Generic death trigger
             this.ObjectivesChanged = true;
@@ -151,6 +153,8 @@ namespace Age.Core
                 {
                     selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
                 }
+                int maxRangeExpected = ((selection.SelectedUnits.Count / 6) + 1) * 30;
+                bool scatter = false;
                 selection.SelectedUnits.ForEach((unit) =>
                 {
                     if (tile.BuildingOccupant != null && unit.CanContributeToBuilding(tile.BuildingOccupant))
@@ -167,7 +171,16 @@ namespace Age.Core
                     }
                     else
                     {
-                        unit.Strategy.ResetTo(standardTarget);
+                        if (scatter)
+                        {
+                            Vector2 actualTarget = standardTarget + R.RandomUnitVector() * maxRangeExpected * R.Float();
+                            standardTarget = actualTarget;
+                        }
+                        else
+                        {
+                            scatter = true;
+                            unit.Strategy.ResetTo(standardTarget);
+                        }
                     }
                 });
             }

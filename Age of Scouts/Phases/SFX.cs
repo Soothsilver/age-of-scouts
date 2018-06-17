@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Age.Core;
 using Auxiliary;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Age.Phases
@@ -30,15 +31,24 @@ namespace Age.Phases
             PlaySound(sfxName);
         }
 
-        internal static void PlayRandom(params SoundEffect[] sfxs)
+        internal static void PlayRandom(float volume, params SoundEffect[] sfxs)
         {
             SoundEffect sfx = sfxs[R.Next(sfxs.Length)];
-            sfx.Play(Settings.Instance.SfxVolume, 0, 0);
+            sfx.Play(Settings.Instance.SfxVolume * volume, 0, 0);
         }
 
-        internal static void Play(SoundEffect sfx)
+        internal static void Play(SoundEffect sfx, float volume)
         {
-            sfx.Play(Settings.Instance.SfxVolume, 0, 0);
+            sfx.Play(Settings.Instance.SfxVolume * volume, 0, 0);
+        }
+
+        internal static float VolumeFromDistance(Vector2 soundSource, Vector2 listenerPoint)
+        {
+            float distanceInScreens = (soundSource - listenerPoint).LengthSquared() / Root.ScreenWidth;
+            float minDistanceToFade = 1;
+            float maxDistance = 5;
+            float fade = MathHelper.Clamp(1 - (distanceInScreens - minDistanceToFade)/(maxDistance - minDistanceToFade), 0.1f, 1f);
+            return fade;
         }
     }
 }

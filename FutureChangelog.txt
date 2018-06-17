@@ -14,8 +14,8 @@ YES: aegis on units as well
 YES: repairers go to adjacent building when done
 YES: in radenin, limit buildings to just tent and tower
 YES: no mud at start for each unit
-level 2 voicework and quests
-katapult
+YES: level 2 voicework and quests
+YES: katapult
 YES: dropoff point buildings
 Performance test
 Gather AI to switch to another resource when no path
@@ -23,11 +23,20 @@ Build skript
 - Autobuild ZIP file
 - Prettier installer 
 - installer name
+zobrazovat viewport v minimapce
+simpler line of sight algorithm for buildings
 
 
 IN PROGRESS: Mise 2 radenín
 IN PROGRESS: Mise 3 Temnı hrad
 YES: icons make them work
+
+---- Feedback z vıpravy ----
+Informace o útoku nepøátel "Pøepad"
+Déš a vzducholoï, postup na vyšší úroveò
+Ménì agresivní, slabší nepøítel
+Lepší pohyb skupiny jednotek
+
 
 
 DELAYED: tile rhythm would require that buildings be split into tiles...

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Age.Core;
 using Age.Phases;
 using Age.World;
@@ -22,7 +23,6 @@ namespace Age.HUD
         private static Color tallGrass = Color.GreenYellow.Alpha(TERRAIN_ALPHA).OverlayOnto(Color.White);
         private static Color forest = Color.DarkGreen.Alpha(TERRAIN_ALPHA).OverlayOnto(Color.White);
         private static Color obstacle = Color.Black;
-        private int cyclesUntilRedraw = 0;
         private Rectangle rectangle;
         private volatile bool initialized = false;
 
@@ -94,6 +94,38 @@ namespace Age.HUD
                 minimapTexture.SetData(minimapData);
             }
             Primitives.DrawImage(minimapTexture, rectangle);
+            if (session.MinimapWarnings.Warnings.Any())
+            {
+                int minimapHeight = rectangle.Height;
+                int tileHeight = rectangle.Height / map.Height;
+                for(int wi = session.MinimapWarnings.Warnings.Count - 1; wi >= 0; wi--)
+                {
+                    MinimapWarnings.MinimapWarning warning = session.MinimapWarnings.Warnings[wi];
+                    if (warning.StopWarningAt > DateTime.Now)
+                    {
+                        int x = warning.TileX;
+                        int y = warning.TileY;
+                        int screenX = (x - y) * tileWidth / 2 + rectangle.Width / 2 + rectangle.X;
+                        int screenY = (x + y) * tileHeight / 2 + rectangle.Y;
+                        int radius = (int)R.Flicker * 30;
+                        Primitives.DrawRectangle(new Rectangle(screenX - radius, screenY - radius, radius * 2, radius * 2), Color.Red, 1);
+                    }
+                    else if (warning.StopPreventingWarningsAt < DateTime.Now)
+                    {
+                        session.MinimapWarnings.Warnings.RemoveAt(wi);
+                    }
+                   
+                }
+            }
+            // Viewport
+            IntVector minimapTopLeft = StandardToMinimap(Isomath.ScreenToStandard(Vector2.Zero, session), rectangle, session);
+            IntVector minimapTopRight = StandardToMinimap(Isomath.ScreenToStandard(new Vector2(Root.ScreenWidth, 0), session), rectangle, session);
+            IntVector minimapBottomLeft = StandardToMinimap(Isomath.ScreenToStandard(new Vector2(0, Root.ScreenHeight), session), rectangle, session);
+            IntVector minimapBottomRight = StandardToMinimap(Isomath.ScreenToStandard(new Vector2(Root.ScreenWidth, Root.ScreenHeight), session), rectangle, session);
+            Rectangle minimapRect = new Rectangle((int)minimapTopLeft.X, (int)minimapTopLeft.Y, (int)(minimapBottomRight.X - minimapTopLeft.X), (int)(minimapBottomRight.Y - minimapTopLeft.Y));
+            Primitives.DrawRectangle(minimapRect, Color.White);
+            
+
             // Borders
             int movright = tileWidth;
             int movall = -2;
@@ -132,6 +164,18 @@ namespace Age.HUD
             minimapTexture.SetData(minimapData);
             this.initialized = true;
 
+        }
+
+        private IntVector StandardToMinimap(Vector2 standard, Rectangle rectangle, Session session)
+        {
+            int minimapHeight = rectangle.Height;
+            int tileWidth = rectangle.Width / session.Map.Width;
+            int tileHeight = rectangle.Height / session.Map.Height;
+            int x = (int)(standard.X * tileWidth / Tile.WIDTH);
+            int y = (int)(standard.Y * tileHeight / Tile.HEIGHT);
+            int screenX = x + rectangle.X + rectangle.Width /2;
+            int screenY = y + rectangle.Y;
+            return new IntVector(screenX, screenY);
         }
 
         private static Color GetMinimapColor(Tile tile)
