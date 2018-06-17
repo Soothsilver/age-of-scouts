@@ -97,7 +97,7 @@ namespace Age.Core
             SecondsToBuild = 10,
             SelectionSfx = SoundEffectName.MovingBoxes,
             EncyclopediaFilename = "Val",
-            MaxHP = 250,
+            MaxHP = 100,
             LineOfSightInTiles = 2
         };
         public int LineOfSightInTiles = 3;

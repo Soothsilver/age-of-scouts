@@ -277,7 +277,7 @@ namespace Auxiliary
         SmallFanfare,
         LadderClimb,
         MunitionTent,
-        NotEnoughFood,
+        NotEnoughFood, 
         NotEnoughClay,
         NotEnoughWood,
         NotEnoughPopulationLimit,

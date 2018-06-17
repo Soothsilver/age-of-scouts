@@ -35,8 +35,10 @@ namespace Age.Phases
             int tcountBefore = process.Threads.Count;
             var memory = RememberAllThreads(process);
 
-            Thread anotherThread = new Thread(FullOuterThread);
-            anotherThread.IsBackground = true;
+            Thread anotherThread = new Thread(FullOuterThread)
+            {
+                IsBackground = true
+            };
             anotherThread.Start();
 
             process = Process.GetCurrentProcess();
