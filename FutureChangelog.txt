@@ -1,3 +1,23 @@
+
+vzducholoï
+vzduchopark
+postup na vyšší vìk
+defenzivní ai
+táborovı kruh
+random map
+
+
+
+lepsi time dilation
+Performance test
+Build skript
+- Autobuild ZIP file
+- Prettier installer 
+- installer name
+
+
+
+
 YES: VSync three options
 YES: repair
 YES: fog of map clearer reveal without flickering
@@ -17,12 +37,7 @@ YES: no mud at start for each unit
 YES: level 2 voicework and quests
 YES: katapult
 YES: dropoff point buildings
-Performance test
 YES: Gather AI to switch to another resource when no path
-Build skript
-- Autobuild ZIP file
-- Prettier installer 
-- installer name
 YES: zobrazovat viewport v minimapce
 YES: simpler line of sight algorithm for buildings
 YES: cheat screen
@@ -31,15 +46,11 @@ YES: encyklopedie: val
 YES: encyklopedie: klávesové zkratky
 YES: klávesová zkratka: home
 YES: udelat, aby nepratele nemohli utocit na fiktivniho "Spojence"
-lepsi time dilation
-
-
-IN PROGRESS: Mise 2 radenín
-IN PROGRESS: Mise 3 Temnı hrad
+YES: Mise 2 radenín
 YES: icons make them work
 
 ---- Feedback z vıpravy ----
-Informace o útoku nepøátel "Pøepad"
+YES: Informace o útoku nepøátel "Pøepad"
 Déš a vzducholoï, postup na vyšší úroveò
 YES: Ménì agresivní, slabší nepøítel
 YES: Lepší pohyb skupiny jednotek

@@ -159,8 +159,10 @@ namespace Age
 
             BackgroundMusicPlayer.Draw((float)gameTime.ElapsedGameTime.TotalSeconds);
             PerformanceCounter.EndMeasurement(PerformanceGroup.DrawCycle);
-            PerformanceCounter.Instance.DrawSelf(new Vector2(Root.ScreenWidth - 300, 50));
-
+            if (Settings.Instance.ShowPerformanceIndicators)
+            {
+                PerformanceCounter.Instance.DrawSelf(new Vector2(Root.ScreenWidth - 300, 50));
+            }
             PerformanceCounter.StartMeasurement(PerformanceGroup.SpriteBatchEnd);
             spriteBatch.End();
             PerformanceCounter.EndMeasurement(PerformanceGroup.SpriteBatchEnd);

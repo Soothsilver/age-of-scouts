@@ -17,7 +17,7 @@ namespace Age.Core
         public static void InitializeAllConstructionOptions()
         {
             foreach(BuildingTemplate buildingTemplate in new[] {  BuildingTemplate.Kitchen, BuildingTemplate.Tent, BuildingTemplate.Skladiste, BuildingTemplate.Sklipek , BuildingTemplate.MunitionTent, BuildingTemplate.DrevarskyKout, BuildingTemplate.HadrakoVez, BuildingTemplate.Wall,
-            BuildingTemplate.MajestatniSocha})
+            BuildingTemplate.MajestatniSocha, BuildingTemplate.TaborovyKruh})
             {
                 ConstructionOption option = new ConstructionOption("Postavit budovu " + buildingTemplate.Name, buildingTemplate.Description,
                     (b, s) =>

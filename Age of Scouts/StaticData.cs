@@ -18,5 +18,6 @@ namespace Age
         /// How much HP of a building does a single Pracant repair per second.
         /// </summary>
         internal static float RepairSpeed = 2;
+        internal static Resource[] AllResources = new[] { Resource.Food, Resource.Clay, Resource.Wood };
     }
 }

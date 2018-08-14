@@ -16,7 +16,7 @@ namespace Age.Phases
             int xd = (xdif >= ydif ? 1 : 0);
             int yd = (xdif >= ydif ? 0 : 1);
             if (mouseOverTile.X < startedBuildingOnThisTile.X) xd *= -1;
-            if (mouseOverTile.Y < startedBuildingOnThisTile.Y) yd *= 1;
+            if (mouseOverTile.Y < startedBuildingOnThisTile.Y) yd *= -1;
             List<Tile> tiles = new List<Tile>();
             for (int i  =0; i <= max; i++)
             {

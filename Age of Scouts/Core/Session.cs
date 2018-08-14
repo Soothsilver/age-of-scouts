@@ -110,7 +110,7 @@ namespace Age.Core
             this.Projectiles.Add(projectile);
         }
 
-        internal void RightClickOn(Selection selection, Vector2 standardTarget)
+        internal void RightClickOn(Selection selection, Vector2 standardTarget, bool playSound)
         {
             Tile tile = Map.GetTileFromStandardCoordinates(standardTarget);
             if (tile != null && selection.SelectedUnits.Count > 0 &&
@@ -119,7 +119,10 @@ namespace Age.Core
                 if (Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) ||
                     Root.Keyboard_NewState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
                 {
-                    selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                    if (playSound)
+                    {
+                        selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                    }
                     selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttackMove((IntVector)standardTarget); });
                     return;
                 }
@@ -127,31 +130,46 @@ namespace Age.Core
                 foreach (var target in AllUnits)
                 {
                     if (AreEnemies(selection.SelectedUnits[0], target) &&
-                        target.Hitbox.Contains((int) standardTarget.X, (int) standardTarget.Y))
+                        target.Hitbox.Contains((int)standardTarget.X, (int)standardTarget.Y))
                     {
-                        selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                        if (playSound)
+                        {
+                            selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                        }
                         selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttack(target); });
                         return;
                     }
                 }
                 if (tile.BuildingOccupant != null && selection.SelectedUnits[0].CanContributeToBuilding(tile.BuildingOccupant))
                 {
-                    selection.SelectedUnits[0].UnitTemplate.PlayBuildSound();
+                    if (playSound)
+                    {
+                        selection.SelectedUnits[0].UnitTemplate.PlayBuildSound();
+                    }
                 }
                 else if (tile.BuildingOccupant != null && selection.SelectedUnits.Any(unt => unt.CanAttack) &&
                          AreEnemies(selection.SelectedUnits[0], tile.BuildingOccupant))
                 {
-                    selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                    if (playSound)
+                    {
+                        selection.SelectedUnits[0].UnitTemplate.PlayAttackSound();
+                    }
                     selection.SelectedUnits.ForEach((unit) => { unit.Strategy.ResetToAttack(tile.BuildingOccupant); });
                     return;
                 }
                 else if (tile.NaturalObjectOccupant != null && selection.SelectedUnits[0].CanBeOrderedToGatherFrom(tile.NaturalObjectOccupant))
                 {
-                    selection.SelectedUnits[0].UnitTemplate.PlayGatherSound(tile.NaturalObjectOccupant.EntityKind);
+                    if (playSound)
+                    {
+                        selection.SelectedUnits[0].UnitTemplate.PlayGatherSound(tile.NaturalObjectOccupant.EntityKind);
+                    }
                 }
                 else
                 {
-                    selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
+                    if (playSound)
+                    {
+                        selection.SelectedUnits[0].UnitTemplate.PlayMovementSound();
+                    }
                 }
                 int maxRangeExpected = ((selection.SelectedUnits.Count / 6) + 1) * Tile.HALF_WIDTH;
                 bool scatter = false;

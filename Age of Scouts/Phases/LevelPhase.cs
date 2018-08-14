@@ -102,7 +102,7 @@ namespace Age.Phases
             if (Root.WasMouseRightClick)
             {
                 Vector2 standardTarget = Isomath.ScreenToStandard(Root.Mouse_NewState.X, Root.Mouse_NewState.Y, Session);
-                Session.RightClickOn(Selection, standardTarget);
+                Session.RightClickOn(Selection, standardTarget, true);
             }
             PerformanceCounter.StartMeasurement(PerformanceGroup.AI);
             for(int pl = 0; pl < Session.Troops.Count; pl++)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Age.AI;
 using Age.Animation;
 using Age.HUD;
 using Age.Phases;
@@ -114,12 +115,7 @@ namespace Age.Core
         {
             return this.Controller == owner.Controller && owner.CarryingHowMuchResource > 0
                 &&
-                (
-                    this.Template.Id == BuildingId.Kitchen ||
-                    (this.Template.Id == BuildingId.Sklipek && owner.CarryingResource == Resource.Food) ||
-                    (this.Template.Id == BuildingId.Skladiste && owner.CarryingResource != Resource.Food) ||
-                    (this.Template.Id == BuildingId.DrevarskyKout && owner.CarryingResource == Resource.Wood)
-                );
+                this.Template.CanAcceptResource(owner.CarryingResource);
         }
 
         internal bool EnqueueConstruction(UnitTemplate unitTemplate)
@@ -307,6 +303,15 @@ namespace Age.Core
                 {
                     SelfConstructionProgress = 1;
                     SelfConstructionInProgress = false;
+                    foreach(Unit unit in Session.AllUnits.Where(unt => unt.Controller == this.Controller &&
+                    unt.UnitTemplate.CanGatherStuff && unt.Activity.BuildingWhat == this))
+                    {
+                        NaturalObject gatherWhat = Subroutines.FindClosestGatherSpotGatherableBy(this);
+                        if (gatherWhat != null)
+                        {
+                            unit.Strategy.ResetTo(gatherWhat);
+                        }
+                    }
                     if (this.Controller == Session.PlayerTroop)
                     {
                         SFX.PlaySoundUnlessPlaying(SoundEffectName.Harp);

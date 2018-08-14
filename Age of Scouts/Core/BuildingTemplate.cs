@@ -85,6 +85,17 @@ namespace Age.Core
             MaxHP = 100,
             EncyclopediaFilename = "Sklipek"
         };
+
+        internal bool CanAcceptResource(Resource carryingResource)
+        {
+            return (
+                this.Id == BuildingId.Kitchen ||
+                (this.Id == BuildingId.Sklipek && carryingResource == Resource.Food) ||
+                (this.Id == BuildingId.Skladiste && carryingResource != Resource.Food) ||
+                (this.Id == BuildingId.DrevarskyKout && carryingResource == Resource.Wood)
+            );
+        }
+
         public static BuildingTemplate DrevarskyKout = new BuildingTemplate(BuildingId.DrevarskyKout, "Dřevařský kout", "V dřevařském koutě můžeš stavět katapulty, a pracanti tam mohou odnášet dřevo.", TextureName.DrevarskyKout, 2, 2, 0, 300, 0)
         {
             SecondsToBuild = 70,
@@ -98,6 +109,14 @@ namespace Age.Core
             SelectionSfx = SoundEffectName.MovingBoxes,
             EncyclopediaFilename = "Val",
             MaxHP = 100,
+            LineOfSightInTiles = 2
+        };
+        public static BuildingTemplate TaborovyKruh = new BuildingTemplate(BuildingId.TaborovyKruh, "Táborový kruh", "S táborovým kruhem můžete slibovat na vyšší věk.", TextureName.TaborovyKruh, 2, 2, 0, 400, 40)
+        {
+            SecondsToBuild = 40,
+            SelectionSfx = SoundEffectName.SkautskySignal,
+            EncyclopediaFilename = "TaborovyKruh",
+            MaxHP = 200,
             LineOfSightInTiles = 2
         };
         public int LineOfSightInTiles = 3;
@@ -173,6 +192,7 @@ namespace Age.Core
         Skladiste,
         Sklipek,
         DrevarskyKout,
-        Wall
+        Wall,
+        TaborovyKruh
     }
 }

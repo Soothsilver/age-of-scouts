@@ -121,6 +121,7 @@
     <Compile Include="AI\AggressiveAI.cs" />
     <Compile Include="AI\BaseAI.cs" />
     <Compile Include="AI\DoNothingAI.cs" />
+    <Compile Include="AI\Subroutines.cs" />
     <Compile Include="Animation\SpriteCache.cs" />
     <Compile Include="Animation\TextureKey.cs" />
     <Compile Include="Cheating\Cheat.cs" />
@@ -253,6 +254,9 @@
   <ItemGroup>
     <Content Include="AgeOfScoutsLogo.ico" />
     <Content Include="AgeOfScoutsLogo.png" />
+    <Content Include="Encyclopedia\TaborovyKruh.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Encyclopedia\KeyboardShortcuts.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

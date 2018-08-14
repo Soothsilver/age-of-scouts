@@ -30,7 +30,14 @@ namespace Age
         /// <summary>
         /// Shows FPS, UPS (updates-per-second) and other indicators that may point to a performance problem.
         /// </summary>
-        public bool ShowPerformanceIndicators = true;
+        public bool ShowPerformanceIndicators =
+#if DEBUG
+            true;
+#else
+            false;
+#endif
+
+
 
         public float TimeFactor = 1;
 

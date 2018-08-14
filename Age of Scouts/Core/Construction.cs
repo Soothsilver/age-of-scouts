@@ -40,7 +40,9 @@ namespace Age.Core
             }
             if (building.RallyPointInStandardCoordinates != Vector2.Zero)
             {
-                trainee.Strategy.ResetTo(building.RallyPointInStandardCoordinates);
+                Selection createdUnitAsSelection = new Selection();
+                createdUnitAsSelection.SelectedUnits.Add(trainee);
+                building.Session.RightClickOn(createdUnitAsSelection, building.RallyPointInStandardCoordinates, false);
             }
             return true;
         }

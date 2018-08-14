@@ -31,12 +31,16 @@ namespace Age.Music
             PlayingWhat = track;
             MediaPlayer.Play(track.Song);
             MediaPlayer.IsRepeating = true;
+            /*
+             * Let's suppress the music track indicator for now, it wasn't very useful.
             Status = FlagStatus.Raising;
             FlagRaisedPercentage = 0;
+            */
         }
 
         public static void Draw(float elapsedSeconds)
         {
+
             switch(Status)
             {
                 case FlagStatus.Raising:

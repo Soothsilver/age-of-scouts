@@ -255,7 +255,7 @@ namespace Age.HUD
                         }
                         if (Root.WasMouseRightClick)
                         {
-                            session.RightClickOn(selection, pointerStandard);
+                            session.RightClickOn(selection, pointerStandard, true);
                             Root.WasMouseRightClick = false;
                         }
                     }

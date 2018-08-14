@@ -112,7 +112,11 @@ namespace Age.World
             switch (tiletype)
             {
                 case "Grass":
-                    tile.Icon = TextureName.IsoGrass2;
+                    tile.Icon = TextureName.IsoGrassDark;
+                    if (R.Coin())
+                    {
+                        tile.Icon = TextureName.IsoGrassDark2;
+                    }
                     tile.Type = TileType.Grass;
                     break;
                 case "Water":

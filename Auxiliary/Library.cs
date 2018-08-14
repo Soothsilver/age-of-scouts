@@ -298,7 +298,8 @@ namespace Auxiliary
         Rad10,
         Rad11,
         NeprateleUtoci,
-        PrepadajiNasTabor
+        PrepadajiNasTabor,
+        SkautskySignal
     }
 
     public enum TextureName
@@ -412,6 +413,9 @@ namespace Auxiliary
         KatapultRightAfterAttack,
         KatapultCorpse,
         WallStandalone,
-        WallFlat
+        WallFlat,
+        TaborovyKruh,
+        IsoGrassDark,
+        IsoGrassDark2
     }
 }
